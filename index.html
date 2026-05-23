@@ -129,7 +129,7 @@ html, body {
   transform: translateY(20px);
   transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
   line-height: 0;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.14), 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.03);
 }
 #project-page.open #project-image-wrap { transform: translateY(0); }
 #project-image-bg {
@@ -509,7 +509,7 @@ const PROJECTS = [
     title: "Naturally You",
     desc:  "A collaboration with Yiyi Chen exploring Wu Wei — the Taoist principle of effortless, natural action. Philosophical depth merged with creative expression.",
     img: "covers/naturally-you.jpg", imgPos: "center center",
-    imgs: ['naturally-you/1.jpg','naturally-you/2.jpg','naturally-you/3.jpg','naturally-you/4.jpg'] },
+    imgs: ['naturally-you/2.jpg','naturally-you/1.jpg','naturally-you/3.jpg','naturally-you/4.jpg'] },
   { short: "Mirrors & Windows",year: "2023",  cat: "photography", type: "personal", color: "#f0d0e8",
     title: "Mirrors & Windows",
     desc:  "My mother, father, sister. What they see in themselves versus what I see in them. A deeply personal exercise in perception and reflection.",
@@ -542,19 +542,20 @@ const PROJECTS = [
     desc:  "Sculpture.",
     img: "covers/untitled.jpg", imgPos: "center center",
     imgs: ['untitled/1.jpg','untitled/2.jpg','untitled/3.jpg'] },
-  { short: "Echoes",           year: "2024",  cat: "sound", type: "personal",       color: "#d99a97",  shape: "circle",
-    title: "Echoes of Intention",
+  { short: "Echoes of Purpose", year: "2024",  cat: "sound", type: "personal",       color: "#d99a97",  shape: "circle",
+    title: "Echoes of Purpose",
     desc:  "A sound work exploring intention, resonance and the space between action and meaning.",
-    img: "covers/echoes.jpg", imgPos: "center center", bgSize: "cover" },
+    img: "covers/echoes.jpg", imgPos: "center center", bgSize: "cover",
+    imgs: ['echoes/1.mp4'] },
   { short: "1+1=1 — Alcino",   year: "2020",  cat: "photography", type: "personal",  color: "#a8c8e8",
     title: "1+1=1 A Vida de Alcino Ventura",
     desc:  "An alternate reality built around my grandfather's disappearance. Photography, video and objects constructing a fictional existence woven through real historical events.",
     img: "covers/1-1=1-alcino.jpg", imgPos: "center top" },
-  { short: "Echoes of Purpose", year: "2024",  cat: "sound", type: "personal",  color: "#a0dce0",
-    title: "Echoes of Purpose",
+  { short: "Ecos de Intenção", year: "2024",  cat: "sound", type: "personal",  color: "#a0dce0",
+    title: "Ecos de Intenção",
     desc:  "An exhibition built around the sound work. Space, listening, and the architecture of attention.",
     img: "covers/ecos-de-intencao.jpg", imgPos: "center top",
-    imgs: ['ecos-de-intencao/10.jpg','ecos-de-intencao/9.jpg','ecos-de-intencao/4.jpg','ecos-de-intencao/3.jpg','ecos-de-intencao/6.jpg','ecos-de-intencao/6.mp4'] },
+    imgs: ['ecos-de-intencao/10.jpg','ecos-de-intencao/9.jpg','ecos-de-intencao/4.jpg','ecos-de-intencao/3.jpg','ecos-de-intencao/6.jpg'] },
   { short: "Quarto",           year: "2024",  cat: "photography", type: "personal",  color: "#e0a8e8",
     title: "Quarto",
     desc:  "An exhibition exploring the intimate space of a room as psychological landscape.",
