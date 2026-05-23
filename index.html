@@ -127,7 +127,7 @@ html, body {
 #project-image-wrap {
   border-radius: 2px; overflow: hidden;
   transform: translateY(20px);
-  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), width 0.35s ease, height 0.35s ease;
   line-height: 0;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.03);
 }
@@ -673,13 +673,23 @@ function goSlide(idx) {
     projectVideoBg.muted = true;
     videoMuteBtn.textContent = '🔇';
     videoMuteBtn.style.display = 'flex';
+    projectVideoBg.onloadedmetadata = () => {
+      if (projectVideoBg.videoWidth && projectVideoBg.videoHeight)
+        lockSlideSize(projectVideoBg.videoWidth, projectVideoBg.videoHeight);
+    };
     projectVideoBg.play().catch(() => {});
   } else {
+    projectVideoBg.pause();
+    projectVideoBg.onloadedmetadata = null;
     projectVideoBg.style.display = 'none';
     projectVideoBg.src = '';
     projectImageBg.style.display = 'block';
     projectImageBg.src = src;
     videoMuteBtn.style.display = 'none';
+    if (probeImg) probeImg.onload = null;
+    probeImg = new Image();
+    probeImg.onload = () => lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
+    probeImg.src = src;
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
   projectNavL.style.display = slideIdx === 0 ? 'none' : 'flex';
@@ -895,14 +905,6 @@ function openProject(p) {
   projectImageWrap.style.height = '';
   projectImageWrap.classList.remove('sized');
 
-  const firstSrc = (p.imgs && p.imgs.find(s => !isVideo(s))) || p.img;
-  if (firstSrc) {
-    if (probeImg) probeImg.onload = null;
-    probeImg = new Image();
-    probeImg.onload = () => lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
-    probeImg.src = firstSrc;
-  }
-
   if (p.imgs && p.imgs.length > 0) {
     slideImgs = p.imgs; slideIdx = 0;
     projectDots.innerHTML = ''; slideDots = [];
@@ -923,7 +925,14 @@ function openProject(p) {
     goSlide(0);
   } else {
     teardownSlide();
-    projectImageBg.src = p.img || '';
+    const src = p.img || '';
+    projectImageBg.src = src;
+    if (src) {
+      if (probeImg) probeImg.onload = null;
+      probeImg = new Image();
+      probeImg.onload = () => lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
+      probeImg.src = src;
+    }
   }
 
   projectTitleText.textContent = p.title;
