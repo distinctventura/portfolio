@@ -153,17 +153,22 @@ html, body {
   transition: color 0.2s;
 }
 #project-back:hover { color: #111; }
-.project-nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  display: none;
-  background: none; border: none; cursor: pointer;
-  font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
-  color: #bbb; font-family: inherit; z-index: 10;
-  transition: color 0.2s, opacity 0.2s;
+#project-nav-l, #project-nav-r {
+  position: absolute; top: 0; bottom: 0; width: 48%;
+  display: none; z-index: 10;
 }
-.project-nav:hover { color: #333; }
-#project-prev { left: 28px; }
-#project-next { right: 28px; }
+#project-nav-l { left: 0; cursor: w-resize; }
+#project-nav-r { right: 0; cursor: e-resize; }
+#project-dots {
+  display: none; gap: 8px;
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 11;
+}
+.project-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #ddd; cursor: pointer; transition: background 0.3s;
+}
+.project-dot.active { background: #888; }
 
 /* ── ABOUT & CONTACT ── */
 #about-page, #contact-page {
@@ -350,8 +355,9 @@ a.contact-value:hover { color: #888; }
 <!-- Project page -->
 <div id="project-page">
   <button id="project-back">← Back</button>
-  <button id="project-prev" class="project-nav">←</button>
-  <button id="project-next" class="project-nav">→</button>
+  <div id="project-nav-l"></div>
+  <div id="project-nav-r"></div>
+  <div id="project-dots"></div>
   <div id="project-hero">
     <div id="project-image-wrap">
       <div id="project-image-bg"></div>
@@ -582,15 +588,25 @@ const projectImageBg   = document.getElementById('project-image-bg');
 const projectTitleText = document.getElementById('project-title-text');
 const projectDescText  = document.getElementById('project-desc-text');
 const projectYearText  = document.getElementById('project-year-text');
-const projectPrev      = document.getElementById('project-prev');
-const projectNext      = document.getElementById('project-next');
-let slideImgs = [], slideIdx = 0;
+const projectNavL  = document.getElementById('project-nav-l');
+const projectNavR  = document.getElementById('project-nav-r');
+const projectDots  = document.getElementById('project-dots');
+let slideImgs = [], slideIdx = 0, slideDots = [];
 
 function goSlide(idx) {
   slideIdx = Math.max(0, Math.min(slideImgs.length - 1, idx));
   projectImageBg.style.backgroundImage = `url('${slideImgs[slideIdx]}')`;
-  projectPrev.style.opacity = slideIdx === 0 ? '0.25' : '1';
-  projectNext.style.opacity = slideIdx === slideImgs.length - 1 ? '0.25' : '1';
+  slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
+  projectNavL.style.display = slideIdx === 0 ? 'none' : 'block';
+  projectNavR.style.display = slideIdx === slideImgs.length - 1 ? 'none' : 'block';
+}
+
+function teardownSlide() {
+  slideImgs = []; slideIdx = 0; slideDots = [];
+  projectNavL.style.display = 'none';
+  projectNavR.style.display = 'none';
+  projectDots.style.display = 'none';
+  projectDots.innerHTML = '';
 }
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
@@ -620,6 +636,7 @@ function closeAll() {
   aboutPage.classList.remove('open');
   contactPage.classList.remove('open');
   projectPage.classList.remove('open');
+  teardownSlide();
   cursorLabel.classList.remove('visible', 'hidden');
 }
 
@@ -786,13 +803,18 @@ function openProject(p) {
   if (p.imgs && p.imgs.length > 1) {
     slideImgs = p.imgs;
     slideIdx  = 0;
-    projectPrev.style.display = 'block';
-    projectNext.style.display = 'block';
+    projectDots.innerHTML = '';
+    slideDots = p.imgs.map((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'project-dot';
+      d.addEventListener('click', e => { e.stopPropagation(); goSlide(i); });
+      projectDots.appendChild(d);
+      return d;
+    });
+    projectDots.style.display = 'flex';
     goSlide(0);
   } else {
-    slideImgs = [];
-    projectPrev.style.display = 'none';
-    projectNext.style.display = 'none';
+    teardownSlide();
     projectImageBg.style.backgroundImage = p.img ? `url('${p.img}')` : '';
     if (!p.img) projectImageBg.style.background = p.color;
   }
@@ -807,13 +829,11 @@ function openProject(p) {
 // ── BACK BUTTONS ──
 document.getElementById('project-back').addEventListener('click', () => {
   projectPage.classList.remove('open');
-  slideImgs = []; slideIdx = 0;
-  projectPrev.style.display = 'none';
-  projectNext.style.display = 'none';
+  teardownSlide();
 });
 
-projectPrev.addEventListener('click', () => goSlide(slideIdx - 1));
-projectNext.addEventListener('click', () => goSlide(slideIdx + 1));
+projectNavL.addEventListener('click', () => goSlide(slideIdx - 1));
+projectNavR.addEventListener('click', () => goSlide(slideIdx + 1));
 
 // ── NAV LINKS ──
 document.getElementById('nav-home').addEventListener('click', e => {
