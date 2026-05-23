@@ -301,97 +301,6 @@ a.contact-value:hover { color: #888; }
   }
 }
 
-/* ── OLD HOUSE PAGE ── */
-#oldhouse-page {
-  position: fixed; inset: 0; background: #fff;
-  z-index: 300; opacity: 0; pointer-events: none;
-  transition: opacity 0.5s ease; overflow: hidden;
-}
-#oldhouse-page.open { opacity: 1; pointer-events: all; }
-
-#oh-back {
-  position: absolute; top: 18px; right: 24px;
-  font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
-  color: #999; background: none; border: none;
-  cursor: pointer; font-family: inherit; z-index: 20;
-  transition: color 0.2s;
-}
-#oh-back:hover { color: #111; }
-
-/* Slides */
-.oh-slide {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center;
-  opacity: 0; transition: opacity 0.55s ease;
-  pointer-events: none;
-}
-.oh-slide.active { opacity: 1; }
-
-/* Intro slide */
-.oh-intro-content {
-  display: flex; flex-direction: column; justify-content: center;
-  height: 100%; padding: 0 10vw; max-width: 640px; align-self: flex-start;
-  margin-left: max(40px, calc(50vw - 320px));
-}
-.oh-year-label {
-  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: #bbb; margin-bottom: 24px;
-}
-.oh-title {
-  font-size: 12px; font-weight: 500; letter-spacing: 0.08em;
-  text-transform: uppercase; color: #111; line-height: 2.2; margin-bottom: 32px;
-}
-.oh-statement { font-size: 13px; color: #777; line-height: 1.9; max-width: 420px; margin-bottom: 52px; }
-.oh-cue { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: #ccc; }
-
-/* Photo slides */
-.oh-photo-wrap {
-  flex: 1; min-height: 0;
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; padding: 56px 80px 20px;
-}
-.oh-photo { max-height: 100%; width: auto; max-width: 100%; display: block; }
-
-.oh-text-bar {
-  flex-shrink: 0; width: 100%; max-width: 640px;
-  padding: 0 0 32px; margin: 0 auto;
-  display: flex; align-items: flex-start; gap: 20px;
-}
-.oh-tarot { width: 44px; height: auto; opacity: 0.78; flex-shrink: 0; margin-top: 3px; }
-.oh-text-body { flex: 1; }
-.oh-num { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #bbb; margin-bottom: 5px; }
-.oh-name {
-  font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-  color: #111; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 0.5px solid #ebebeb;
-}
-.oh-desc { font-size: 11.5px; color: #777; line-height: 1.85; }
-
-/* Nav zones */
-#oh-nav-l, #oh-nav-r {
-  position: absolute; top: 0; bottom: 0; width: 48%; z-index: 10;
-  transition: opacity 0.2s;
-}
-#oh-nav-l { left: 0; cursor: w-resize; }
-#oh-nav-r { right: 0; cursor: e-resize; }
-#oh-nav-l.oh-disabled, #oh-nav-r.oh-disabled { pointer-events: none; opacity: 0; }
-
-/* Progress dots */
-#oh-progress {
-  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 10px; z-index: 15; pointer-events: all;
-}
-.oh-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: #ddd; cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-.oh-dot.active { background: #888; transform: scale(1.4); }
-
-@media (max-width: 768px) {
-  .oh-photo-wrap { padding: 52px 32px 16px; }
-  .oh-text-bar { padding: 0 32px 28px; }
-  .oh-intro-content { padding: 0 32px; margin-left: 0; }
-}
 </style>
 </head>
 <body>
@@ -543,110 +452,6 @@ a.contact-value:hover { color: #888; }
 </div>
 
 
-<!-- Old House Page -->
-<div id="oldhouse-page">
-  <button id="oh-back">← Back</button>
-
-  <!-- Slide 0: Intro -->
-  <div class="oh-slide active" data-idx="0">
-    <div class="oh-intro-content">
-      <p class="oh-year-label">2022 — Photography — Personal</p>
-      <h1 class="oh-title">I Would Rather Not<br>Go Back To The Old House</h1>
-      <p class="oh-statement">A story of failed love told through six photographs, each one a chapter. The sequence follows the Rider-Waite tarot — not as mysticism, but as a borrowed language for emotions that resist ordinary words.</p>
-      <span class="oh-cue">click anywhere to begin →</span>
-    </div>
-  </div>
-
-  <!-- Slide 1: The Fool -->
-  <div class="oh-slide" data-idx="1">
-    <div class="oh-photo-wrap"><img class="oh-photo" src="old-house/1-fool.jpg" alt="The Fool"></div>
-    <div class="oh-text-bar">
-      <img class="oh-tarot" src="tarot/fool.jpg" alt="">
-      <div class="oh-text-body">
-        <p class="oh-num">0</p>
-        <h2 class="oh-name">The Fool</h2>
-        <p class="oh-desc">The Fool is me. Numbered zero — the beginning of everything, or the end. He stands at the cliff's edge with a flower in his hand. Too new to know fear. But look closely at his gaze: it is already downward. Not at the ground — more like something inside him already knows. The naivety of beginning something, and underneath it, a quiet shadow.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide 2: The Empress -->
-  <div class="oh-slide" data-idx="2">
-    <div class="oh-photo-wrap"><img class="oh-photo" src="old-house/2-emperess.jpg" alt="The Empress"></div>
-    <div class="oh-text-bar">
-      <img class="oh-tarot" src="tarot/empress.jpg" alt="">
-      <div class="oh-text-body">
-        <p class="oh-num">III</p>
-        <h2 class="oh-name">The Empress</h2>
-        <p class="oh-desc">Feminine, abundant, present in every sense. Look at her hand — extended outward, open, offering. She is available, interested, reaching toward something. This is how it began: the gesture of someone who seems to be waiting for someone to take what they are offering. And I took it.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide 3: The Lovers -->
-  <div class="oh-slide" data-idx="3">
-    <div class="oh-photo-wrap"><img class="oh-photo" src="old-house/3-lovers.jpg" alt="The Lovers"></div>
-    <div class="oh-text-bar">
-      <img class="oh-tarot" src="tarot/lovers.jpg" alt="">
-      <div class="oh-text-body">
-        <p class="oh-num">VI</p>
-        <h2 class="oh-name">The Lovers</h2>
-        <p class="oh-desc">Look at where each figure stands. The Fool is below — smaller, reaching upward. The Empress stands above, elevated. This is the power dynamic the card never says out loud. He looks at her hand, the same hand she offered. She doesn't look at him. Her gaze is elsewhere.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide 4: Death -->
-  <div class="oh-slide" data-idx="4">
-    <div class="oh-photo-wrap"><img class="oh-photo" src="old-house/4-death.jpg" alt="Death"></div>
-    <div class="oh-text-bar">
-      <img class="oh-tarot" src="tarot/death.jpg" alt="">
-      <div class="oh-text-body">
-        <p class="oh-num">XIII</p>
-        <h2 class="oh-name">Death</h2>
-        <p class="oh-desc">Death is the funeral. Not a metaphor — the actual burial of something that was real. People say Death in tarot means transformation, not ending. Maybe. But you still have to stand there and watch it happen. You still have to be at the funeral before anything can begin again.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide 5: The Hanged Man -->
-  <div class="oh-slide" data-idx="5">
-    <div class="oh-photo-wrap"><img class="oh-photo" src="old-house/5-hangedman.jpg" alt="The Hanged Man"></div>
-    <div class="oh-text-bar">
-      <img class="oh-tarot" src="tarot/hangedman.jpg" alt="">
-      <div class="oh-text-body">
-        <p class="oh-num">XII</p>
-        <h2 class="oh-name">The Hanged Man</h2>
-        <p class="oh-desc">This is where I lived for a while. Suspended — bound, hanging, unable to move forward or return. I couldn't breathe. I couldn't move. I felt broken and stuck in time. Not grief exactly. Closer to asphyxiation. You are still alive, which is almost the worst part.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Slide 6: The Moon -->
-  <div class="oh-slide" data-idx="6">
-    <div class="oh-photo-wrap"><img class="oh-photo" src="old-house/6-moon.jpg" alt="The Moon"></div>
-    <div class="oh-text-bar">
-      <img class="oh-tarot" src="tarot/moon.jpg" alt="">
-      <div class="oh-text-body">
-        <p class="oh-num">XVIII</p>
-        <h2 class="oh-name">The Moon</h2>
-        <p class="oh-desc">The Moon is the only thing in the sky you cannot touch. I understand that now. She will always be my moon — I can see her from here, I can love her from here, but I will never hold her. That is the final stage: arriving at a kind of peace with the distance.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="oh-nav-l" class="oh-disabled"></div>
-  <div id="oh-nav-r"></div>
-
-  <div id="oh-progress">
-    <div class="oh-dot"></div>
-    <div class="oh-dot"></div>
-    <div class="oh-dot"></div>
-    <div class="oh-dot"></div>
-    <div class="oh-dot"></div>
-    <div class="oh-dot"></div>
-  </div>
-</div>
 <script>
 const PROJECTS = [
   { short: "Old House",        year: "2023",  cat: "photography", type: "personal", color: "#f2cfc0",
@@ -762,7 +567,6 @@ const projectImageBg   = document.getElementById('project-image-bg');
 const projectTitleText = document.getElementById('project-title-text');
 const projectDescText  = document.getElementById('project-desc-text');
 const projectYearText  = document.getElementById('project-year-text');
-const oldhousePage = document.getElementById('oldhouse-page');
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
 
@@ -784,16 +588,13 @@ function origin() { return { ox: _ox, oy: _oy }; }
 function anyOverlayOpen() {
   return projectPage.classList.contains('open') ||
          aboutPage.classList.contains('open')   ||
-         contactPage.classList.contains('open') ||
-         oldhousePage.classList.contains('open');
+         contactPage.classList.contains('open');
 }
 
 function closeAll() {
   aboutPage.classList.remove('open');
   contactPage.classList.remove('open');
   projectPage.classList.remove('open');
-  oldhousePage.classList.remove('open');
-  ohGoTo(0);
   cursorLabel.classList.remove('visible', 'hidden');
 }
 
@@ -952,12 +753,6 @@ function loop() {
 
 // ── PROJECT PAGE ──
 function openProject(p) {
-  if (p.short === 'Old House') {
-    ohGoTo(0);
-    oldhousePage.classList.add('open');
-    cursorLabel.classList.remove('visible');
-    return;
-  }
   if (p.img) {
     projectImageBg.style.backgroundImage    = `url('${p.img}')`;
     projectImageBg.style.backgroundPosition = p.imgPos  || 'center';
@@ -976,13 +771,8 @@ function openProject(p) {
 }
 
 // ── BACK BUTTONS ──
-document.getElementById('oh-back').addEventListener('click', () => {
-  oldhousePage.classList.remove('open');
-  ohGoTo(0);
-});
 document.getElementById('project-back').addEventListener('click', () => {
   projectPage.classList.remove('open');
-  projectPage.scrollTop = 0;
 });
 
 // ── NAV LINKS ──
@@ -1003,10 +793,7 @@ document.getElementById('nav-contact').addEventListener('click', e => {
 // ── KEYBOARD ──
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeAll(); return; }
-  if (oldhousePage.classList.contains('open')) {
-    if (e.key === 'ArrowRight') { e.preventDefault(); ohGoTo(ohIdx + 1); }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); ohGoTo(ohIdx - 1); }
-  }
+
 });
 
 // ── FILTER ──
@@ -1056,25 +843,6 @@ document.querySelectorAll('#filter-cat button').forEach(btn => {
   });
 });
 
-// ── OLD HOUSE NAV ──
-let ohIdx = 0;
-const ohSlides = document.querySelectorAll('.oh-slide');
-const ohDots   = document.querySelectorAll('.oh-dot');
-const ohNavL   = document.getElementById('oh-nav-l');
-const ohNavR   = document.getElementById('oh-nav-r');
-
-function ohGoTo(idx) {
-  idx = Math.max(0, Math.min(6, idx));
-  ohSlides.forEach((s, i) => s.classList.toggle('active', i === idx));
-  ohDots.forEach((d, i)   => d.classList.toggle('active', i === idx - 1));
-  ohNavL.classList.toggle('oh-disabled', idx === 0);
-  ohNavR.classList.toggle('oh-disabled', idx === 6);
-  ohIdx = idx;
-}
-
-ohNavR.addEventListener('click', () => ohGoTo(ohIdx + 1));
-ohNavL.addEventListener('click', () => ohGoTo(ohIdx - 1));
-ohDots.forEach((d, i) => d.addEventListener('click', e => { e.stopPropagation(); ohGoTo(i + 1); }));
 
 // ── INIT ──
 build();
