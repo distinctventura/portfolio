@@ -144,6 +144,21 @@ html, body {
   width: auto; height: auto;
   border-radius: 2px;
 }
+#video-mute-btn {
+  display: none;
+  position: absolute;
+  bottom: 56px; right: 12px;
+  z-index: 20;
+  background: rgba(0,0,0,0.35);
+  border: none; border-radius: 50%;
+  width: 32px; height: 32px;
+  cursor: pointer;
+  align-items: center; justify-content: center;
+  color: #fff; font-size: 14px;
+  transition: background 0.2s;
+  backdrop-filter: blur(4px);
+}
+#video-mute-btn:hover { background: rgba(0,0,0,0.55); }
 #project-meta {
   display: flex; align-items: baseline; justify-content: center;
   gap: 16px; text-align: center;
@@ -374,6 +389,7 @@ a.contact-value:hover { color: #888; }
       <img id="project-image-bg" src="" alt="">
       <video id="project-video-bg" autoplay loop muted playsinline></video>
     </div>
+    <button id="video-mute-btn" aria-label="Toggle mute">🔇</button>
   </div>
   <div id="project-meta">
     <p id="project-year-text"></p>
@@ -611,6 +627,13 @@ let slideImgs = [], slideIdx = 0, slideDots = [];
 
 function isVideo(src) { return src && src.endsWith('.mp4'); }
 
+const videoMuteBtn = document.getElementById('video-mute-btn');
+videoMuteBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  projectVideoBg.muted = !projectVideoBg.muted;
+  videoMuteBtn.textContent = projectVideoBg.muted ? '🔇' : '🔊';
+});
+
 function goSlide(idx) {
   slideIdx = Math.max(0, Math.min(slideImgs.length - 1, idx));
   const src = slideImgs[slideIdx];
@@ -618,12 +641,16 @@ function goSlide(idx) {
     projectImageBg.style.display = 'none';
     projectVideoBg.style.display = 'block';
     projectVideoBg.src = src;
+    projectVideoBg.muted = true;
+    videoMuteBtn.textContent = '🔇';
+    videoMuteBtn.style.display = 'flex';
     projectVideoBg.play();
   } else {
     projectVideoBg.style.display = 'none';
     projectVideoBg.src = '';
     projectImageBg.style.display = 'block';
     projectImageBg.src = src;
+    videoMuteBtn.style.display = 'none';
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
   projectNavL.style.display = slideIdx === 0 ? 'none' : 'block';
@@ -639,6 +666,7 @@ function teardownSlide() {
   projectVideoBg.style.display = 'none';
   projectVideoBg.src = '';
   projectImageBg.style.display = 'block';
+  videoMuteBtn.style.display = 'none';
 }
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
