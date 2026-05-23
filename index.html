@@ -179,11 +179,18 @@ html, body {
 }
 #project-back:hover { color: #111; }
 #project-nav-l, #project-nav-r {
-  position: absolute; top: 0; bottom: 0; width: 48%;
-  display: none; z-index: 10;
+  position: fixed; top: 50%; transform: translateY(-50%);
+  display: none; z-index: 400;
+  width: 30px; height: 30px;
+  background: none; border: 0.5px solid rgba(0,0,0,0.18);
+  cursor: pointer; font-family: inherit; padding: 0;
+  align-items: center; justify-content: center;
+  font-size: 15px; color: #aaa;
+  transition: color 0.2s, border-color 0.2s;
 }
-#project-nav-l { left: 0; cursor: w-resize; }
-#project-nav-r { right: 0; cursor: e-resize; }
+#project-nav-l { left: 20px; }
+#project-nav-r { right: 20px; }
+#project-nav-l:hover, #project-nav-r:hover { color: #333; border-color: rgba(0,0,0,0.45); }
 #project-dots {
   display: none; gap: 8px; justify-content: center;
   z-index: 11;
@@ -380,8 +387,8 @@ a.contact-value:hover { color: #888; }
 <div id="project-page">
   <button id="project-back">← Back</button>
   <div id="project-hero">
-    <div id="project-nav-l"></div>
-    <div id="project-nav-r"></div>
+    <button id="project-nav-l" aria-label="Previous">&#8249;</button>
+    <button id="project-nav-r" aria-label="Next">&#8250;</button>
     <div id="project-image-wrap">
       <img id="project-image-bg" src="" alt="">
       <video id="project-video-bg" autoplay loop muted playsinline preload="none"></video>
@@ -675,8 +682,8 @@ function goSlide(idx) {
     videoMuteBtn.style.display = 'none';
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
-  projectNavL.style.display = slideIdx === 0 ? 'none' : 'block';
-  projectNavR.style.display = slideIdx === slideImgs.length - 1 ? 'none' : 'block';
+  projectNavL.style.display = slideIdx === 0 ? 'none' : 'flex';
+  projectNavR.style.display = slideIdx === slideImgs.length - 1 ? 'none' : 'flex';
 }
 
 function teardownSlide() {
