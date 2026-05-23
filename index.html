@@ -137,6 +137,13 @@ html, body {
   max-width: calc(100vw - 80px);
   width: auto; height: auto;
 }
+#project-video-bg {
+  display: none;
+  max-height: min(calc(100vh - 160px), 580px);
+  max-width: calc(100vw - 80px);
+  width: auto; height: auto;
+  border-radius: 2px;
+}
 #project-meta {
   display: flex; align-items: baseline; justify-content: center;
   gap: 16px; text-align: center;
@@ -365,6 +372,7 @@ a.contact-value:hover { color: #888; }
   <div id="project-hero">
     <div id="project-image-wrap">
       <img id="project-image-bg" src="" alt="">
+      <video id="project-video-bg" autoplay loop muted playsinline></video>
     </div>
   </div>
   <div id="project-meta">
@@ -509,7 +517,7 @@ const PROJECTS = [
   { short: "Fans of the Bible",year: "2024",  cat: "sculpture", type: "personal",   color: "#b8c0f0",
     title: "Fans of the Bible",
     desc:  "A sculptural work exploring religion, iconography and material culture.",
-    imgs: ['fans-of-the-bible/1.jpg','fans-of-the-bible/2.jpg','fans-of-the-bible/3.jpg','fans-of-the-bible/4.jpg','fans-of-the-bible/5.jpg'],
+    imgs: ['fans-of-the-bible/1.jpg','fans-of-the-bible/2.jpg','fans-of-the-bible/3.jpg','fans-of-the-bible/4.jpg','fans-of-the-bible/5.jpg','fans-of-the-bible/6.mp4'],
     img: "covers/fans-of-the-bible.jpg", imgPos: "center center" },
   { short: "Untitled",         year: "2024",  cat: "sculpture", type: "personal",   color: "#a8d8b8",
     title: "Untitled",
@@ -597,11 +605,25 @@ const projectYearText  = document.getElementById('project-year-text');
 const projectNavL  = document.getElementById('project-nav-l');
 const projectNavR  = document.getElementById('project-nav-r');
 const projectDots  = document.getElementById('project-dots');
+const projectVideoBg = document.getElementById('project-video-bg');
 let slideImgs = [], slideIdx = 0, slideDots = [];
+
+function isVideo(src) { return src && src.endsWith('.mp4'); }
 
 function goSlide(idx) {
   slideIdx = Math.max(0, Math.min(slideImgs.length - 1, idx));
-  projectImageBg.src = slideImgs[slideIdx];
+  const src = slideImgs[slideIdx];
+  if (isVideo(src)) {
+    projectImageBg.style.display = 'none';
+    projectVideoBg.style.display = 'block';
+    projectVideoBg.src = src;
+    projectVideoBg.play();
+  } else {
+    projectVideoBg.style.display = 'none';
+    projectVideoBg.src = '';
+    projectImageBg.style.display = 'block';
+    projectImageBg.src = src;
+  }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
   projectNavL.style.display = slideIdx === 0 ? 'none' : 'block';
   projectNavR.style.display = slideIdx === slideImgs.length - 1 ? 'none' : 'block';
@@ -613,6 +635,9 @@ function teardownSlide() {
   projectNavR.style.display = 'none';
   projectDots.style.display = 'none';
   projectDots.innerHTML = '';
+  projectVideoBg.style.display = 'none';
+  projectVideoBg.src = '';
+  projectImageBg.style.display = 'block';
 }
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
