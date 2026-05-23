@@ -123,7 +123,7 @@ html, body {
   padding: 56px 40px 32px; gap: 20px;
 }
 #project-page.open { opacity: 1; pointer-events: all; }
-#project-hero { flex-shrink: 0; }
+#project-hero { flex-shrink: 0; position: relative; }
 #project-image-wrap {
   border-radius: 2px; overflow: hidden;
   transform: translateY(20px);
@@ -146,7 +146,7 @@ html, body {
 #video-mute-btn {
   display: none;
   position: absolute;
-  bottom: 56px; right: 12px;
+  bottom: 12px; right: 12px;
   z-index: 20;
   background: rgba(0,0,0,0.35);
   border: none; border-radius: 50%;
@@ -185,8 +185,7 @@ html, body {
 #project-nav-l { left: 0; cursor: w-resize; }
 #project-nav-r { right: 0; cursor: e-resize; }
 #project-dots {
-  display: none; gap: 8px;
-  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  display: none; gap: 8px; justify-content: center;
   z-index: 11;
 }
 .project-dot {
@@ -380,16 +379,16 @@ a.contact-value:hover { color: #888; }
 <!-- Project page -->
 <div id="project-page">
   <button id="project-back">← Back</button>
-  <div id="project-nav-l"></div>
-  <div id="project-nav-r"></div>
-  <div id="project-dots"></div>
   <div id="project-hero">
+    <div id="project-nav-l"></div>
+    <div id="project-nav-r"></div>
     <div id="project-image-wrap">
       <img id="project-image-bg" src="" alt="">
-      <video id="project-video-bg" autoplay loop muted playsinline></video>
+      <video id="project-video-bg" autoplay loop muted playsinline preload="none"></video>
     </div>
     <button id="video-mute-btn" aria-label="Toggle mute">🔇</button>
   </div>
+  <div id="project-dots"></div>
   <div id="project-meta">
     <p id="project-year-text"></p>
     <h2 id="project-title-text"></h2>
@@ -667,7 +666,7 @@ function goSlide(idx) {
     projectVideoBg.muted = true;
     videoMuteBtn.textContent = '🔇';
     videoMuteBtn.style.display = 'flex';
-    projectVideoBg.play();
+    projectVideoBg.play().catch(() => {});
   } else {
     projectVideoBg.style.display = 'none';
     projectVideoBg.src = '';
@@ -686,6 +685,7 @@ function teardownSlide() {
   projectNavR.style.display = 'none';
   projectDots.style.display = 'none';
   projectDots.innerHTML = '';
+  projectVideoBg.pause();
   projectVideoBg.style.display = 'none';
   projectVideoBg.src = '';
   projectImageBg.style.display = 'block';
@@ -771,7 +771,7 @@ function build() {
 
     el.addEventListener('click', () => { if (card.entered) openProject(p); });
 
-    if (p.short === 'Echoes') {
+    if (p.shape === 'circle') {
       const sz = 210;
       el.style.width = el.style.height = sz + 'px';
       el.style.borderRadius = '50%';
@@ -880,29 +880,39 @@ function loop() {
 }
 
 // ── PROJECT PAGE ──
+let probeImg = null;
+
 function openProject(p) {
+  projectVideoBg.pause();
   projectImageWrap.style.width = '';
   projectImageWrap.style.height = '';
   projectImageWrap.classList.remove('sized');
 
   const firstSrc = (p.imgs && p.imgs.find(s => !isVideo(s))) || p.img;
   if (firstSrc) {
-    const probe = new Image();
-    probe.onload = () => lockSlideSize(probe.naturalWidth, probe.naturalHeight);
-    probe.src = firstSrc;
+    if (probeImg) probeImg.onload = null;
+    probeImg = new Image();
+    probeImg.onload = () => lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
+    probeImg.src = firstSrc;
   }
 
-  if (p.imgs && p.imgs.length > 1) {
+  if (p.imgs && p.imgs.length > 0) {
     slideImgs = p.imgs; slideIdx = 0;
-    projectDots.innerHTML = '';
-    slideDots = p.imgs.map((_, i) => {
-      const d = document.createElement('div');
-      d.className = 'project-dot';
-      d.addEventListener('click', e => { e.stopPropagation(); goSlide(i); });
-      projectDots.appendChild(d);
-      return d;
-    });
-    projectDots.style.display = 'flex';
+    projectDots.innerHTML = ''; slideDots = [];
+    if (p.imgs.length > 1) {
+      slideDots = p.imgs.map((_, i) => {
+        const d = document.createElement('div');
+        d.className = 'project-dot';
+        d.addEventListener('click', e => { e.stopPropagation(); goSlide(i); });
+        projectDots.appendChild(d);
+        return d;
+      });
+      projectDots.style.display = 'flex';
+    } else {
+      projectDots.style.display = 'none';
+      projectNavL.style.display = 'none';
+      projectNavR.style.display = 'none';
+    }
     goSlide(0);
   } else {
     teardownSlide();
@@ -940,12 +950,28 @@ document.getElementById('nav-contact').addEventListener('click', e => {
   cursorLabel.classList.add('hidden');
 });
 
+// ── SLIDE TOUCH SWIPE ──
+let slideTouchStartX = 0;
+projectImageWrap.addEventListener('touchstart', e => {
+  slideTouchStartX = e.touches[0].clientX;
+}, { passive: true });
+projectImageWrap.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - slideTouchStartX;
+  if (Math.abs(dx) > 40 && slideImgs.length > 1) {
+    if (dx < 0) goSlide(slideIdx + 1);
+    else         goSlide(slideIdx - 1);
+  }
+}, { passive: true });
+
 // ── KEYBOARD ──
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeAll(); return; }
   if (projectPage.classList.contains('open') && slideImgs.length > 1) {
     if (e.key === 'ArrowRight') { e.preventDefault(); goSlide(slideIdx + 1); }
     if (e.key === 'ArrowLeft')  { e.preventDefault(); goSlide(slideIdx - 1); }
+  } else if (!anyOverlayOpen()) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); targetScroll += Math.abs(STEP_X); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); targetScroll -= Math.abs(STEP_X); }
   }
 });
 
