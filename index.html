@@ -152,60 +152,61 @@ html, body {
 }
 /* ── PROJECT NOTIFICATION ── */
 #project-notify {
-  position: fixed; top: 56px; right: 20px; z-index: 600;
-  background: #f8f7f5;
-  border-left: 2px solid var(--notify-accent, #111);
-  border-radius: 0 4px 4px 0;
-  box-shadow: 0 12px 48px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.05);
-  padding: 14px 38px 14px 16px;
-  width: 290px; max-width: calc(100vw - 40px);
-  opacity: 0; transform: translateX(20px);
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  position: fixed; top: 16px; right: 16px; z-index: 600;
+  background: rgba(235,235,235,0.88);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08), inset 0 0 0 0.5px rgba(255,255,255,0.55);
+  padding: 12px 12px 12px 12px;
+  display: flex; gap: 10px; align-items: flex-start;
+  width: 320px; max-width: calc(100vw - 32px);
+  opacity: 0; transform: translateY(-8px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1);
   pointer-events: none;
 }
-#project-notify.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
-#notify-close {
-  position: absolute; top: 11px; right: 12px;
-  background: none; border: none; cursor: pointer;
-  font-size: 13px; color: #ccc; padding: 0; line-height: 1;
-  font-family: inherit; transition: color 0.2s;
+#project-notify.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+#notify-icon {
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: var(--notify-accent, #555);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.12);
 }
-#notify-close:hover { color: #777; }
-#notify-label {
-  font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--notify-accent, #999);
-  display: flex; align-items: center; gap: 5px;
-  margin-bottom: 9px;
-}
-#notify-label::before {
-  content: ''; width: 4px; height: 4px; border-radius: 50%;
-  background: var(--notify-accent, #999); flex-shrink: 0;
+#notify-content { flex: 1; min-width: 0; padding-right: 16px; }
+#notify-app {
+  font-size: 11px; font-weight: 500; color: #555;
+  margin-bottom: 1px; line-height: 1.3;
 }
 #notify-title {
-  font-size: 14px; font-weight: 500; letter-spacing: -0.01em;
-  color: #111; margin-bottom: 8px; line-height: 1.2;
+  font-size: 13px; font-weight: 600; color: #111;
+  margin-bottom: 2px; line-height: 1.3; letter-spacing: -0.01em;
 }
-#notify-rule { height: 0.5px; background: rgba(0,0,0,0.08); margin-bottom: 10px; }
 #notify-body {
-  font-size: 10.5px; color: #777; line-height: 1.72;
-  letter-spacing: 0.01em; margin-bottom: 14px;
-  font-style: italic;
+  font-size: 12px; color: #555; line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
 }
-#notify-actions { display: flex; align-items: center; gap: 16px; }
-#notify-yes {
-  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
-  background: none; border: none; border-bottom: 0.5px solid #111;
-  cursor: pointer; font-family: inherit; padding: 0; color: #111;
-  transition: color 0.2s, border-color 0.2s;
+#notify-actions { display: flex; gap: 6px; margin-top: 8px; }
+#notify-yes, #notify-no {
+  flex: 1; padding: 5px 0;
+  font-size: 12px; font-weight: 500;
+  background: rgba(0,0,0,0.08); border: none;
+  border-radius: 7px; cursor: pointer; font-family: inherit;
+  color: #222; transition: background 0.15s;
+  text-transform: none; letter-spacing: 0;
 }
-#notify-yes:hover { color: #666; border-color: #666; }
-#notify-no {
-  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
-  background: none; border: none; cursor: pointer;
-  font-family: inherit; padding: 0; color: #bbb;
-  transition: color 0.2s;
+#notify-yes { background: rgba(0,0,0,0.12); }
+#notify-yes:hover { background: rgba(0,0,0,0.18); }
+#notify-no:hover { background: rgba(0,0,0,0.12); }
+#notify-close {
+  position: absolute; top: 9px; right: 10px;
+  width: 16px; height: 16px;
+  background: rgba(0,0,0,0.12); border: none; border-radius: 50%;
+  cursor: pointer; font-size: 10px; color: #555;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit; transition: background 0.15s; padding: 0;
 }
-#notify-no:hover { color: #777; }
+#notify-close:hover { background: rgba(0,0,0,0.22); }
 /* ── INFO PANEL ── */
 #project-info-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
@@ -545,13 +546,15 @@ a.contact-value:hover { color: #888; }
 
 <div id="project-notify">
   <button id="notify-close" aria-label="Dismiss">×</button>
-  <div id="notify-label">Exhibition note</div>
-  <div id="notify-title"></div>
-  <div id="notify-rule"></div>
-  <div id="notify-body"></div>
-  <div id="notify-actions">
-    <button id="notify-yes">Open</button>
-    <button id="notify-no">Not now</button>
+  <div id="notify-icon"></div>
+  <div id="notify-content">
+    <div id="notify-app">Exhibition note</div>
+    <div id="notify-title"></div>
+    <div id="notify-body"></div>
+    <div id="notify-actions">
+      <button id="notify-yes">Open</button>
+      <button id="notify-no">Not now</button>
+    </div>
   </div>
 </div>
 
