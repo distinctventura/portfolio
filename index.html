@@ -130,7 +130,13 @@ html, body {
   transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), width 0.35s ease, height 0.35s ease;
   line-height: 0;
 }
-#project-image-wrap.shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.03); }
+#project-image-wrap.shadow {
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 4px 12px rgba(0,0,0,0.05),
+    0 16px 40px rgba(0,0,0,0.07),
+    0 40px 80px rgba(0,0,0,0.04);
+}
 #project-page.open #project-image-wrap { transform: translateY(0); }
 #slide-caption {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
@@ -727,13 +733,20 @@ const PROJECTS = [
            'quarto/receipt2.jpg','quarto/receipt3.jpg','quarto/receipt4.jpg',
            'quarto/receipt5.jpg','quarto/receipt6.jpg','quarto/receipt7.jpg',
            'quarto/receipt8.jpg','quarto/receipt9.jpg'],
-    slideCaptions: [
-      null,
-      { title: "Cama, 2024", body: "Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery. Each piece was a different way of inhabiting the same private space." },
-      null, null,
-      { body: "I tend to not be great at verbalising my thoughts and feelings, so a while ago I started using receipts as a way to document my life and my inner world. Here are some of my favourite ones." },
-      null, null, null, null, null, null, null
-    ],
+    slideCaptions: (function(){
+      const rec = { body: "I tend to not be great at verbalising my thoughts and feelings, so a while ago I started using receipts as a way to document my life and my inner world. Here are some of my favourite ones." };
+      return [
+        null,
+        { title: "Cama, 2024", body: "Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery. Each piece was a different way of inhabiting the same private space." },
+        null,
+        { title: "Untitled, 2024", body: "Painted with cyanotype — the chemical process behind photography. My first abstract painting." },
+        rec, rec, rec, rec, rec, rec, rec, rec
+      ];
+    })(),
+    videoPosters: {
+      'quarto/performance.mp4': 'quarto/performance-poster.jpg',
+      'quarto/performance2.mp4': 'quarto/performance2-poster.jpg'
+    },
     notification: {
       teaser: "A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition — photographs, receipts, a bed built inside a gallery.",
       body: "Quarto (Portuguese: bedroom) was Pedro Ventura's first solo exhibition, held at Art-Spot, Porto, in 2024. The work turns the bedroom into an archaeological site — a space excavated for its psychological residue rather than its physical function.\n\nAt the centre stood Cama — an installation in which Ventura constructed a bed inside the gallery and performed within it. The piece collapses the distance between private life and public space: between the vulnerability of sleep and the exposure of being seen.\n\nScattered throughout were receipts — fragments of daily commerce repurposed as a private journaling practice. Here they became poems: small monuments to the unremarkable moments that quietly define a life.\n\nQuarto was an introduction. Not a statement, but an open door."
@@ -930,12 +943,13 @@ function closeInfoPanel() {
 document.getElementById('info-panel-close').addEventListener('click', closeInfoPanel);
 
 function goSlide(idx) {
-  slideIdx = Math.max(0, Math.min(slideImgs.length - 1, idx));
+  slideIdx = ((idx % slideImgs.length) + slideImgs.length) % slideImgs.length;
   const src = slideImgs[slideIdx];
   if (isVideo(src)) {
     projectImageBg.style.display = 'none';
     projectVideoBg.style.display = 'block';
     projectVideoBg.src = src;
+    projectVideoBg.poster = (currentProject && currentProject.videoPosters && currentProject.videoPosters[src]) || '';
     projectVideoBg.muted = true;
     videoMuteBtn.textContent = '🔇';
     videoMuteBtn.style.display = 'flex';
@@ -959,8 +973,8 @@ function goSlide(idx) {
     probeImg.src = src;
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
-  projectNavL.style.display = slideIdx === 0 ? 'none' : 'flex';
-  projectNavR.style.display = slideIdx === slideImgs.length - 1 ? 'none' : 'flex';
+  projectNavL.style.display = slideImgs.length > 1 ? 'flex' : 'none';
+  projectNavR.style.display = slideImgs.length > 1 ? 'flex' : 'none';
 
   const cap = currentProject && currentProject.slideCaptions && currentProject.slideCaptions[slideIdx];
   slideCaptionTitle.textContent = cap && cap.title ? cap.title : '';
