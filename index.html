@@ -159,40 +159,55 @@ html, body {
 /* ── PROJECT NOTIFICATION ── */
 #project-notify {
   position: fixed; top: 56px; right: 16px; z-index: 600;
-  background: rgba(235,235,235,0.88);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(238,238,238,0.92);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
   border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08), inset 0 0 0 0.5px rgba(255,255,255,0.55);
-  padding: 12px 12px 12px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.12), inset 0 0 0 0.5px rgba(255,255,255,0.65);
+  padding: 12px 12px 18px 12px;
   display: flex; gap: 10px; align-items: flex-start;
   width: 320px; max-width: calc(100vw - 32px);
-  opacity: 0; transform: translateY(-8px);
-  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1);
+  opacity: 0; transform: translateX(calc(100% + 32px));
+  transition: opacity 0.3s ease, transform 0.42s cubic-bezier(0.34,1.18,0.64,1);
   pointer-events: none;
+  overflow: hidden;
+  cursor: default;
 }
-#project-notify.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+#project-notify.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
+#project-notify.hiding {
+  opacity: 0; transform: translateX(calc(100% + 32px));
+  transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.55,0,1,0.45);
+}
+#notify-progress {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--notify-accent, #555);
+  opacity: 0.45;
+  transform-origin: left;
+  transform: scaleX(1);
+  border-radius: 0 0 14px 14px;
+}
 #notify-icon {
   width: 36px; height: 36px; flex-shrink: 0;
   background: var(--notify-accent, #555);
   border-radius: 8px;
   box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.12);
 }
-#notify-content { flex: 1; min-width: 0; padding-right: 16px; }
+#notify-content { flex: 1; min-width: 0; }
 #notify-app {
-  font-size: 11px; font-weight: 500; color: #555;
-  margin-bottom: 1px; line-height: 1.3;
+  font-size: 11px; font-weight: 500; color: #666;
+  margin-bottom: 1px; line-height: 1.3; letter-spacing: 0.01em;
 }
 #notify-title {
   font-size: 13px; font-weight: 600; color: #111;
-  margin-bottom: 2px; line-height: 1.3; letter-spacing: -0.01em;
+  margin-bottom: 3px; line-height: 1.3; letter-spacing: -0.01em;
 }
 #notify-body {
-  font-size: 12px; color: #555; line-height: 1.4;
+  font-size: 12px; color: #555; line-height: 1.45;
   display: -webkit-box; -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; overflow: hidden;
 }
-#notify-actions { display: flex; gap: 6px; margin-top: 8px; }
+#notify-actions { display: flex; gap: 6px; margin-top: 9px; }
 #notify-yes, #notify-no {
   flex: 1; padding: 5px 0;
   font-size: 12px; font-weight: 500;
@@ -202,26 +217,27 @@ html, body {
   text-transform: none; letter-spacing: 0;
 }
 #notify-yes { background: rgba(0,0,0,0.12); }
-#notify-yes:hover { background: rgba(0,0,0,0.18); }
+#notify-yes:hover { background: rgba(0,0,0,0.2); }
 #notify-no:hover { background: rgba(0,0,0,0.12); }
-#notify-close {
-  position: absolute; top: 9px; right: 10px;
-  width: 16px; height: 16px;
-  background: rgba(0,0,0,0.12); border: none; border-radius: 50%;
-  cursor: pointer; font-size: 10px; color: #555;
-  display: flex; align-items: center; justify-content: center;
-  font-family: inherit; transition: background 0.15s; padding: 0;
-}
-#notify-close:hover { background: rgba(0,0,0,0.22); }
 /* ── INFO PANEL ── */
+#info-panel-backdrop {
+  position: fixed; inset: 0; z-index: 640;
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+  transition: background 0.45s ease;
+}
+#info-panel-backdrop.active {
+  background: rgba(0,0,0,0.18);
+  pointer-events: all;
+}
 #project-info-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
-  width: 360px; max-width: 100vw;
-  background: #fff; z-index: 650;
+  width: 380px; max-width: 100vw;
+  background: #fafafa; z-index: 650;
   transform: translateX(100%);
-  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+  transition: transform 0.48s cubic-bezier(0.22,1,0.36,1);
   overflow-y: auto;
-  box-shadow: -12px 0 48px rgba(0,0,0,0.06);
+  box-shadow: -16px 0 64px rgba(0,0,0,0.08);
 }
 #project-info-panel.open { transform: translateX(0); }
 #info-panel-inner { padding: 56px 32px 72px; }
@@ -229,30 +245,36 @@ html, body {
   position: fixed; top: 18px; right: 24px; z-index: 660;
   background: none; border: none; cursor: pointer;
   font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
-  color: #999; font-family: inherit; transition: color 0.2s;
+  color: #aaa; font-family: inherit; transition: color 0.2s;
 }
 #info-panel-close:hover { color: #111; }
 #info-panel-title {
-  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
   text-transform: uppercase; color: #111; margin-bottom: 20px;
 }
 #info-panel-body {
-  font-size: 12px; color: #666; line-height: 1.85;
-  margin-bottom: 40px; letter-spacing: 0.02em;
+  font-size: 12px; color: #555; line-height: 1.9;
+  margin-bottom: 40px; letter-spacing: 0.025em;
   white-space: pre-line;
 }
 #info-panel-bts-label {
-  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
   color: #bbb; margin-bottom: 16px; padding-bottom: 8px;
-  border-bottom: 0.5px solid #eee; display: block;
+  border-bottom: 0.5px solid #e8e8e8; display: block;
 }
 #info-panel-photos { display: flex; flex-direction: column; gap: 10px; }
-#info-panel-photos img { width: 100%; height: auto; border-radius: 1px; display: block; }
+#info-panel-photos img {
+  width: 100%; height: auto; border-radius: 1px; display: block;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+#info-panel-photos img.loaded { opacity: 1; transform: translateY(0); }
 #project-image-bg {
   display: block;
   max-height: min(calc(100vh - 160px), 580px);
   max-width: calc(100vw - 80px);
   width: auto; height: auto;
+  transition: opacity 0.28s ease;
 }
 #project-video-bg { display: none; max-height: min(calc(100vh - 160px), 580px); max-width: calc(100vw - 80px); width: auto; height: auto; }
 #project-image-wrap.sized #project-image-bg,
@@ -540,28 +562,29 @@ a.contact-value:hover { color: #888; }
   </div>
 </div>
 
+<div id="info-panel-backdrop"></div>
 <div id="project-info-panel">
-  <button id="info-panel-close">× Close</button>
+  <button id="info-panel-close">Close</button>
   <div id="info-panel-inner">
     <div id="info-panel-title"></div>
     <div id="info-panel-body"></div>
-    <span id="info-panel-bts-label">Behind the scenes</span>
+    <span id="info-panel-bts-label">Portraits</span>
     <div id="info-panel-photos"></div>
   </div>
 </div>
 
 <div id="project-notify">
-  <button id="notify-close" aria-label="Dismiss">×</button>
   <div id="notify-icon"></div>
   <div id="notify-content">
-    <div id="notify-app">Exhibition note</div>
+    <div id="notify-app">Note</div>
     <div id="notify-title"></div>
     <div id="notify-body"></div>
     <div id="notify-actions">
       <button id="notify-yes">Open</button>
-      <button id="notify-no">Not now</button>
+      <button id="notify-no">Dismiss</button>
     </div>
   </div>
+  <div id="notify-progress"></div>
 </div>
 
 <!-- About page -->
@@ -674,7 +697,7 @@ const PROJECTS = [
     img: "covers/old-house.jpg", imgPos: "center center" },
   { short: "Naturally You",    year: "2023",  cat: "photography", type: "personal", color: "#c8e6d0",
     title: "Naturally You",
-    desc:  "A collaboration with Yiyi Chen exploring Wu Wei — the Taoist principle of effortless, natural action. Images made without force, searching for what arrives on its own.",
+    desc:  "A collaboration with Yiyi Chen built around Wu Wei — the Taoist principle of effortless, natural action. Images made without force, searching for what presents itself rather than what is staged.",
     img: "covers/naturally-you.jpg", imgPos: "center center",
     imgs: ['naturally-you/2.jpg','naturally-you/1.jpg','naturally-you/3.jpg','naturally-you/4.jpg'] },
   { short: "Mirrors & Windows",year: "2023",  cat: "photography", type: "personal", color: "#f0d0e8",
@@ -684,25 +707,25 @@ const PROJECTS = [
     imgs: ['mirrors-windows/1.jpg','mirrors-windows/2.jpg'] },
   { short: "Flores",           year: "2024",  cat: "photography", type: "personal", color: "#b8e8e0",
     title: "Flores com Frederico Santos",
-    desc:  "Film photography tracing flowers through time. Colour, composition, and the delicate beauty of natural decay.",
+    desc:  "A collaboration with Frederico Santos shot on film. Flowers traced through time — colour, composition, and the slow drama of natural decay.",
     img: "covers/flores.jpg", imgPos: "center center",
     imgs: ['flores/1.jpg','flores/2.jpg','flores/3.jpg','flores/4.jpg'] },
   { short: "Film Archive",     year: "2020—", cat: "photography", type: "personal", color: "#dcc8f0",
     title: "Film Personal Archive",
-    desc:  "An ongoing personal archive shot on film. Moments, people, places — fragments of a life in progress.",
+    desc:  "An ongoing personal archive, shot entirely on film since 2020. Moments, people, places — fragments of a life accumulated frame by frame.",
     img: "covers/film-archive.jpg", imgPos: "center center" },
   { short: "Painting",         year: "2020—", cat: "painting", type: "personal",    color: "#3a2a1a",
     title: "Abstract Painting",
-    desc:  "An ongoing painting practice. Abstract, emotional, process-driven. Paint as a way of thinking out loud.",
+    desc:  "An ongoing painting practice rooted in abstraction. Emotional, process-driven, resistant to resolution — paint as a way of thinking out loud rather than arriving at an answer.",
     img: "covers/painting.jpg", imgPos: "center center", bgColor: "#3a2a1a",
     imgs: ['painting/1.jpg','painting/2.jpg','painting/3.jpg','painting/4.jpg','painting/5.jpg','painting/6.jpg'] },
   { short: "Foda-se",          year: "2023",  cat: "sculpture", type: "personal",   color: "#f0b8b8",
     title: "Foda-se Condensado",
-    desc:  "A homage to Warhol's Campbell's Soup charged with Portuguese culture. The beginning of a series blending art history with contemporary cultural expression.",
+    desc:  "A homage to Warhol's Campbell's Soup, charged with Portuguese vernacular. Foda-se Condensado transposes the language of pop art onto a domestic icon of southern European kitchen culture — the first work in an ongoing series.",
     img: "covers/foda-se.jpg", imgPos: "center center" },
   { short: "Fans of the Bible",year: "2024",  cat: "sculpture", type: "personal",   color: "#b8c0f0",
     title: "Fans of the Bible",
-    desc:  "A sculptural work examining religion, iconography, and the weight of belief as material culture.",
+    desc:  "A sculptural work examining religion, iconography, and the residue belief leaves in objects. Faith materialised — the sacred made literal, awkward, and strangely tender.",
     imgs: ['fans-of-the-bible/1.jpg','fans-of-the-bible/2.jpg','fans-of-the-bible/3.jpg','fans-of-the-bible/4.jpg','fans-of-the-bible/5.jpg','fans-of-the-bible/6.mp4'],
     img: "covers/fans-of-the-bible.jpg", imgPos: "center center" },
   { short: "Untitled",         year: "2024",  cat: "sculpture", type: "personal",   color: "#a8d8b8",
@@ -712,7 +735,7 @@ const PROJECTS = [
     imgs: ['untitled/1.jpg','untitled/2.jpg','untitled/3.jpg'] },
   { short: "Echoes of Purpose", year: "2024",  cat: "sound", type: "personal",       color: "#d99a97",  shape: "circle",
     title: "Echoes of Purpose",
-    desc:  "A sound work exploring intention, resonance and the space between action and meaning.",
+    desc:  "A sound work examining intention, resonance, and the ambiguous space between action and its meaning. What remains when the impulse has passed.",
     img: "covers/echoes.jpg", imgPos: "center center", bgSize: "cover",
     imgs: ['echoes/1.mp4'] },
   { short: "1+1=1 — Alcino",   year: "2020",  cat: "photography", type: "personal",  color: "#a8c8e8",
@@ -721,12 +744,12 @@ const PROJECTS = [
     img: "covers/1-1=1-alcino.jpg", imgPos: "center top" },
   { short: "Ecos de Intenção", year: "2024",  cat: "sound", type: "personal",  color: "#a0dce0",
     title: "Ecos de Intenção",
-    desc:  "An exhibition built around the sound work. Space, listening, and the architecture of attention.",
+    desc:  "An exhibition built around the sound work Echoes of Purpose. The gallery reframed as an instrument — space, silence, and the architecture of collective listening.",
     img: "covers/ecos-de-intencao.jpg", imgPos: "center top",
     imgs: ['ecos-de-intencao/10.jpg','ecos-de-intencao/9.jpg','ecos-de-intencao/4.jpg','ecos-de-intencao/3.jpg','ecos-de-intencao/6.jpg','ecos-de-intencao/7.mp4'] },
   { short: "Quarto",           year: "2024",  cat: "photography", type: "personal",  color: "#e0a8e8",
     title: "Quarto",
-    desc:  "An exhibition exploring the intimate space of a room as psychological landscape.",
+    desc:  "A solo exhibition held at Art-Spot, Porto, in 2024. Photographs, an installation, a painting, and receipts used as diary entries — four bodies of work turning the bedroom into an excavation site.",
     img: "covers/quarto.jpg", imgPos: "left center",
     ambientAudio: "quarto/ambient.mp3",
     imgs: ['quarto/wall.jpg','quarto/performance.mp4','quarto/performance2.mp4','quarto/painting.jpg',
@@ -761,40 +784,40 @@ const PROJECTS = [
     bts: ['lfw/portraits/1.jpg','lfw/portraits/2.jpg','lfw/portraits/3.jpg','lfw/portraits/4.jpg','lfw/portraits/5.jpg','lfw/portraits/6.jpg','lfw/portraits/8.jpg','lfw/portraits/9.jpg'] },
   { short: "Nuno Baltazar",    year: "2023",  cat: "photography", type: "client", color: "#d0e8c0",
     title: "Nuno Baltazar",
-    desc:  "Photography for Portuguese fashion designer Nuno Baltazar.",
+    desc:  "Photography for Portuguese fashion designer Nuno Baltazar — garment, form, and the precise relationship between clothing and the body that wears it.",
     imgs: ['nuno-baltazar/1.jpg','nuno-baltazar/2.jpg','nuno-baltazar/3.jpg','nuno-baltazar/4.jpg','nuno-baltazar/5.jpg','nuno-baltazar/6.jpg','nuno-baltazar/7.jpg','nuno-baltazar/8.jpg','nuno-baltazar/9.jpg'],
     img: "covers/nuno-baltazar.jpg", imgPos: "center top", shadow: true },
   { short: "Erdem",            year: "2023",  cat: "photography", type: "client", color: "#b8d8a8",
     title: "Erdem",
-    desc:  "Photography for Erdem.",
+    desc:  "Photography for British fashion house Erdem. Intricate, romantic garments met with an equally considered visual language.",
     imgs: ['erdem/1.jpg','erdem/2.jpg','erdem/3.jpg'],
     img: "covers/erdem.jpg", imgPos: "left top", shadow: true },
   { short: "Bershka",          year: "2024",  cat: "photography", type: "client", color: "#f0c0d0",
     title: "Bershka",
-    desc:  "Photography for Bershka.",
+    desc:  "Photography for Bershka. Youth culture and accessible fashion rendered as image.",
     img: "covers/bershka.jpg", imgPos: "center top",
     imgs: ['bershka/1.jpg','bershka/2.jpg','bershka/3.jpg'] },
   { short: "Vanity Fair Italia BTS", year: "2026", cat: "photography", type: "client", color: "#e8e0d0",
     title: "Vanity Fair Italia BTS",
-    desc: "Behind-the-scenes photography for Vanity Fair Italia.",
+    desc: "Behind-the-scenes photography for Vanity Fair Italia — the atmosphere, labour, and quiet intensity that precede the published image.",
     img: "covers/vanity-fair-italia-bts.jpg", imgPos: "center center",
     imgs: ['vanity-fair-bts/1.jpg','vanity-fair-bts/2.jpg','vanity-fair-bts/3.jpg','vanity-fair-bts/4.jpg','vanity-fair-bts/5.jpg','vanity-fair-bts/6.jpg','vanity-fair-bts/7.jpg','vanity-fair-bts/8.jpg'] },
   { short: "Husbands", year: "2026", cat: "photography", type: "client", color: "#e8d8c8",
     title: "Husbands",
-    desc: "Photography for Husbands.",
+    desc: "Photography for Parisian menswear house Husbands. Suiting, precision, and the quiet authority of a well-made garment.",
     img: "covers/husbands.jpg", imgPos: "center center",
     imgs: ['husbands/1.jpg','husbands/2.jpg','husbands/3.jpg','husbands/4.jpg'] },
   { short: "Video Diary", year: "2020—", cat: "video", type: "personal", color: "#d0c8e8",
     title: "Video Diary",
-    desc: "An ongoing video diary, started in 2020. Fragments of daily life in motion.",
+    desc: "An ongoing video diary started in 2020. Fragments of daily life accumulated in motion — personal footage as a record of time, people, and the texture of ordinary days.",
     img: "covers/video-diary.jpg", imgPos: "center center" },
   { short: "Compartmentalizing", year: "2026", cat: "video", type: "personal", color: "#c8d0e8",
     title: "Compartmentalizing",
-    desc: "An ongoing video work.",
+    desc: "A video work in progress. The act of sorting, separating, and filing — an investigation into how we organise memory and the self.",
     img: "covers/compartmentalizing.jpg", imgPos: "center center" },
   { short: "Athena Ceramics",  year: "2024",  cat: "photography", type: "client", color: "#d8f0c8",
     title: "Athena Ceramics",
-    desc:  "Photography for Athena Ceramics — objects, texture, and the beauty of craft.",
+    desc:  "Photography for Athena Ceramics — objects, surface, and the slow beauty of handmade things. Images that ask to be held rather than scrolled past.",
     img: "covers/athena-ceramics.jpg", imgPos: "center bottom",
     imgs: ['athena-ceramics/1.jpg','athena-ceramics/2.jpg','athena-ceramics/3.jpg'] },
 ];
@@ -850,16 +873,27 @@ const slideCaption      = document.getElementById('slide-caption');
 const slideCaptionTitle = document.getElementById('slide-caption-title');
 const slideCaptionBody  = document.getElementById('slide-caption-body');
 const projectNotify  = document.getElementById('project-notify');
+const notifyBar      = document.getElementById('notify-progress');
+const NOTIFY_DURATION = 8000;
 let   notifyTimers    = [];
-let   notifyArmed     = false; // notification is waiting to fire after first interaction
+let   notifyArmed     = false;
 let   currentProject  = null;
+let   notifyActive    = false;
+let   notifyPaused    = false;
+let   notifyShowTime  = 0;
+let   notifyRemaining = NOTIFY_DURATION;
+let   notifyAutoTimer = null;
 
-function clearNotifyTimers() { notifyTimers.forEach(clearTimeout); notifyTimers = []; }
+function clearNotifyTimers() {
+  notifyTimers.forEach(clearTimeout);
+  notifyTimers = [];
+  if (notifyAutoTimer) { clearTimeout(notifyAutoTimer); notifyAutoTimer = null; }
+}
 
 function triggerNotify() {
   if (!notifyArmed || !currentProject) return;
   notifyArmed = false;
-  queueNotify(currentProject, 8000);
+  queueNotify(currentProject, 7000);
 }
 
 function queueNotify(p, delay) {
@@ -872,16 +906,92 @@ function queueNotify(p, delay) {
 }
 
 function showNotify(p) {
+  notifyActive = true;
+  notifyPaused = false;
+  notifyRemaining = NOTIFY_DURATION;
   projectNotify.style.setProperty('--notify-accent', p.color || '#111');
   document.getElementById('notify-title').textContent = p.title || '';
-  document.getElementById('notify-body').textContent  = p.notification && p.notification.teaser ? p.notification.teaser : '';
+  document.getElementById('notify-body').textContent  = p.notification?.teaser || '';
+  projectNotify.classList.remove('hiding');
   projectNotify.classList.add('visible');
-  const autoTimer = setTimeout(() => {
-    projectNotify.classList.remove('visible');
-    if (currentProject) queueNotify(currentProject, 40000);
-  }, 9000);
-  notifyTimers.push(autoTimer);
+  startNotifyBar();
+  scheduleAutoDismiss();
 }
+
+function startNotifyBar() {
+  notifyBar.style.transition = 'none';
+  notifyBar.style.transform  = 'scaleX(1)';
+  notifyBar.getBoundingClientRect();
+  notifyBar.style.transition = `transform ${notifyRemaining}ms linear`;
+  notifyBar.style.transform  = 'scaleX(0)';
+  notifyShowTime = Date.now();
+}
+
+function pauseNotifyBar() {
+  const elapsed = Date.now() - notifyShowTime;
+  notifyRemaining = Math.max(0, notifyRemaining - elapsed);
+  const frac = notifyRemaining / NOTIFY_DURATION;
+  const cur = window.getComputedStyle(notifyBar).transform;
+  notifyBar.style.transition = 'none';
+  notifyBar.style.transform  = cur;
+}
+
+function resumeNotifyBar() {
+  notifyShowTime = Date.now();
+  notifyBar.getBoundingClientRect();
+  notifyBar.style.transition = `transform ${notifyRemaining}ms linear`;
+  notifyBar.style.transform  = 'scaleX(0)';
+}
+
+function scheduleAutoDismiss() {
+  if (notifyAutoTimer) clearTimeout(notifyAutoTimer);
+  notifyAutoTimer = setTimeout(() => {
+    notifyAutoTimer = null;
+    dismissNotify(() => {
+      if (currentProject) queueNotify(currentProject, 45000);
+    });
+  }, notifyRemaining);
+}
+
+function dismissNotify(onDone) {
+  if (!notifyActive) return;
+  notifyActive = false;
+  if (notifyAutoTimer) { clearTimeout(notifyAutoTimer); notifyAutoTimer = null; }
+  projectNotify.classList.add('hiding');
+  const done = () => {
+    projectNotify.classList.remove('visible', 'hiding');
+    if (onDone) onDone();
+  };
+  const fallback = setTimeout(done, 380);
+  projectNotify.addEventListener('transitionend', function handler() {
+    clearTimeout(fallback);
+    projectNotify.removeEventListener('transitionend', handler);
+    done();
+  }, { once: true });
+}
+
+projectNotify.addEventListener('mouseenter', () => {
+  if (!notifyActive || notifyPaused) return;
+  notifyPaused = true;
+  if (notifyAutoTimer) { clearTimeout(notifyAutoTimer); notifyAutoTimer = null; }
+  pauseNotifyBar();
+});
+projectNotify.addEventListener('mouseleave', () => {
+  if (!notifyActive || !notifyPaused) return;
+  notifyPaused = false;
+  resumeNotifyBar();
+  scheduleAutoDismiss();
+});
+
+document.addEventListener('click', e => {
+  if (!notifyActive) return;
+  if (!projectNotify.contains(e.target)) {
+    clearNotifyTimers();
+    dismissNotify(() => {
+      if (currentProject) queueNotify(currentProject, 45000);
+    });
+  }
+}, true);
 
 videoMuteBtn.addEventListener('click', e => {
   e.stopPropagation();
@@ -893,24 +1003,22 @@ ambientMuteBtn.addEventListener('click', e => {
   ambientAudio.muted = !ambientAudio.muted;
   ambientMuteBtn.textContent = ambientAudio.muted ? '🔕' : '♪';
 });
-document.getElementById('notify-close').addEventListener('click', () => {
-  clearNotifyTimers();
-  projectNotify.classList.remove('visible');
-  if (currentProject) queueNotify(currentProject, 40000);
-});
 document.getElementById('notify-no').addEventListener('click', () => {
   clearNotifyTimers();
-  projectNotify.classList.remove('visible');
-  if (currentProject) queueNotify(currentProject, 40000);
+  dismissNotify(() => {
+    if (currentProject) queueNotify(currentProject, 45000);
+  });
 });
 document.getElementById('notify-yes').addEventListener('click', () => {
   clearNotifyTimers();
-  projectNotify.classList.remove('visible');
-  if (currentProject) openInfoPanel(currentProject);
+  dismissNotify(() => {
+    if (currentProject) openInfoPanel(currentProject);
+  });
 });
 
 // ── INFO PANEL ──
-const infoPanel = document.getElementById('project-info-panel');
+const infoPanel   = document.getElementById('project-info-panel');
+const infoBdrop   = document.getElementById('info-panel-backdrop');
 
 function openInfoPanel(p) {
   const bodyEl   = document.getElementById('info-panel-body');
@@ -918,29 +1026,40 @@ function openInfoPanel(p) {
   const photosEl = document.getElementById('info-panel-photos');
   photosEl.innerHTML = '';
   document.getElementById('info-panel-title').textContent = p.title || '';
-  const bodyText = p.notification && p.notification.body ? p.notification.body : '';
+  const bodyText = p.notification?.body || '';
   bodyEl.textContent   = bodyText;
   bodyEl.style.display = bodyText ? 'block' : 'none';
   if (p.bts && p.bts.length) {
     btsLabel.style.display = 'block';
-    p.bts.forEach(src => {
+    p.bts.forEach((src, i) => {
       const img = document.createElement('img');
-      img.src = src; img.alt = '';
+      img.alt = '';
+      img.onload = () => {
+        setTimeout(() => img.classList.add('loaded'), i * 60);
+      };
+      img.src = src;
+      if (img.complete) setTimeout(() => img.classList.add('loaded'), i * 60);
       photosEl.appendChild(img);
     });
   } else {
     btsLabel.style.display = 'none';
   }
+  infoBdrop.classList.add('active');
   infoPanel.classList.add('open');
 }
 
 function closeInfoPanel() {
+  infoBdrop.classList.remove('active');
   infoPanel.classList.remove('open');
-  document.getElementById('info-panel-photos').innerHTML = '';
+  infoPanel.addEventListener('transitionend', function h() {
+    document.getElementById('info-panel-photos').innerHTML = '';
+    infoPanel.removeEventListener('transitionend', h);
+  }, { once: true });
   if (currentProject) queueNotify(currentProject, 20000);
 }
 
 document.getElementById('info-panel-close').addEventListener('click', closeInfoPanel);
+infoBdrop.addEventListener('click', closeInfoPanel);
 
 function goSlide(idx) {
   slideIdx = ((idx % slideImgs.length) + slideImgs.length) % slideImgs.length;
@@ -965,11 +1084,15 @@ function goSlide(idx) {
     projectVideoBg.style.display = 'none';
     projectVideoBg.src = '';
     projectImageBg.style.display = 'block';
-    projectImageBg.src = src;
+    projectImageBg.style.opacity = '0';
     videoMuteBtn.style.display = 'none';
     if (probeImg) probeImg.onload = null;
     probeImg = new Image();
-    probeImg.onload = () => lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
+    probeImg.onload = () => {
+      lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
+      projectImageBg.src = src;
+      requestAnimationFrame(() => { projectImageBg.style.opacity = '1'; });
+    };
     probeImg.src = src;
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
@@ -999,7 +1122,9 @@ function teardownSlide() {
   ambientMuteBtn.style.display = 'none';
   clearNotifyTimers();
   notifyArmed = false;
-  projectNotify.classList.remove('visible');
+  notifyActive = false;
+  projectNotify.classList.remove('visible', 'hiding');
+  infoBdrop.classList.remove('active');
   infoPanel.classList.remove('open');
   document.getElementById('info-panel-photos').innerHTML = '';
   currentProject = null;
