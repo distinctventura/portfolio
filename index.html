@@ -774,6 +774,7 @@ const PROJECTS = [
       teaser: "A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition — photographs, receipts, a bed built inside a gallery.",
       body: "Quarto (Portuguese: bedroom) was Pedro Ventura's first solo exhibition, held at Art-Spot, Porto, in 2024. The work turns the bedroom into an archaeological site — a space excavated for its psychological residue rather than its physical function.\n\nAt the centre stood Cama — an installation in which Ventura constructed a bed inside the gallery and performed within it. The piece collapses the distance between private life and public space: between the vulnerability of sleep and the exposure of being seen.\n\nScattered throughout were receipts — fragments of daily commerce repurposed as a private journaling practice. Here they became poems: small monuments to the unremarkable moments that quietly define a life.\n\nQuarto was an introduction. Not a statement, but an open door."
     },
+    btsLabel: "Behind the scenes",
     bts: ['quarto/bts/1.jpg','quarto/bts/2.jpg','quarto/bts/3.jpg','quarto/bts/4.jpg','quarto/bts/5.jpg','quarto/bts/6.jpg','quarto/bts/7.jpg','quarto/bts/8.jpg'] },
   { short: "Moda Lisboa",      year: "2023",  cat: "photography", type: "client", color: "#c0e0b0",
     title: "Moda Lisboa",
@@ -781,6 +782,7 @@ const PROJECTS = [
     img: "covers/lfw.jpg", imgPos: "center bottom", bgSize: "cover", bgColor: "#c0e0b0",
     imgs: ['lfw/1.jpg','lfw/2.jpg','lfw/3.jpg','lfw/4.jpg','lfw/5.jpg','lfw/6.jpg','lfw/7.jpg','lfw/8.jpg','lfw/9.jpg'],
     notification: { teaser: "Would you like to see some portraits I did?" },
+    btsLabel: "Portraits",
     bts: ['lfw/portraits/1.jpg','lfw/portraits/2.jpg','lfw/portraits/3.jpg','lfw/portraits/4.jpg','lfw/portraits/5.jpg','lfw/portraits/6.jpg','lfw/portraits/8.jpg','lfw/portraits/9.jpg'] },
   { short: "Nuno Baltazar",    year: "2023",  cat: "photography", type: "client", color: "#d0e8c0",
     title: "Nuno Baltazar",
@@ -1030,6 +1032,7 @@ function openInfoPanel(p) {
   bodyEl.textContent   = bodyText;
   bodyEl.style.display = bodyText ? 'block' : 'none';
   if (p.bts && p.bts.length) {
+    btsLabel.textContent = p.btsLabel || 'Behind the scenes';
     btsLabel.style.display = 'block';
     p.bts.forEach((src, i) => {
       const img = document.createElement('img');
