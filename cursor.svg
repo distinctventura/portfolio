@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="36" viewBox="0 0 32 36">
+  <defs>
+    <radialGradient id="gloss" cx="36%" cy="28%" r="52%">
+      <stop offset="0%"   stop-color="#fff" stop-opacity="0.22"/>
+      <stop offset="60%"  stop-color="#fff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-10%" width="160%" height="160%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <!-- Arrow body -->
+  <path d="M5 3 C5 3 5 3 5 3 L5 27 L10.5 21.5 L15.5 32 L19.5 30 L14.5 19.5 L23.5 19.5 Z"
+        fill="#111" filter="url(#shadow)"/>
+  <!-- Gloss highlight -->
+  <path d="M5 3 C5 3 5 3 5 3 L5 27 L10.5 21.5 L15.5 32 L19.5 30 L14.5 19.5 L23.5 19.5 Z"
+        fill="url(#gloss)"/>
+</svg>

@@ -472,16 +472,7 @@ a.contact-value:hover { color: #888; }
 
 /* ── CUSTOM CURSOR ── */
 @media (hover: hover) {
-  *, *::before, *::after { cursor: none !important; }
-}
-#cursor-dot {
-  position: fixed; top: 0; left: 0;
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #fff; mix-blend-mode: exclusion;
-  pointer-events: none; z-index: 9999;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  will-change: transform;
+  *, *::before, *::after { cursor: url('cursor.svg') 5 3, auto !important; }
 }
 
 /* ── CHROME 0.3 OPACITY ── */
@@ -553,7 +544,6 @@ a.contact-value:hover { color: #888; }
   <div id="scroll-track"></div>
 </div>
 
-<div id="cursor-dot"></div>
 <div id="cursor-label"></div>
 <div id="hint">Scroll or drag</div>
 
@@ -1277,8 +1267,6 @@ stage.addEventListener('wheel', e => {
   targetScroll += (e.deltaY + e.deltaX) * 0.7;
 }, { passive: false });
 
-const cursorDot = document.getElementById('cursor-dot');
-
 stage.addEventListener('mousedown', e => {
   isDragging = true;
   dragStartX = e.clientX;
@@ -1318,8 +1306,6 @@ stage.addEventListener('touchend', () => {
 window.addEventListener('mousemove', e => {
   mouseX = e.clientX;
   mouseY = e.clientY;
-  cursorDot.style.transform = `translate(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%))`;
-  if (cursorDot.style.opacity === '0') cursorDot.style.opacity = '1';
   cursorLabel.style.left = e.clientX + 'px';
   cursorLabel.style.top  = e.clientY + 'px';
   if (isDragging) targetScroll = dragStartScroll - (e.clientX - dragStartX) * 1.4;
@@ -1336,10 +1322,7 @@ window.addEventListener('mousemove', e => {
   });
   topCard = newTop;
 });
-window.addEventListener('mouseleave', () => {
-  mouseX = -9999; mouseY = -9999; topCard = null;
-  cursorDot.style.opacity = '0';
-});
+window.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; topCard = null; });
 
 // ── MAIN LOOP ──
 function applyPositions() {
