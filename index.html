@@ -132,6 +132,65 @@ html, body {
   box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.03);
 }
 #project-page.open #project-image-wrap { transform: translateY(0); }
+#slide-caption {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
+  background: linear-gradient(transparent, rgba(0,0,0,0.62));
+  padding: 44px 18px 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+  line-height: 0;
+}
+#project-image-wrap:hover #slide-caption.has-text { opacity: 1; }
+#slide-caption-title {
+  display: block; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.95); margin-bottom: 5px; line-height: 1.4;
+}
+#slide-caption-body {
+  display: block; font-size: 10px; color: rgba(255,255,255,0.75);
+  line-height: 1.65; letter-spacing: 0.03em;
+}
+/* ── PROJECT NOTIFICATION ── */
+#project-notify {
+  position: fixed; top: 56px; right: 20px; z-index: 600;
+  background: rgba(252,252,252,0.96);
+  backdrop-filter: blur(16px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  padding: 12px 12px 12px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+  width: 270px; max-width: calc(100vw - 40px);
+  opacity: 0; transform: translateX(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+#project-notify.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
+#notify-icon {
+  width: 34px; height: 34px; flex-shrink: 0;
+  background: #111; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #fff;
+}
+#notify-text { flex: 1; min-width: 0; }
+#notify-title {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #111; margin-bottom: 4px;
+}
+#notify-body { font-size: 10px; color: #777; line-height: 1.55; letter-spacing: 0.02em; }
+#notify-bts {
+  display: inline-block; margin-top: 8px;
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #333; cursor: pointer; border-bottom: 0.5px solid rgba(0,0,0,0.2);
+  transition: color 0.2s;
+}
+#notify-bts:hover { color: #888; }
+#notify-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 15px; color: #bbb; padding: 0; line-height: 1;
+  flex-shrink: 0; margin-top: -1px; font-family: inherit;
+}
+#notify-close:hover { color: #666; }
 #project-image-bg {
   display: block;
   max-height: min(calc(100vh - 160px), 580px);
@@ -407,6 +466,10 @@ a.contact-value:hover { color: #888; }
     <div id="project-image-wrap">
       <img id="project-image-bg" src="" alt="">
       <video id="project-video-bg" autoplay loop muted playsinline preload="none"></video>
+      <div id="slide-caption">
+        <span id="slide-caption-title"></span>
+        <span id="slide-caption-body"></span>
+      </div>
     </div>
     <button id="video-mute-btn" aria-label="Toggle mute">🔇</button>
     <button id="ambient-mute-btn" aria-label="Toggle ambient sound">♪</button>
@@ -418,6 +481,16 @@ a.contact-value:hover { color: #888; }
     <h2 id="project-title-text"></h2>
     <p id="project-desc-text"></p>
   </div>
+</div>
+
+<div id="project-notify">
+  <div id="notify-icon">Q</div>
+  <div id="notify-text">
+    <div id="notify-title"></div>
+    <div id="notify-body"></div>
+    <span id="notify-bts">→ Behind the scenes</span>
+  </div>
+  <button id="notify-close" aria-label="Dismiss">×</button>
 </div>
 
 <!-- About page -->
@@ -588,7 +661,16 @@ const PROJECTS = [
     imgs: ['quarto/performance.mp4','quarto/wall.jpg','quarto/painting.jpg',
            'quarto/receipt1.jpg','quarto/receipt2.jpg','quarto/receipt3.jpg',
            'quarto/receipt4.jpg','quarto/receipt5.jpg','quarto/receipt6.jpg',
-           'quarto/receipt7.jpg','quarto/receipt8.jpg','quarto/receipt9.jpg'] },
+           'quarto/receipt7.jpg','quarto/receipt8.jpg','quarto/receipt9.jpg'],
+    slideCaptions: [
+      { title: "Cama, 2024", body: "Installation/Performance from my first solo exhibition. A reflection on my relationship with my bedroom — a space of both freedom and loneliness. It's where vulnerability meets deep contemplation." },
+      null, null,
+      { body: "I tend to not be great at verbalising my thoughts and feelings, so a while ago I started using receipts as a way to document my life and my inner world. Here are some of my favourite ones." },
+      null, null, null, null, null, null, null, null
+    ],
+    notification: {
+      body: "Quarto was my first solo exhibition. A photography archive and an installation — I built a room and invited the world in. This project was me introducing myself to the art world and letting them into my room, my head, my world."
+    } },
   { short: "LFW",              year: "2023",  cat: "photography", type: "client", color: "#c0e0b0",
     title: "Lisbon Fashion Week",
     desc:  "Photography for Lisbon Fashion Week. Runway, backstage, and the energy of the collections.",
@@ -681,6 +763,12 @@ function lockSlideSize(nw, nh) {
 const videoMuteBtn   = document.getElementById('video-mute-btn');
 const ambientAudio   = document.getElementById('project-ambient');
 const ambientMuteBtn = document.getElementById('ambient-mute-btn');
+const slideCaption      = document.getElementById('slide-caption');
+const slideCaptionTitle = document.getElementById('slide-caption-title');
+const slideCaptionBody  = document.getElementById('slide-caption-body');
+const projectNotify  = document.getElementById('project-notify');
+let   notifyTimer    = null;
+let   currentProject = null;
 
 videoMuteBtn.addEventListener('click', e => {
   e.stopPropagation();
@@ -691,6 +779,13 @@ ambientMuteBtn.addEventListener('click', e => {
   e.stopPropagation();
   ambientAudio.muted = !ambientAudio.muted;
   ambientMuteBtn.textContent = ambientAudio.muted ? '🔕' : '♪';
+});
+document.getElementById('notify-close').addEventListener('click', () => {
+  clearTimeout(notifyTimer);
+  projectNotify.classList.remove('visible');
+});
+document.getElementById('notify-bts').addEventListener('click', () => {
+  projectNotify.classList.remove('visible');
 });
 
 function goSlide(idx) {
@@ -724,6 +819,12 @@ function goSlide(idx) {
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
   projectNavL.style.display = slideIdx === 0 ? 'none' : 'flex';
   projectNavR.style.display = slideIdx === slideImgs.length - 1 ? 'none' : 'flex';
+
+  const cap = currentProject && currentProject.slideCaptions && currentProject.slideCaptions[slideIdx];
+  slideCaptionTitle.textContent = cap && cap.title ? cap.title : '';
+  slideCaptionBody.textContent  = cap && cap.body  ? cap.body  : '';
+  slideCaptionTitle.style.display = (cap && cap.title) ? 'block' : 'none';
+  slideCaption.classList.toggle('has-text', !!cap);
 }
 
 function teardownSlide() {
@@ -740,6 +841,12 @@ function teardownSlide() {
   ambientAudio.pause();
   ambientAudio.src = '';
   ambientMuteBtn.style.display = 'none';
+  clearTimeout(notifyTimer);
+  projectNotify.classList.remove('visible');
+  currentProject = null;
+  slideCaption.classList.remove('has-text');
+  slideCaptionTitle.textContent = '';
+  slideCaptionBody.textContent  = '';
   projectImageWrap.style.width = '';
   projectImageWrap.style.height = '';
   projectImageWrap.classList.remove('sized');
@@ -968,12 +1075,26 @@ function openProject(p) {
     }
   }
 
+  currentProject = p;
+
   if (p.ambientAudio) {
     ambientAudio.src = p.ambientAudio;
     ambientAudio.muted = false;
     ambientMuteBtn.textContent = '♪';
     ambientMuteBtn.style.display = 'flex';
     ambientAudio.play().catch(() => {});
+  }
+
+  if (p.notification) {
+    clearTimeout(notifyTimer);
+    projectNotify.classList.remove('visible');
+    document.getElementById('notify-title').textContent = p.title || '';
+    document.getElementById('notify-body').textContent  = p.notification.body || '';
+    document.getElementById('notify-bts').style.display = p.notification.bts ? 'inline-block' : 'none';
+    notifyTimer = setTimeout(() => {
+      projectNotify.classList.add('visible');
+      notifyTimer = setTimeout(() => projectNotify.classList.remove('visible'), 9000);
+    }, 3500);
   }
 
   projectTitleText.textContent = p.title;
