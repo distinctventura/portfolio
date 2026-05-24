@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typography Mockups — Pedro Ventura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f5f5f3; }
+
+.header {
+  position: sticky; top: 0; background: #f5f5f3; z-index: 10;
+  padding: 20px 40px; border-bottom: 0.5px solid #ddd;
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.header a {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #888; text-decoration: none; padding: 6px 14px;
+  border: 0.5px solid #ccc; border-radius: 20px;
+  transition: all 0.15s;
+}
+.header a:hover, .header a.active { color: #111; border-color: #111; }
+
+.option {
+  min-height: 100vh; padding: 80px 40px 80px;
+  border-bottom: 2px solid #ddd;
+}
+.option-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #aaa; margin-bottom: 60px;
+}
+
+/* ── OPTION A: Helvetica Neue (current) ── */
+.opt-a { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.opt-a .site-name { font-size: 11px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; color: #111; }
+.opt-a .nav-item { font-size: 10px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: #999; }
+.opt-a .project-title { font-size: 22px; font-weight: 400; color: #111; letter-spacing: -0.02em; }
+.opt-a .project-desc { font-size: 12px; color: #666; line-height: 1.8; letter-spacing: 0.02em; }
+.opt-a .year { font-size: 10px; letter-spacing: 0.14em; color: #aaa; text-transform: uppercase; }
+.opt-a .cat { font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-a .caption { font-size: 10px; color: rgba(255,255,255,0.75); line-height: 1.65; letter-spacing: 0.03em; }
+
+/* ── OPTION B: Cormorant ── */
+.opt-b-ui { font-family: 'Helvetica Neue', sans-serif; }
+.opt-b-text { font-family: 'Cormorant', serif; }
+.opt-b .site-name { font-family: 'Cormorant', serif; font-size: 16px; font-weight: 400; letter-spacing: 0.12em; color: #111; font-style: italic; }
+.opt-b .nav-item { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: #999; }
+.opt-b .project-title { font-family: 'Cormorant', serif; font-size: 28px; font-weight: 400; color: #111; letter-spacing: -0.01em; line-height: 1.1; }
+.opt-b .project-desc { font-family: 'Cormorant', serif; font-size: 15px; color: #555; line-height: 1.75; letter-spacing: 0.01em; }
+.opt-b .year { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-b .cat { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-b .caption { font-family: 'Cormorant', serif; font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.6; font-style: italic; }
+
+/* ── OPTION C: DM Serif Display ── */
+.opt-c .site-name { font-family: 'DM Serif Display', serif; font-size: 15px; font-weight: 400; letter-spacing: 0.01em; color: #111; }
+.opt-c .nav-item { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: #999; }
+.opt-c .project-title { font-family: 'DM Serif Display', serif; font-size: 26px; font-weight: 400; color: #111; line-height: 1.15; }
+.opt-c .project-title em { font-style: italic; }
+.opt-c .project-desc { font-family: 'Helvetica Neue', sans-serif; font-size: 11.5px; color: #666; line-height: 1.82; letter-spacing: 0.02em; }
+.opt-c .year { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-c .cat { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-c .caption { font-family: 'Helvetica Neue', sans-serif; font-size: 10px; color: rgba(255,255,255,0.75); line-height: 1.65; letter-spacing: 0.02em; }
+
+/* ── OPTION D: Playfair Display ── */
+.opt-d .site-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 400; letter-spacing: 0.04em; color: #111; }
+.opt-d .nav-item { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: #999; }
+.opt-d .project-title { font-family: 'Playfair Display', serif; font-size: 25px; font-weight: 400; color: #111; line-height: 1.2; }
+.opt-d .project-title em { font-style: italic; }
+.opt-d .project-desc { font-family: 'Helvetica Neue', sans-serif; font-size: 11.5px; color: #666; line-height: 1.82; letter-spacing: 0.02em; }
+.opt-d .year { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-d .cat { font-family: 'Helvetica Neue', sans-serif; font-size: 9px; letter-spacing: 0.18em; color: #aaa; text-transform: uppercase; }
+.opt-d .caption { font-family: 'Helvetica Neue', sans-serif; font-size: 10px; color: rgba(255,255,255,0.75); line-height: 1.65; letter-spacing: 0.02em; }
+
+/* shared layout */
+.demo { display: grid; grid-template-columns: 1fr 1fr; gap: 60px 80px; max-width: 900px; }
+@media (max-width: 700px) { .demo { grid-template-columns: 1fr; } }
+
+.demo-nav {
+  display: flex; align-items: center; gap: 32px;
+  padding-bottom: 28px; border-bottom: 0.5px solid #ddd; margin-bottom: 40px;
+}
+.demo-nav-items { display: flex; gap: 20px; }
+
+.demo-card { }
+.demo-card .year-cat { display: flex; gap: 8px; margin-bottom: 6px; }
+.demo-card .year-cat span:not(:last-child)::after { content: "·"; margin-left: 8px; color: #ccc; }
+.demo-card .project-title { margin-bottom: 10px; }
+.demo-card .project-desc { max-width: 340px; }
+
+.demo-caption-wrap {
+  grid-column: 1 / -1;
+  background: #111; border-radius: 2px;
+  padding: 32px 28px; position: relative;
+  overflow: hidden;
+}
+.demo-caption-wrap::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+}
+.demo-caption-inner { position: relative; z-index: 1; }
+.demo-caption-wrap .caption-title {
+  display: block; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.9); margin-bottom: 6px;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+.demo-notify {
+  grid-column: 1 / -1;
+  background: rgba(238,238,238,0.95);
+  border-radius: 14px;
+  padding: 12px 12px 14px;
+  display: flex; gap: 10px; align-items: flex-start;
+  width: 320px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.10);
+}
+.demo-notify-icon {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  background: #c0e0b0;
+}
+.demo-notify-app { font-size: 11px; color: #666; margin-bottom: 1px; font-family: 'Helvetica Neue', sans-serif; }
+.demo-notify-content { flex: 1; }
+
+.tag {
+  display: inline-block;
+  background: #111; color: #fff;
+  font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 3px; vertical-align: middle;
+  margin-left: 8px; font-family: 'Helvetica Neue', sans-serif;
+}
+.tag.recommended { background: #2a7; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="#a" class="active">A — Helvetica Neue (current)</a>
+  <a href="#b">B — Cormorant</a>
+  <a href="#c">C — DM Serif + Helvetica</a>
+  <a href="#d">D — Playfair + Helvetica</a>
+</div>
+
+<!-- ────────────────────────────────────────── -->
+<!-- OPTION A: Helvetica Neue (current)         -->
+<!-- ────────────────────────────────────────── -->
+<div class="option opt-a" id="a">
+  <p class="option-label">Option A — Helvetica Neue (current)</p>
+  <div class="demo">
+
+    <div style="grid-column: 1/-1" class="demo-nav">
+      <span class="site-name">Pedro Ventura</span>
+      <div class="demo-nav-items">
+        <span class="nav-item">All</span>
+        <span class="nav-item">Photography</span>
+        <span class="nav-item">Personal</span>
+        <span class="nav-item">Client</span>
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Quarto</div>
+      <div class="project-desc">A solo exhibition held at Art-Spot, Porto, in 2024. Photographs, an installation, a painting, and receipts used as diary entries — four bodies of work turning the bedroom into an excavation site.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Moda Lisboa</div>
+      <div class="project-desc">Shot at Moda Lisboa 2023 as part of Workstation. Given complete creative freedom, I moved away from the garments — turning my lens toward faces, peripheral moments, and the quiet texture between shows.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography · Personal</span>
+      </div>
+      <div class="project-title">I Would Rather Not Go Back To The Old House</div>
+      <div class="project-desc">Six photographs mapping failed love through Rider-Waite tarot. The Fool, The Empress, The Lovers, Death, The Hanged Man, The Moon — each card a stage of grief and transformation.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Sculpture</span>
+      </div>
+      <div class="project-title">Fans of the Bible</div>
+      <div class="project-desc">A sculptural work examining religion, iconography, and the residue belief leaves in objects. Faith materialised — the sacred made literal, awkward, and strangely tender.</div>
+    </div>
+
+    <div class="demo-caption-wrap">
+      <div class="demo-caption-inner">
+        <span class="caption-title">Cama, 2024</span>
+        <span class="caption">Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery.</span>
+      </div>
+    </div>
+
+    <div class="demo-notify">
+      <div class="demo-notify-icon"></div>
+      <div class="demo-notify-content">
+        <div class="demo-notify-app">Note</div>
+        <div class="project-title" style="font-size:13px; font-weight:600; margin-bottom:2px;">Quarto</div>
+        <div class="project-desc" style="font-size:12px; line-height:1.4;">A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────── -->
+<!-- OPTION B: Cormorant                        -->
+<!-- ────────────────────────────────────────── -->
+<div class="option opt-b" id="b">
+  <p class="option-label">Option B — Cormorant <span class="tag">editorial / literary</span></p>
+  <div class="demo">
+
+    <div style="grid-column: 1/-1" class="demo-nav">
+      <span class="site-name">Pedro Ventura</span>
+      <div class="demo-nav-items">
+        <span class="nav-item">All</span>
+        <span class="nav-item">Photography</span>
+        <span class="nav-item">Personal</span>
+        <span class="nav-item">Client</span>
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Quarto</div>
+      <div class="project-desc">A solo exhibition held at Art-Spot, Porto, in 2024. Photographs, an installation, a painting, and receipts used as diary entries — four bodies of work turning the bedroom into an excavation site.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Moda Lisboa</div>
+      <div class="project-desc">Shot at Moda Lisboa 2023 as part of Workstation. Given complete creative freedom, I moved away from the garments — turning my lens toward faces, peripheral moments, and the quiet texture between shows.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography · Personal</span>
+      </div>
+      <div class="project-title"><em>I Would Rather Not Go Back To The Old House</em></div>
+      <div class="project-desc">Six photographs mapping failed love through Rider-Waite tarot. The Fool, The Empress, The Lovers, Death, The Hanged Man, The Moon — each card a stage of grief and transformation.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Sculpture</span>
+      </div>
+      <div class="project-title">Fans of the Bible</div>
+      <div class="project-desc">A sculptural work examining religion, iconography, and the residue belief leaves in objects. Faith materialised — the sacred made literal, awkward, and strangely tender.</div>
+    </div>
+
+    <div class="demo-caption-wrap">
+      <div class="demo-caption-inner">
+        <span class="caption-title">Cama, 2024</span>
+        <span class="caption opt-b-text" style="font-size:13px; font-style:italic; color:rgba(255,255,255,0.9)">Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery.</span>
+      </div>
+    </div>
+
+    <div class="demo-notify">
+      <div class="demo-notify-icon"></div>
+      <div class="demo-notify-content">
+        <div class="demo-notify-app">Note</div>
+        <div class="opt-b project-title" style="font-size:15px; margin-bottom:3px;">Quarto</div>
+        <div class="opt-b project-desc" style="font-size:13px; line-height:1.5;">A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────── -->
+<!-- OPTION C: DM Serif Display + Helvetica     -->
+<!-- ────────────────────────────────────────── -->
+<div class="option opt-c" id="c">
+  <p class="option-label">Option C — DM Serif Display (titles) + Helvetica Neue (body) <span class="tag recommended">recommended</span></p>
+  <div class="demo">
+
+    <div style="grid-column: 1/-1" class="demo-nav">
+      <span class="site-name">Pedro Ventura</span>
+      <div class="demo-nav-items">
+        <span class="nav-item">All</span>
+        <span class="nav-item">Photography</span>
+        <span class="nav-item">Personal</span>
+        <span class="nav-item">Client</span>
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Quarto</div>
+      <div class="project-desc">A solo exhibition held at Art-Spot, Porto, in 2024. Photographs, an installation, a painting, and receipts used as diary entries — four bodies of work turning the bedroom into an excavation site.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Moda Lisboa</div>
+      <div class="project-desc">Shot at Moda Lisboa 2023 as part of Workstation. Given complete creative freedom, I moved away from the garments — turning my lens toward faces, peripheral moments, and the quiet texture between shows.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography · Personal</span>
+      </div>
+      <div class="project-title"><em>I Would Rather Not Go Back To The Old House</em></div>
+      <div class="project-desc">Six photographs mapping failed love through Rider-Waite tarot. The Fool, The Empress, The Lovers, Death, The Hanged Man, The Moon — each card a stage of grief and transformation.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Sculpture</span>
+      </div>
+      <div class="project-title">Fans of the Bible</div>
+      <div class="project-desc">A sculptural work examining religion, iconography, and the residue belief leaves in objects. Faith materialised — the sacred made literal, awkward, and strangely tender.</div>
+    </div>
+
+    <div class="demo-caption-wrap">
+      <div class="demo-caption-inner">
+        <span class="caption-title">Cama, 2024</span>
+        <span class="caption">Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery.</span>
+      </div>
+    </div>
+
+    <div class="demo-notify">
+      <div class="demo-notify-icon"></div>
+      <div class="demo-notify-content">
+        <div class="demo-notify-app">Note</div>
+        <div class="project-title" style="font-size:17px; margin-bottom:3px;">Quarto</div>
+        <div class="project-desc" style="font-size:11.5px; line-height:1.5;">A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────── -->
+<!-- OPTION D: Playfair Display + Helvetica     -->
+<!-- ────────────────────────────────────────── -->
+<div class="option opt-d" id="d">
+  <p class="option-label">Option D — Playfair Display (titles) + Helvetica Neue (body) <span class="tag">classic / editorial</span></p>
+  <div class="demo">
+
+    <div style="grid-column: 1/-1" class="demo-nav">
+      <span class="site-name">Pedro Ventura</span>
+      <div class="demo-nav-items">
+        <span class="nav-item">All</span>
+        <span class="nav-item">Photography</span>
+        <span class="nav-item">Personal</span>
+        <span class="nav-item">Client</span>
+      </div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Quarto</div>
+      <div class="project-desc">A solo exhibition held at Art-Spot, Porto, in 2024. Photographs, an installation, a painting, and receipts used as diary entries — four bodies of work turning the bedroom into an excavation site.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography</span>
+      </div>
+      <div class="project-title">Moda Lisboa</div>
+      <div class="project-desc">Shot at Moda Lisboa 2023 as part of Workstation. Given complete creative freedom, I moved away from the garments — turning my lens toward faces, peripheral moments, and the quiet texture between shows.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2023</span>
+        <span class="cat">Photography · Personal</span>
+      </div>
+      <div class="project-title"><em>I Would Rather Not Go Back To The Old House</em></div>
+      <div class="project-desc">Six photographs mapping failed love through Rider-Waite tarot. The Fool, The Empress, The Lovers, Death, The Hanged Man, The Moon — each card a stage of grief and transformation.</div>
+    </div>
+
+    <div class="demo-card">
+      <div class="year-cat">
+        <span class="year">2024</span>
+        <span class="cat">Sculpture</span>
+      </div>
+      <div class="project-title">Fans of the Bible</div>
+      <div class="project-desc">A sculptural work examining religion, iconography, and the residue belief leaves in objects. Faith materialised — the sacred made literal, awkward, and strangely tender.</div>
+    </div>
+
+    <div class="demo-caption-wrap">
+      <div class="demo-caption-inner">
+        <span class="caption-title">Cama, 2024</span>
+        <span class="caption">Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery.</span>
+      </div>
+    </div>
+
+    <div class="demo-notify">
+      <div class="demo-notify-icon"></div>
+      <div class="demo-notify-content">
+        <div class="demo-notify-app">Note</div>
+        <div class="project-title" style="font-size:17px; margin-bottom:3px;">Quarto</div>
+        <div class="project-desc" style="font-size:11.5px; line-height:1.5;">A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
