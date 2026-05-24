@@ -152,7 +152,7 @@ html, body {
 }
 /* ── PROJECT NOTIFICATION ── */
 #project-notify {
-  position: fixed; top: 16px; right: 16px; z-index: 600;
+  position: fixed; top: 56px; right: 16px; z-index: 600;
   background: rgba(235,235,235,0.88);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
@@ -729,7 +729,7 @@ const PROJECTS = [
            'quarto/receipt8.jpg','quarto/receipt9.jpg'],
     slideCaptions: [
       null,
-      { title: "Cama, 2024", body: "Installation/Performance from my first solo exhibition. A reflection on my relationship with my bedroom — a space of both freedom and loneliness. It's where vulnerability meets deep contemplation." },
+      { title: "Cama, 2024", body: "Quarto brought together four bodies of work: a series of photographs, a painting, receipts used as diary entries, and Cama — a life-size room built inside the gallery. Each piece was a different way of inhabiting the same private space." },
       null,
       { body: "I tend to not be great at verbalising my thoughts and feelings, so a while ago I started using receipts as a way to document my life and my inner world. Here are some of my favourite ones." },
       null, null, null, null, null, null, null
@@ -835,10 +835,17 @@ const slideCaption      = document.getElementById('slide-caption');
 const slideCaptionTitle = document.getElementById('slide-caption-title');
 const slideCaptionBody  = document.getElementById('slide-caption-body');
 const projectNotify  = document.getElementById('project-notify');
-let   notifyTimers   = [];
-let   currentProject = null;
+let   notifyTimers    = [];
+let   notifyArmed     = false; // notification is waiting to fire after first interaction
+let   currentProject  = null;
 
 function clearNotifyTimers() { notifyTimers.forEach(clearTimeout); notifyTimers = []; }
+
+function triggerNotify() {
+  if (!notifyArmed || !currentProject) return;
+  notifyArmed = false;
+  queueNotify(currentProject, 8000);
+}
 
 function queueNotify(p, delay) {
   if (!(p.notification || (p.bts && p.bts.length))) return;
@@ -856,7 +863,7 @@ function showNotify(p) {
   projectNotify.classList.add('visible');
   const autoTimer = setTimeout(() => {
     projectNotify.classList.remove('visible');
-    if (currentProject) queueNotify(currentProject, 22000);
+    if (currentProject) queueNotify(currentProject, 40000);
   }, 9000);
   notifyTimers.push(autoTimer);
 }
@@ -874,12 +881,12 @@ ambientMuteBtn.addEventListener('click', e => {
 document.getElementById('notify-close').addEventListener('click', () => {
   clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  if (currentProject) queueNotify(currentProject, 22000);
+  if (currentProject) queueNotify(currentProject, 40000);
 });
 document.getElementById('notify-no').addEventListener('click', () => {
   clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  if (currentProject) queueNotify(currentProject, 22000);
+  if (currentProject) queueNotify(currentProject, 40000);
 });
 document.getElementById('notify-yes').addEventListener('click', () => {
   clearNotifyTimers();
@@ -975,6 +982,7 @@ function teardownSlide() {
   ambientAudio.src = '';
   ambientMuteBtn.style.display = 'none';
   clearNotifyTimers();
+  notifyArmed = false;
   projectNotify.classList.remove('visible');
   infoPanel.classList.remove('open');
   document.getElementById('info-panel-photos').innerHTML = '';
@@ -1223,8 +1231,8 @@ function openProject(p) {
 
   if (p.notification || (p.bts && p.bts.length)) {
     clearNotifyTimers();
+    notifyArmed = true;
     projectNotify.classList.remove('visible');
-    queueNotify(p, 3500);
   }
 
   projectTitleText.textContent = p.title;
@@ -1240,8 +1248,8 @@ document.getElementById('project-back').addEventListener('click', () => {
   teardownSlide();
 });
 
-projectNavL.addEventListener('click', () => goSlide(slideIdx - 1));
-projectNavR.addEventListener('click', () => goSlide(slideIdx + 1));
+projectNavL.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx - 1); });
+projectNavR.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx + 1); });
 
 // ── NAV LINKS ──
 document.getElementById('nav-home').addEventListener('click', e => {
@@ -1275,8 +1283,8 @@ projectImageWrap.addEventListener('touchend', e => {
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeAll(); return; }
   if (projectPage.classList.contains('open') && slideImgs.length > 1) {
-    if (e.key === 'ArrowRight') { e.preventDefault(); goSlide(slideIdx + 1); }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); goSlide(slideIdx - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); triggerNotify(); goSlide(slideIdx + 1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); triggerNotify(); goSlide(slideIdx - 1); }
   } else if (!anyOverlayOpen()) {
     if (e.key === 'ArrowRight') { e.preventDefault(); targetScroll += Math.abs(STEP_X); }
     if (e.key === 'ArrowLeft')  { e.preventDefault(); targetScroll -= Math.abs(STEP_X); }
