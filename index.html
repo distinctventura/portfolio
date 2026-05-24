@@ -129,8 +129,8 @@ html, body {
   transform: translateY(20px);
   transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), width 0.35s ease, height 0.35s ease;
   line-height: 0;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.03);
 }
+#project-image-wrap.shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 6px rgba(0,0,0,0.03); }
 #project-page.open #project-image-wrap { transform: translateY(0); }
 #slide-caption {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
@@ -737,12 +737,12 @@ const PROJECTS = [
     title: "Nuno Baltazar",
     desc:  "Photography for Portuguese fashion designer Nuno Baltazar.",
     imgs: ['nuno-baltazar/1.jpg','nuno-baltazar/2.jpg','nuno-baltazar/3.jpg','nuno-baltazar/4.jpg','nuno-baltazar/5.jpg','nuno-baltazar/6.jpg','nuno-baltazar/7.jpg','nuno-baltazar/8.jpg','nuno-baltazar/9.jpg'],
-    img: "covers/nuno-baltazar.jpg", imgPos: "center top" },
+    img: "covers/nuno-baltazar.jpg", imgPos: "center top", shadow: true },
   { short: "Erdem",            year: "2023",  cat: "photography", type: "client", color: "#b8d8a8",
     title: "Erdem",
     desc:  "Photography for Erdem.",
     imgs: ['erdem/1.jpg','erdem/2.jpg','erdem/3.jpg'],
-    img: "covers/erdem.jpg", imgPos: "left top" },
+    img: "covers/erdem.jpg", imgPos: "left top", shadow: true },
   { short: "Bershka",          year: "2024",  cat: "photography", type: "client", color: "#f0c0d0",
     title: "Bershka",
     desc:  "Photography for Bershka.",
@@ -988,7 +988,7 @@ function teardownSlide() {
   slideCaptionBody.textContent  = '';
   projectImageWrap.style.width = '';
   projectImageWrap.style.height = '';
-  projectImageWrap.classList.remove('sized');
+  projectImageWrap.classList.remove('sized', 'shadow');
 }
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
@@ -1182,7 +1182,8 @@ function openProject(p) {
   projectVideoBg.pause();
   projectImageWrap.style.width = '';
   projectImageWrap.style.height = '';
-  projectImageWrap.classList.remove('sized');
+  projectImageWrap.classList.remove('sized', 'shadow');
+  projectImageWrap.classList.toggle('shadow', !!p.shadow);
 
   if (p.imgs && p.imgs.length > 0) {
     slideImgs = p.imgs; slideIdx = 0;
