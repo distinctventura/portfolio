@@ -110,7 +110,6 @@ html, body {
   pointer-events: none;
   transition: opacity 1.5s ease;
   white-space: nowrap; z-index: 100;
-  opacity: 1;  /* start visible, JS fades it */
 }
 
 /* ── PROJECT PAGE ── */
@@ -438,21 +437,13 @@ a.contact-value:hover { color: #888; }
 #filter-type {
   display: flex; gap: 20px; white-space: nowrap; align-items: center;
 }
-#filter-cat {
-  display: flex; gap: 14px; white-space: nowrap; align-items: center;
-}
 /* Cat row — hidden by default, slides in */
 #filter-cat {
-  opacity: 0;
-  transform: translateY(6px);
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex; gap: 14px; white-space: nowrap; align-items: center;
+  opacity: 0; transform: translateY(6px);
+  pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
 }
-#filter-cat.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: all;
-}
+#filter-cat.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
 #filter button {
   background: none; border: none;
   letter-spacing: 0.14em; text-transform: uppercase;
@@ -469,11 +460,6 @@ a.contact-value:hover { color: #888; }
   font-size: 8px; letter-spacing: 0.15em;
 }
 #filter-cat button.active { font-weight: 500; }
-
-/* ── CUSTOM CURSOR ── */
-@media (hover: hover) {
-  *, *::before, *::after { cursor: url('cursor.png') 5 3, url('cursor.svg') 5 3, auto !important; }
-}
 
 /* ── CHROME 0.3 OPACITY ── */
 #project-back {
@@ -1137,6 +1123,7 @@ function goSlide(idx) {
 }
 
 function teardownSlide() {
+  if (probeImg) { probeImg.onload = null; probeImg = null; }
   slideImgs = []; slideIdx = 0; slideDots = [];
   projectNavL.style.display = 'none';
   projectNavR.style.display = 'none';
@@ -1313,9 +1300,9 @@ window.addEventListener('mousemove', e => {
   if (anyOverlayOpen()) return;
   let newTop = null, topZ = -1;
   cards.forEach(card => {
-    if (!card.entered || card._filtered) return;
-    const rect = card.el.getBoundingClientRect();
-    if (mouseX >= rect.left && mouseX <= rect.right && mouseY >= rect.top && mouseY <= rect.bottom) {
+    if (!card.entered || card._filtered || !card._rect) return;
+    const r = card._rect;
+    if (mouseX >= r.left && mouseX <= r.right && mouseY >= r.top && mouseY <= r.bottom) {
       const z = parseInt(card.el.style.zIndex) || 0;
       if (z > topZ) { topZ = z; newTop = card; }
     }
@@ -1330,18 +1317,19 @@ function applyPositions() {
   cursorLabel.classList.toggle('visible', onCard);
   if (onCard) cursorLabel.textContent = topCard.p.short;
 
+  const { ox, oy } = origin();
   cards.forEach(card => {
     if (!card.entered) return;
     const offset = getOffset(card.idx);
     const cw = parseFloat(card.el.style.width)  || CARD_W;
     const ch = parseFloat(card.el.style.height) || CARD_H;
-    const { ox, oy } = origin();
     const x = ox + offset * STEP_X - cw / 2;
     const y = oy + offset * STEP_Y - ch / 2;
     const fade = Math.max(0, Math.min(1, (N / 2 - 0.4) - Math.abs(offset)));
 
     card.el.style.left   = x + 'px';
     card.el.style.top    = y + 'px';
+    card._rect = { left: x, top: y, right: x + cw, bottom: y + ch };
     card.el.style.opacity = String(card._filtered ? Math.min(fade * 0.1, 0.08) : fade * 0.95);
     card.el.style.zIndex  = String(Math.round(100 + offset * 10));
 
@@ -1375,6 +1363,7 @@ let probeImg = null;
 
 function openProject(p) {
   projectVideoBg.pause();
+  ambientAudio.pause(); ambientAudio.src = ''; ambientMuteBtn.style.display = 'none';
   projectImageWrap.style.width = '';
   projectImageWrap.style.height = '';
   projectImageWrap.classList.remove('sized', 'shadow');
@@ -1502,9 +1491,9 @@ function applyFilter() {
     const match = (activeType === 'all' || card.p.type === activeType) &&
                   (activeCat  === 'all' || card.p.cat  === activeCat);
     card._filtered = !match;
+    card._wasLit = false;
     card.el.style.transition    = 'opacity 0.4s ease';
     card.el.style.pointerEvents = match ? 'all' : 'none';
-    if (match && card._wasLit) card._wasLit = false;
     setTimeout(() => { card.el.style.transition = ''; }, 450);
   });
   topCard = null;
