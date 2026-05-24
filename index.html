@@ -472,11 +472,16 @@ a.contact-value:hover { color: #888; }
 
 /* ── CUSTOM CURSOR ── */
 @media (hover: hover) {
-  :root {
-    --cur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cline x1='12' y1='1' x2='12' y2='9' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='12' y1='15' x2='12' y2='23' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='1' y1='12' x2='9' y2='12' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='15' y1='12' x2='23' y2='12' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='12' y1='1' x2='12' y2='9' stroke='%23111' stroke-width='1' stroke-linecap='round'/%3E%3Cline x1='12' y1='15' x2='12' y2='23' stroke='%23111' stroke-width='1' stroke-linecap='round'/%3E%3Cline x1='1' y1='12' x2='9' y2='12' stroke='%23111' stroke-width='1' stroke-linecap='round'/%3E%3Cline x1='15' y1='12' x2='23' y2='12' stroke='%23111' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 12 12;
-  }
-  body, a, button, .card, [role="button"] { cursor: var(--cur), crosshair; }
-  #stage.grabbing { cursor: var(--cur), grabbing; }
+  *, *::before, *::after { cursor: none !important; }
+}
+#cursor-dot {
+  position: fixed; top: 0; left: 0;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #fff; mix-blend-mode: exclusion;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  will-change: transform;
 }
 
 /* ── CHROME 0.3 OPACITY ── */
@@ -548,6 +553,7 @@ a.contact-value:hover { color: #888; }
   <div id="scroll-track"></div>
 </div>
 
+<div id="cursor-dot"></div>
 <div id="cursor-label"></div>
 <div id="hint">Scroll or drag</div>
 
@@ -1271,16 +1277,14 @@ stage.addEventListener('wheel', e => {
   targetScroll += (e.deltaY + e.deltaX) * 0.7;
 }, { passive: false });
 
+const cursorDot = document.getElementById('cursor-dot');
+
 stage.addEventListener('mousedown', e => {
   isDragging = true;
   dragStartX = e.clientX;
   dragStartScroll = targetScroll;
-  stage.classList.add('grabbing');
 });
-window.addEventListener('mouseup', () => {
-  isDragging = false;
-  stage.classList.remove('grabbing');
-});
+window.addEventListener('mouseup', () => { isDragging = false; });
 
 // ── TOUCH: tap vs. swipe + momentum ──
 let touchMoved = false;
@@ -1314,6 +1318,8 @@ stage.addEventListener('touchend', () => {
 window.addEventListener('mousemove', e => {
   mouseX = e.clientX;
   mouseY = e.clientY;
+  cursorDot.style.transform = `translate(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%))`;
+  if (cursorDot.style.opacity === '0') cursorDot.style.opacity = '1';
   cursorLabel.style.left = e.clientX + 'px';
   cursorLabel.style.top  = e.clientY + 'px';
   if (isDragging) targetScroll = dragStartScroll - (e.clientX - dragStartX) * 1.4;
@@ -1330,7 +1336,10 @@ window.addEventListener('mousemove', e => {
   });
   topCard = newTop;
 });
-window.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; topCard = null; });
+window.addEventListener('mouseleave', () => {
+  mouseX = -9999; mouseY = -9999; topCard = null;
+  cursorDot.style.opacity = '0';
+});
 
 // ── MAIN LOOP ──
 function applyPositions() {
