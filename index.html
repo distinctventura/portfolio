@@ -824,8 +824,43 @@ const slideCaption      = document.getElementById('slide-caption');
 const slideCaptionTitle = document.getElementById('slide-caption-title');
 const slideCaptionBody  = document.getElementById('slide-caption-body');
 const projectNotify  = document.getElementById('project-notify');
-let   notifyTimer    = null;
+let   notifyTimers   = [];
+let   notifyPhase    = 0;
+let   currentNotifyType = null;
 let   currentProject = null;
+
+function clearNotifyTimers() { notifyTimers.forEach(clearTimeout); notifyTimers = []; }
+
+function queueNotify(p, delay) {
+  const hasAbout = !!(p.notification && p.notification.body);
+  const hasBts   = !!(p.bts && p.bts.length);
+  if (!hasAbout && !hasBts) return;
+  const t = setTimeout(() => {
+    if (!currentProject || infoPanel.classList.contains('open')) return;
+    const types = [];
+    if (hasAbout) types.push('about');
+    if (hasBts)   types.push('bts');
+    const type = types[notifyPhase % types.length];
+    notifyPhase++;
+    showNotify(p, type);
+  }, delay);
+  notifyTimers.push(t);
+}
+
+function showNotify(p, type) {
+  currentNotifyType = type;
+  document.getElementById('notify-title').textContent = p.title || '';
+  document.getElementById('notify-body').textContent  = type === 'about'
+    ? 'Would you like to know more about this project?'
+    : 'Would you like to see some behind the scenes?';
+  document.getElementById('notify-actions').style.display = 'flex';
+  projectNotify.classList.add('visible');
+  const autoTimer = setTimeout(() => {
+    projectNotify.classList.remove('visible');
+    if (currentProject) queueNotify(currentProject, 18000);
+  }, 9000);
+  notifyTimers.push(autoTimer);
+}
 
 videoMuteBtn.addEventListener('click', e => {
   e.stopPropagation();
@@ -838,37 +873,46 @@ ambientMuteBtn.addEventListener('click', e => {
   ambientMuteBtn.textContent = ambientAudio.muted ? '🔕' : '♪';
 });
 document.getElementById('notify-close').addEventListener('click', () => {
-  clearTimeout(notifyTimer);
+  clearNotifyTimers();
   projectNotify.classList.remove('visible');
+  if (currentProject) queueNotify(currentProject, 18000);
 });
 document.getElementById('notify-no').addEventListener('click', () => {
-  clearTimeout(notifyTimer);
+  clearNotifyTimers();
   projectNotify.classList.remove('visible');
+  if (currentProject) queueNotify(currentProject, 18000);
 });
 document.getElementById('notify-yes').addEventListener('click', () => {
-  clearTimeout(notifyTimer);
+  clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  if (currentProject) openInfoPanel(currentProject);
+  if (currentProject && currentNotifyType) openInfoPanel(currentProject, currentNotifyType);
 });
 
 // ── INFO PANEL ──
 const infoPanel = document.getElementById('project-info-panel');
 
-function openInfoPanel(p) {
-  document.getElementById('info-panel-title').textContent = p.title || '';
-  document.getElementById('info-panel-body').textContent  = p.notification && p.notification.body ? p.notification.body : '';
+function openInfoPanel(p, mode) {
+  const bodyEl   = document.getElementById('info-panel-body');
+  const btsLabel = document.getElementById('info-panel-bts-label');
   const photosEl = document.getElementById('info-panel-photos');
   photosEl.innerHTML = '';
-  const btsLabel = document.getElementById('info-panel-bts-label');
-  if (p.bts && p.bts.length) {
-    btsLabel.style.display = 'block';
-    p.bts.forEach(src => {
-      const img = document.createElement('img');
-      img.src = src; img.alt = '';
-      photosEl.appendChild(img);
-    });
-  } else {
+  if (mode === 'about') {
+    document.getElementById('info-panel-title').textContent = p.title || '';
+    bodyEl.textContent   = p.notification && p.notification.body ? p.notification.body : '';
+    bodyEl.style.display = 'block';
     btsLabel.style.display = 'none';
+  } else {
+    document.getElementById('info-panel-title').textContent = 'Behind the scenes';
+    bodyEl.textContent   = '';
+    bodyEl.style.display = 'none';
+    btsLabel.style.display = 'none';
+    if (p.bts && p.bts.length) {
+      p.bts.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src; img.alt = '';
+        photosEl.appendChild(img);
+      });
+    }
   }
   infoPanel.classList.add('open');
 }
@@ -876,6 +920,7 @@ function openInfoPanel(p) {
 function closeInfoPanel() {
   infoPanel.classList.remove('open');
   document.getElementById('info-panel-photos').innerHTML = '';
+  if (currentProject) queueNotify(currentProject, 20000);
 }
 
 document.getElementById('info-panel-close').addEventListener('click', closeInfoPanel);
@@ -933,9 +978,10 @@ function teardownSlide() {
   ambientAudio.pause();
   ambientAudio.src = '';
   ambientMuteBtn.style.display = 'none';
-  clearTimeout(notifyTimer);
+  clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  closeInfoPanel();
+  infoPanel.classList.remove('open');
+  document.getElementById('info-panel-photos').innerHTML = '';
   currentProject = null;
   slideCaption.classList.remove('has-text');
   slideCaptionTitle.textContent = '';
@@ -1178,16 +1224,11 @@ function openProject(p) {
     ambientAudio.play().catch(() => {});
   }
 
-  if (p.notification) {
-    clearTimeout(notifyTimer);
+  if (p.notification || (p.bts && p.bts.length)) {
+    clearNotifyTimers();
+    notifyPhase = 0;
     projectNotify.classList.remove('visible');
-    document.getElementById('notify-title').textContent = p.title || '';
-    document.getElementById('notify-body').textContent  = p.notification.body || '';
-    document.getElementById('notify-actions').style.display = (p.bts && p.bts.length) ? 'flex' : 'none';
-    notifyTimer = setTimeout(() => {
-      projectNotify.classList.add('visible');
-      notifyTimer = setTimeout(() => projectNotify.classList.remove('visible'), 9000);
-    }, 3500);
+    queueNotify(p, 3500);
   }
 
   projectTitleText.textContent = p.title;
