@@ -153,51 +153,59 @@ html, body {
 /* ── PROJECT NOTIFICATION ── */
 #project-notify {
   position: fixed; top: 56px; right: 20px; z-index: 600;
-  background: rgba(252,252,252,0.96);
-  backdrop-filter: blur(16px);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
-  padding: 12px 12px 12px 14px;
-  display: flex; align-items: flex-start; gap: 10px;
-  width: 270px; max-width: calc(100vw - 40px);
-  opacity: 0; transform: translateX(16px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  background: #f8f7f5;
+  border-left: 2px solid var(--notify-accent, #111);
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.05);
+  padding: 14px 38px 14px 16px;
+  width: 290px; max-width: calc(100vw - 40px);
+  opacity: 0; transform: translateX(20px);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1);
   pointer-events: none;
 }
 #project-notify.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
-#notify-icon {
-  width: 34px; height: 34px; flex-shrink: 0;
-  background: #111; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
-  text-transform: uppercase; color: #fff;
-}
-#notify-text { flex: 1; min-width: 0; }
-#notify-title {
-  font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
-  text-transform: uppercase; color: #111; margin-bottom: 4px;
-}
-#notify-body { font-size: 10px; color: #777; line-height: 1.55; letter-spacing: 0.02em; }
-#notify-actions {
-  display: flex; gap: 6px; margin-top: 10px;
-}
-#notify-yes, #notify-no {
-  flex: 1; padding: 6px 0;
-  font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase;
-  border: 0.5px solid rgba(0,0,0,0.18); border-radius: 4px;
-  cursor: pointer; font-family: inherit;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-#notify-yes { background: #111; color: #fff; border-color: #111; }
-#notify-yes:hover { background: #333; border-color: #333; }
-#notify-no { background: none; color: #aaa; }
-#notify-no:hover { color: #555; border-color: rgba(0,0,0,0.35); }
 #notify-close {
+  position: absolute; top: 11px; right: 12px;
   background: none; border: none; cursor: pointer;
-  font-size: 15px; color: #bbb; padding: 0; line-height: 1;
-  flex-shrink: 0; margin-top: -1px; font-family: inherit;
+  font-size: 13px; color: #ccc; padding: 0; line-height: 1;
+  font-family: inherit; transition: color 0.2s;
 }
-#notify-close:hover { color: #666; }
+#notify-close:hover { color: #777; }
+#notify-label {
+  font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--notify-accent, #999);
+  display: flex; align-items: center; gap: 5px;
+  margin-bottom: 9px;
+}
+#notify-label::before {
+  content: ''; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--notify-accent, #999); flex-shrink: 0;
+}
+#notify-title {
+  font-size: 14px; font-weight: 500; letter-spacing: -0.01em;
+  color: #111; margin-bottom: 8px; line-height: 1.2;
+}
+#notify-rule { height: 0.5px; background: rgba(0,0,0,0.08); margin-bottom: 10px; }
+#notify-body {
+  font-size: 10.5px; color: #777; line-height: 1.72;
+  letter-spacing: 0.01em; margin-bottom: 14px;
+  font-style: italic;
+}
+#notify-actions { display: flex; align-items: center; gap: 16px; }
+#notify-yes {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: none; border-bottom: 0.5px solid #111;
+  cursor: pointer; font-family: inherit; padding: 0; color: #111;
+  transition: color 0.2s, border-color 0.2s;
+}
+#notify-yes:hover { color: #666; border-color: #666; }
+#notify-no {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; padding: 0; color: #bbb;
+  transition: color 0.2s;
+}
+#notify-no:hover { color: #777; }
 /* ── INFO PANEL ── */
 #project-info-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
@@ -224,6 +232,7 @@ html, body {
 #info-panel-body {
   font-size: 12px; color: #666; line-height: 1.85;
   margin-bottom: 40px; letter-spacing: 0.02em;
+  white-space: pre-line;
 }
 #info-panel-bts-label {
   font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
@@ -506,7 +515,7 @@ a.contact-value:hover { color: #888; }
     <button id="project-nav-r" aria-label="Next">&#8250;</button>
     <div id="project-image-wrap">
       <img id="project-image-bg" src="" alt="">
-      <video id="project-video-bg" autoplay loop muted playsinline preload="none"></video>
+      <video id="project-video-bg" autoplay loop muted playsinline preload="metadata"></video>
       <div id="slide-caption">
         <span id="slide-caption-title"></span>
         <span id="slide-caption-body"></span>
@@ -535,16 +544,15 @@ a.contact-value:hover { color: #888; }
 </div>
 
 <div id="project-notify">
-  <div id="notify-icon">Q</div>
-  <div id="notify-text">
-    <div id="notify-title"></div>
-    <div id="notify-body"></div>
-    <div id="notify-actions">
-      <button id="notify-yes">Yes</button>
-      <button id="notify-no">No</button>
-    </div>
-  </div>
   <button id="notify-close" aria-label="Dismiss">×</button>
+  <div id="notify-label">Exhibition note</div>
+  <div id="notify-title"></div>
+  <div id="notify-rule"></div>
+  <div id="notify-body"></div>
+  <div id="notify-actions">
+    <button id="notify-yes">Open</button>
+    <button id="notify-no">Not now</button>
+  </div>
 </div>
 
 <!-- About page -->
@@ -724,8 +732,8 @@ const PROJECTS = [
       null, null, null, null, null, null, null, null
     ],
     notification: {
-      body: "Quarto was my first solo exhibition. A photography archive and an installation — I built a room and invited the world in. This project was me introducing myself to the art world and letting them into my room, my head, my world.",
-      bts: true
+      teaser: "A bedroom is a confessional, a stage, a hiding place. Ventura tore down the fourth wall between private life and public exhibition — photographs, receipts, a bed built inside a gallery.",
+      body: "Quarto (Portuguese: bedroom) was Pedro Ventura's first solo exhibition, held at Art-Spot, Porto, in 2024. The work turns the bedroom into an archaeological site — a space excavated for its psychological residue rather than its physical function.\n\nAt the centre stood Cama — an installation in which Ventura constructed a bed inside the gallery and performed within it. The piece collapses the distance between private life and public space: between the vulnerability of sleep and the exposure of being seen.\n\nScattered throughout were receipts — fragments of daily commerce repurposed as a private journaling practice. Here they became poems: small monuments to the unremarkable moments that quietly define a life.\n\nQuarto was an introduction. Not a statement, but an open door."
     },
     bts: ['quarto/bts/1.jpg','quarto/bts/2.jpg','quarto/bts/3.jpg','quarto/bts/4.jpg','quarto/bts/5.jpg','quarto/bts/6.jpg','quarto/bts/7.jpg'] },
   { short: "LFW",              year: "2023",  cat: "photography", type: "client", color: "#c0e0b0",
@@ -825,39 +833,27 @@ const slideCaptionTitle = document.getElementById('slide-caption-title');
 const slideCaptionBody  = document.getElementById('slide-caption-body');
 const projectNotify  = document.getElementById('project-notify');
 let   notifyTimers   = [];
-let   notifyPhase    = 0;
-let   currentNotifyType = null;
 let   currentProject = null;
 
 function clearNotifyTimers() { notifyTimers.forEach(clearTimeout); notifyTimers = []; }
 
 function queueNotify(p, delay) {
-  const hasAbout = !!(p.notification && p.notification.body);
-  const hasBts   = !!(p.bts && p.bts.length);
-  if (!hasAbout && !hasBts) return;
+  if (!(p.notification || (p.bts && p.bts.length))) return;
   const t = setTimeout(() => {
     if (!currentProject || infoPanel.classList.contains('open')) return;
-    const types = [];
-    if (hasAbout) types.push('about');
-    if (hasBts)   types.push('bts');
-    const type = types[notifyPhase % types.length];
-    notifyPhase++;
-    showNotify(p, type);
+    showNotify(p);
   }, delay);
   notifyTimers.push(t);
 }
 
-function showNotify(p, type) {
-  currentNotifyType = type;
+function showNotify(p) {
+  projectNotify.style.setProperty('--notify-accent', p.color || '#111');
   document.getElementById('notify-title').textContent = p.title || '';
-  document.getElementById('notify-body').textContent  = type === 'about'
-    ? 'Would you like to know more about this project?'
-    : 'Would you like to see some behind the scenes?';
-  document.getElementById('notify-actions').style.display = 'flex';
+  document.getElementById('notify-body').textContent  = p.notification && p.notification.teaser ? p.notification.teaser : '';
   projectNotify.classList.add('visible');
   const autoTimer = setTimeout(() => {
     projectNotify.classList.remove('visible');
-    if (currentProject) queueNotify(currentProject, 18000);
+    if (currentProject) queueNotify(currentProject, 22000);
   }, 9000);
   notifyTimers.push(autoTimer);
 }
@@ -875,44 +871,40 @@ ambientMuteBtn.addEventListener('click', e => {
 document.getElementById('notify-close').addEventListener('click', () => {
   clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  if (currentProject) queueNotify(currentProject, 18000);
+  if (currentProject) queueNotify(currentProject, 22000);
 });
 document.getElementById('notify-no').addEventListener('click', () => {
   clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  if (currentProject) queueNotify(currentProject, 18000);
+  if (currentProject) queueNotify(currentProject, 22000);
 });
 document.getElementById('notify-yes').addEventListener('click', () => {
   clearNotifyTimers();
   projectNotify.classList.remove('visible');
-  if (currentProject && currentNotifyType) openInfoPanel(currentProject, currentNotifyType);
+  if (currentProject) openInfoPanel(currentProject);
 });
 
 // ── INFO PANEL ──
 const infoPanel = document.getElementById('project-info-panel');
 
-function openInfoPanel(p, mode) {
+function openInfoPanel(p) {
   const bodyEl   = document.getElementById('info-panel-body');
   const btsLabel = document.getElementById('info-panel-bts-label');
   const photosEl = document.getElementById('info-panel-photos');
   photosEl.innerHTML = '';
-  if (mode === 'about') {
-    document.getElementById('info-panel-title').textContent = p.title || '';
-    bodyEl.textContent   = p.notification && p.notification.body ? p.notification.body : '';
-    bodyEl.style.display = 'block';
-    btsLabel.style.display = 'none';
+  document.getElementById('info-panel-title').textContent = p.title || '';
+  const bodyText = p.notification && p.notification.body ? p.notification.body : '';
+  bodyEl.textContent   = bodyText;
+  bodyEl.style.display = bodyText ? 'block' : 'none';
+  if (p.bts && p.bts.length) {
+    btsLabel.style.display = 'block';
+    p.bts.forEach(src => {
+      const img = document.createElement('img');
+      img.src = src; img.alt = '';
+      photosEl.appendChild(img);
+    });
   } else {
-    document.getElementById('info-panel-title').textContent = 'Behind the scenes';
-    bodyEl.textContent   = '';
-    bodyEl.style.display = 'none';
     btsLabel.style.display = 'none';
-    if (p.bts && p.bts.length) {
-      p.bts.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src; img.alt = '';
-        photosEl.appendChild(img);
-      });
-    }
   }
   infoPanel.classList.add('open');
 }
@@ -939,6 +931,7 @@ function goSlide(idx) {
       if (projectVideoBg.videoWidth && projectVideoBg.videoHeight)
         lockSlideSize(projectVideoBg.videoWidth, projectVideoBg.videoHeight);
     };
+    projectVideoBg.load();
     projectVideoBg.play().catch(() => {});
   } else {
     projectVideoBg.pause();
@@ -1227,7 +1220,6 @@ function openProject(p) {
 
   if (p.notification || (p.bts && p.bts.length)) {
     clearNotifyTimers();
-    notifyPhase = 0;
     projectNotify.classList.remove('visible');
     queueNotify(p, 3500);
   }
