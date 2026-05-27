@@ -1253,7 +1253,11 @@ function build() {
       setTimeout(() => { el.style.transition = ''; card.entered = true; }, 720);
     }, 60 + i * 55);
 
-    el.addEventListener('click', () => { if (card.entered && !touchMoved) openProject(p); });
+    // On desktop, only open if this card is the one visually on top (topCard).
+    // On mobile topCard is never set (no mousemove), so fall back to direct tap.
+    el.addEventListener('click', () => {
+      if (card.entered && !touchMoved && (topCard === card || !topCard)) openProject(p);
+    });
 
     if (p.shape === 'circle') {
       const sz = isMobile ? 165 : 210;
@@ -1353,14 +1357,17 @@ function applyPositions() {
     const y = oy + offset * STEP_Y - ch / 2;
     const fade = Math.max(0, Math.min(1, (N / 2 - 0.4) - Math.abs(offset)));
 
-    card.el.style.left   = x + 'px';
-    card.el.style.top    = y + 'px';
-    card._rect = { left: x, top: y, right: x + cw, bottom: y + ch };
-    card.el.style.opacity = String(card._filtered ? Math.min(fade * 0.1, 0.08) : fade * 0.95);
+    card.el.style.left = x + 'px';
+    card.el.style.top  = y + 'px';
+    card.el.style.zIndex = String(Math.round(100 + offset * 10));
 
     const isLit = card === topCard && !card._filtered;
+    // Offset hit-rect to match the visual transform so detection follows the card
+    const rx = isLit ? x + 120 : x;
+    card._rect = { left: rx, top: y, right: rx + cw, bottom: y + ch };
+
+    card.el.style.opacity = String(card._filtered ? Math.min(fade * 0.1, 0.08) : fade * 0.95);
     card.el.classList.toggle('lit', isLit);
-    card.el.style.zIndex = isLit ? '500' : String(Math.round(100 + offset * 10));
 
     if (isLit !== card._wasLit) {
       card._wasLit = isLit;
