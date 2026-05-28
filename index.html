@@ -830,7 +830,7 @@ const PROJECTS = [
     title: "Painting",
     desc:  "An ongoing series begun in 2024. Abstract, process-led, unresolved. Paint as a form of thinking.",
     img: "covers/painting.jpg", imgPos: "center center", bgColor: "#3a2a1a",
-    imgs: ['painting/5.jpg','painting/1.jpg','painting/2.jpg','painting/3.jpg','painting/4.jpg','painting/6.jpg'], landscapeMaxH: 340 },
+    imgs: ['painting/5.jpg','painting/1.jpg','painting/2.jpg','painting/3.jpg','painting/4.jpg','painting/6.jpg'] },
   { short: "Video Diary",      year: "2024—", cat: "video", type: "personal", color: "#d0c8e8",
     title: "Video Diary",
     desc: "An ongoing video diary, shot since 2024.",
@@ -921,9 +921,7 @@ function lockSlideSize(nw, nh) {
   const hPad = isMobile ? 32 : 80;
   const vPad = isMobile ? 140 : 160;
   const r = nw / nh;
-  const isLandscape = r > 1;
-  const capH = (isLandscape && currentProject && currentProject.landscapeMaxH) ? currentProject.landscapeMaxH : 580;
-  const maxH = Math.min(window.innerHeight - vPad, capH);
+  const maxH = Math.min(window.innerHeight - vPad, 580);
   const maxW  = window.innerWidth - hPad;
   let w, h;
   if (r > maxW / maxH) { w = Math.round(maxW); h = Math.round(maxW / r); }
