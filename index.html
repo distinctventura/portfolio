@@ -865,6 +865,13 @@ const N = PROJECTS.length;
 // ── STATE ──
 let scrollPos = 0, targetScroll = 0;
 let isDragging = false, dragStartX = 0, dragStartScroll = 0;
+let mouseDragVelX = 0, lastMouseDragX = 0, lastMouseDragTime = 0;
+let snapTimer = null;
+
+function snapToNearest() {
+  const unit = Math.abs(STEP_X);
+  targetScroll = Math.round(targetScroll / unit) * unit;
+}
 let mouseX = -9999, mouseY = -9999;
 let cards = [];
 let topCard = null; // updated on mousemove, not per-frame
@@ -1277,14 +1284,25 @@ function build() {
 stage.addEventListener('wheel', e => {
   e.preventDefault();
   targetScroll += (e.deltaY + e.deltaX) * 0.7;
+  clearTimeout(snapTimer);
+  snapTimer = setTimeout(snapToNearest, 150);
 }, { passive: false });
 
 stage.addEventListener('mousedown', e => {
   isDragging = true;
   dragStartX = e.clientX;
   dragStartScroll = targetScroll;
+  mouseDragVelX = 0;
+  lastMouseDragX = e.clientX;
+  lastMouseDragTime = Date.now();
 });
-window.addEventListener('mouseup', () => { isDragging = false; });
+window.addEventListener('mouseup', () => {
+  if (isDragging) {
+    targetScroll -= mouseDragVelX * 100;
+    snapToNearest();
+  }
+  isDragging = false;
+});
 
 // ── TOUCH: tap vs. swipe + momentum ──
 let touchMoved = false;
@@ -1311,7 +1329,10 @@ stage.addEventListener('touchmove', e => {
 }, { passive: true });
 
 stage.addEventListener('touchend', () => {
-  if (touchMoved) targetScroll -= touchVelX * 120;
+  if (touchMoved) {
+    targetScroll -= touchVelX * 120;
+    snapToNearest();
+  }
 }, { passive: true });
 
 // ── MOUSE TRACKING ──
@@ -1320,7 +1341,14 @@ window.addEventListener('mousemove', e => {
   mouseY = e.clientY;
   cursorLabel.style.left = e.clientX + 'px';
   cursorLabel.style.top  = e.clientY + 'px';
-  if (isDragging) targetScroll = dragStartScroll - (e.clientX - dragStartX) * 1.4;
+  if (isDragging) {
+    const now = Date.now();
+    const dt = now - lastMouseDragTime;
+    if (dt > 0) mouseDragVelX = (e.clientX - lastMouseDragX) / dt;
+    lastMouseDragX = e.clientX;
+    lastMouseDragTime = now;
+    targetScroll = dragStartScroll - (e.clientX - dragStartX) * 1.4;
+  }
 
   if (anyOverlayOpen()) return;
   let newTop = null, topZ = -1;
