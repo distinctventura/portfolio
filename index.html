@@ -369,12 +369,21 @@ html, body {
 .project-dot.active { background: #888; }
 
 /* ── ABOUT & CONTACT ── */
-#about-page, #contact-page {
+#about-page, #contact-page, #selected-page {
   position: fixed; inset: 0; background: #fff;
   z-index: 300; opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease; overflow-y: auto;
 }
-#about-page.open, #contact-page.open { opacity: 1; pointer-events: all; }
+#about-page.open, #contact-page.open, #selected-page.open { opacity: 1; pointer-events: all; }
+#selected-page { display: flex; align-items: center; justify-content: center; overflow-y: hidden; }
+#selected-list { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.selected-item {
+  font-size: 11px; letter-spacing: 0.13em;
+  text-transform: uppercase; color: #111;
+  text-decoration: none; opacity: 0.32; cursor: pointer;
+  transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.selected-item:hover { opacity: 1; }
 #about-inner {
   max-width: 1040px; margin: 0 auto;
   padding: 100px 60px 120px;
@@ -522,6 +531,7 @@ a.contact-value:hover { color: #888; }
 <nav id="nav">
   <div id="nav-left">
     <a href="#" id="nav-home">Pedro Ventura</a>
+    <a href="#" id="nav-selected">Selected Work</a>
     <a href="#" id="nav-about">About</a>
     <a href="#" id="nav-contact">Contact</a>
   </div>
@@ -701,6 +711,18 @@ a.contact-value:hover { color: #888; }
   </div>
 </div>
 
+<!-- Selected Work page -->
+<div id="selected-page">
+  <div id="selected-list">
+    <a class="selected-item" data-short="Ecos de Intenção">Ecos de Intenção</a>
+    <a class="selected-item" data-short="Fans of the Bible">Fans of the Bible</a>
+    <a class="selected-item" data-short="Painting">Painting</a>
+    <a class="selected-item" data-short="Quarto">Quarto</a>
+    <a class="selected-item" data-short="Moda Lisboa">Moda Lisboa</a>
+    <a class="selected-item" data-short="Old House">I Would Rather Not Go Back to the Old House</a>
+    <a class="selected-item" data-short="Film Archive">Film Archive</a>
+  </div>
+</div>
 
 <script>
 const PROJECTS = [
@@ -1182,6 +1204,7 @@ function teardownSlide() {
 }
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
+const selectedPage = document.getElementById('selected-page');
 
 // ── HELPERS ──
 function getOffset(idx) {
@@ -1201,12 +1224,14 @@ function origin() { return { ox: _ox, oy: _oy }; }
 function anyOverlayOpen() {
   return projectPage.classList.contains('open') ||
          aboutPage.classList.contains('open')   ||
-         contactPage.classList.contains('open');
+         contactPage.classList.contains('open') ||
+         selectedPage.classList.contains('open');
 }
 
 function closeAll() {
   aboutPage.classList.remove('open');
   contactPage.classList.remove('open');
+  selectedPage.classList.remove('open');
   projectPage.classList.remove('open');
   teardownSlide();
   cursorLabel.classList.remove('visible', 'hidden');
@@ -1489,6 +1514,11 @@ projectNavR.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx 
 document.getElementById('nav-home').addEventListener('click', e => {
   e.preventDefault(); closeAll();
 });
+document.getElementById('nav-selected').addEventListener('click', e => {
+  e.preventDefault(); closeAll();
+  selectedPage.classList.add('open');
+  cursorLabel.classList.add('hidden');
+});
 document.getElementById('nav-about').addEventListener('click', e => {
   e.preventDefault(); closeAll();
   aboutPage.classList.add('open');
@@ -1498,6 +1528,12 @@ document.getElementById('nav-contact').addEventListener('click', e => {
   e.preventDefault(); closeAll();
   contactPage.classList.add('open');
   cursorLabel.classList.add('hidden');
+});
+document.querySelectorAll('.selected-item').forEach(el => {
+  el.addEventListener('click', () => {
+    const p = PROJECTS.find(p => p.short === el.dataset.short);
+    if (p) { closeAll(); openProject(p); }
+  });
 });
 
 // ── SLIDE TOUCH SWIPE + caption tap ──
