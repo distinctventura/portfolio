@@ -1543,7 +1543,8 @@ function openProject(p) {
 // ── BACK BUTTONS ──
 document.getElementById('project-back').addEventListener('click', () => {
   projectPage.classList.remove('open');
-  teardownSlide();
+  cursorLabel.classList.remove('visible', 'hidden');
+  setTimeout(teardownSlide, 500);
 });
 
 projectNavL.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx - 1); });
