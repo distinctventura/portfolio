@@ -139,23 +139,20 @@ html, body {
 }
 #project-page.open #project-image-wrap { transform: translateY(0); }
 #slide-caption {
-  position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
-  background: linear-gradient(transparent, rgba(0,0,0,0.62));
-  padding: 44px 18px 16px;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.35s ease;
-  line-height: 0;
+  transition: opacity 0.3s ease;
+  text-align: center;
 }
-#project-image-wrap:hover #slide-caption.has-text,
-#slide-caption.has-text.touch-visible { opacity: 1; }
+#slide-caption.has-text { opacity: 1; pointer-events: all; }
 #slide-caption-title {
   display: block; font-size: 10px; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255,255,255,0.95); margin-bottom: 5px; line-height: 1.4;
+  letter-spacing: 0.11em; text-transform: uppercase;
+  color: #444; margin-bottom: 4px; line-height: 1.4;
 }
 #slide-caption-body {
-  display: block; font-size: 10px; color: rgba(255,255,255,0.75);
-  line-height: 1.65; letter-spacing: 0.03em;
+  display: block; font-size: 10px; color: #888;
+  line-height: 1.65; letter-spacing: 0.01em;
+  text-transform: none; font-style: italic;
 }
 /* ── PROJECT NOTIFICATION ── */
 #project-notify {
@@ -313,14 +310,16 @@ html, body {
 }
 #ambient-mute-btn:hover { background: rgba(0,0,0,0.55); }
 #project-meta {
-  display: flex; align-items: baseline; justify-content: center;
-  gap: 16px; text-align: center;
-  flex-wrap: wrap;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; text-align: center;
   opacity: 0; transform: translateY(8px);
   transition: opacity 0.5s ease 0.2s, transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.2s;
 }
 #project-page.open #project-meta {
   opacity: 1; transform: translateY(0);
+}
+#project-meta-top {
+  display: flex; align-items: baseline; gap: 12px;
 }
 #project-year-text {
   font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #bbb;
@@ -329,7 +328,7 @@ html, body {
   font-size: 10px; font-weight: 500;
   letter-spacing: 0.14em; text-transform: uppercase; color: #111;
 }
-#project-desc-text { font-size: 10px; color: #999; letter-spacing: 0.06em; max-width: 480px; line-height: 1.7; }
+#project-desc-text { font-size: 10px; color: #999; letter-spacing: 0.03em; max-width: 440px; line-height: 1.75; }
 #project-back {
   position: fixed; top: 18px; right: 24px;
   font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
@@ -506,7 +505,8 @@ a.contact-value:hover { color: #888; }
     padding: 80px 24px 80px;
   }
   #project-page { padding: 56px 16px 24px; gap: 16px; }
-  #project-meta { max-width: 90vw; }
+  #project-meta { max-width: 90vw; gap: 8px; }
+  #project-desc-text { max-width: 90vw; }
   #filter {
     bottom: 16px; right: 16px;
     gap: 10px;
@@ -570,10 +570,6 @@ a.contact-value:hover { color: #888; }
     <div id="project-image-wrap">
       <img id="project-image-bg" src="" alt="">
       <video id="project-video-bg" autoplay loop muted playsinline preload="metadata"></video>
-      <div id="slide-caption">
-        <span id="slide-caption-title"></span>
-        <span id="slide-caption-body"></span>
-      </div>
     </div>
     <button id="video-mute-btn" aria-label="Toggle mute">🔇</button>
     <button id="ambient-mute-btn" aria-label="Toggle ambient sound">♪</button>
@@ -581,8 +577,14 @@ a.contact-value:hover { color: #888; }
   <div id="project-dots"></div>
   <audio id="project-ambient" loop preload="none"></audio>
   <div id="project-meta">
-    <p id="project-year-text"></p>
-    <h2 id="project-title-text"></h2>
+    <div id="project-meta-top">
+      <h2 id="project-title-text"></h2>
+      <span id="project-year-text"></span>
+    </div>
+    <div id="slide-caption">
+      <span id="slide-caption-title"></span>
+      <span id="slide-caption-body"></span>
+    </div>
     <p id="project-desc-text"></p>
   </div>
 </div>
@@ -1551,12 +1553,6 @@ projectImageWrap.addEventListener('touchend', e => {
     triggerNotify();
     if (dx < 0) goSlide(slideIdx + 1);
     else         goSlide(slideIdx - 1);
-  } else if (!slideTouchMoved) {
-    // tap on image: toggle caption visibility
-    const cap = document.getElementById('slide-caption');
-    if (cap && cap.classList.contains('has-text')) {
-      cap.classList.toggle('touch-visible');
-    }
   }
 }, { passive: true });
 
