@@ -1357,9 +1357,7 @@ function applyPositions() {
     card.el.style.zIndex = String(Math.round(100 + offset * 10));
 
     const isLit = card === topCard && !card._filtered;
-    // Offset hit-rect to match the visual transform so detection follows the card
-    const rx = isLit ? x + 120 : x;
-    card._rect = { left: rx, top: y, right: rx + cw, bottom: y + ch };
+    card._rect = { left: x, top: y, right: x + cw, bottom: y + ch };
 
     card.el.style.opacity = String(card._filtered ? Math.min(fade * 0.1, 0.08) : fade * 0.95);
     card.el.classList.toggle('lit', isLit);
