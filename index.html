@@ -1393,11 +1393,11 @@ function applyPositions() {
     if (isLit !== card._wasLit) {
       card._wasLit = isLit;
       if (isLit) {
-        card.el.style.transition = 'transform 0.65s cubic-bezier(0.16,1,0.3,1)';
-        card.el.style.transform  = `rotateX(${ROT_X}deg) rotateY(${ROT_Y}deg) translateZ(60px) translateX(120px)`;
+        card.el.style.transition = 'transform 0.45s cubic-bezier(0.16,1,0.3,1)';
+        card.el.style.transform  = `rotateX(${ROT_X}deg) rotateY(${ROT_Y}deg) translateZ(50px) translateX(80px)`;
         card.el.style.opacity    = '1';
       } else {
-        card.el.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1)';
+        card.el.style.transition = 'transform 0.2s cubic-bezier(0,0,0.2,1)';
         card.el.style.transform  = `rotateX(${ROT_X}deg) rotateY(${ROT_Y}deg) scale(1)`;
       }
     }
