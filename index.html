@@ -120,7 +120,7 @@ html, body {
   transition: opacity 0.5s ease; overflow: hidden;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 56px 40px 32px; gap: 20px;
+  padding: 56px 40px 28px; gap: 10px;
 }
 #project-page.open { opacity: 1; pointer-events: all; }
 #project-hero { flex-shrink: 0; position: relative; }
@@ -140,14 +140,13 @@ html, body {
 #project-page.open #project-image-wrap { transform: translateY(0); }
 #slide-caption {
   opacity: 0; pointer-events: none;
-  transition: opacity 0.3s ease;
-  text-align: center;
+  transition: opacity 0.25s ease;
 }
-#slide-caption.has-text { opacity: 1; pointer-events: all; }
+#slide-caption.has-text { opacity: 1; }
 #slide-caption-title {
   display: block; font-size: 10px; font-weight: 500;
-  letter-spacing: 0.11em; text-transform: uppercase;
-  color: #444; margin-bottom: 4px; line-height: 1.4;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #555; line-height: 1.5;
 }
 #slide-caption-body {
   display: block; font-size: 10px; color: #888;
@@ -310,25 +309,28 @@ html, body {
 }
 #ambient-mute-btn:hover { background: rgba(0,0,0,0.55); }
 #project-meta {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 10px; text-align: center;
-  opacity: 0; transform: translateY(8px);
-  transition: opacity 0.5s ease 0.2s, transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.2s;
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 5px; text-align: left;
+  opacity: 0; transform: translateY(6px);
+  transition: width 0.35s ease, opacity 0.5s ease 0.15s, transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s;
 }
 #project-page.open #project-meta {
   opacity: 1; transform: translateY(0);
 }
 #project-meta-top {
-  display: flex; align-items: baseline; gap: 12px;
+  display: flex; align-items: baseline; gap: 10px;
 }
 #project-year-text {
-  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #bbb;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #bbb;
 }
 #project-title-text {
   font-size: 10px; font-weight: 500;
   letter-spacing: 0.14em; text-transform: uppercase; color: #111;
 }
-#project-desc-text { font-size: 10px; color: #999; letter-spacing: 0.03em; max-width: 440px; line-height: 1.75; }
+#project-desc-text {
+  font-size: 10px; color: #aaa; letter-spacing: 0.02em;
+  line-height: 1.75; text-transform: none;
+}
 #project-back {
   position: fixed; top: 18px; right: 24px;
   font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
@@ -353,10 +355,10 @@ html, body {
 #project-nav-l { left: 20px; }
 #project-nav-r { right: 20px; }
 #project-dots {
-  display: none; gap: 8px; justify-content: center;
+  display: none; gap: 6px; justify-content: flex-start;
   z-index: 11;
-  opacity: 0; transform: translateY(6px);
-  transition: opacity 0.4s ease 0.3s, transform 0.4s ease 0.3s;
+  opacity: 0; transform: translateY(4px);
+  transition: width 0.35s ease, opacity 0.4s ease 0.25s, transform 0.4s ease 0.25s;
 }
 #project-page.open #project-dots {
   opacity: 1; transform: translateY(0);
@@ -505,8 +507,8 @@ a.contact-value:hover { color: #888; }
     padding: 80px 24px 80px;
   }
   #project-page { padding: 56px 16px 24px; gap: 16px; }
-  #project-meta { max-width: 90vw; gap: 8px; }
-  #project-desc-text { max-width: 90vw; }
+  #project-page { padding: 56px 16px 20px; gap: 8px; }
+  #project-meta { gap: 5px; }
   #filter {
     bottom: 16px; right: 16px;
     gap: 10px;
@@ -913,6 +915,7 @@ const projectYearText  = document.getElementById('project-year-text');
 const projectNavL  = document.getElementById('project-nav-l');
 const projectNavR  = document.getElementById('project-nav-r');
 const projectDots  = document.getElementById('project-dots');
+const projectMeta  = document.getElementById('project-meta');
 const projectVideoBg   = document.getElementById('project-video-bg');
 const projectImageWrap = document.getElementById('project-image-wrap');
 let slideImgs = [], slideIdx = 0, slideDots = [];
@@ -931,6 +934,8 @@ function lockSlideSize(nw, nh) {
   projectImageWrap.style.width  = w + 'px';
   projectImageWrap.style.height = h + 'px';
   projectImageWrap.classList.add('sized');
+  projectDots.style.width = w + 'px';
+  projectMeta.style.width = w + 'px';
 }
 
 const videoMuteBtn   = document.getElementById('video-mute-btn');
