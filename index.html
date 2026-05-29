@@ -548,9 +548,8 @@ a.contact-value:hover { color: #888; }
 }
 #universe-canvas {
   position: absolute; inset: 0;
-  cursor: grab;
+  pointer-events: none;
 }
-#universe-canvas.grabbing { cursor: grabbing; }
 #universe-btn {
   position: fixed; right: 24px; top: 50%;
   transform: translateY(-50%);
@@ -925,6 +924,7 @@ a.contact-value:hover { color: #888; }
   </div>
 </div>
 
+<script async id="three-js" src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 const PROJECTS = [
   // 2026
@@ -1101,9 +1101,10 @@ let isDragging = false, dragStartX = 0, dragStartScroll = 0;
 let mouseDragVelX = 0, lastMouseDragX = 0, lastMouseDragTime = 0;
 let snapTimer = null;
 let uItems = [], uOrganised = false;
-let uCanvas = null, uPanX = 0, uPanY = 0;
-let uDragging = false, uDragActive = false;
-let uDragStartX = 0, uDragStartY = 0, uDragPanX0 = 0, uDragPanY0 = 0;
+let uCanvas = null;
+let uRenderer = null, uScene = null, uCamera = null, uGroup = null, uRaycaster = null;
+let uMeshes = [];
+let uMouseTarget = { x: 0, y: 0 }, uMouseCurrent = { x: 0, y: 0 };
 
 function snapToNearest() {
   const unit = Math.abs(STEP_X);
@@ -1813,6 +1814,12 @@ function applyFilter() {
                   (activeCat  === 'all' || u.p.cat  === activeCat);
     u.el.classList.toggle('u-dim', !match);
   });
+  uMeshes.forEach(m => {
+    const match = (activeType === 'all' || m.p.type === activeType) &&
+                  (activeCat  === 'all' || m.p.cat  === activeCat);
+    m.mesh.material.transparent = !match;
+    m.mesh.material.opacity = match ? 1 : 0.07;
+  });
   topCard = null;
 }
 
@@ -1864,16 +1871,14 @@ function buildUniverse() {
   uCanvas = document.getElementById('universe-canvas');
   const rand = seededRand(137);
   const vw = window.innerWidth, vh = window.innerHeight;
-  // Full viewport spread with breathing room at edges
   const padX = Math.max(60, vw * 0.08), padY = Math.max(60, vh * 0.10);
 
+  // CSS u-cards — hidden while Three.js runs; used only for organise fly animation
   PROJECTS.forEach(p => {
     const { w, h } = pickUSize(rand());
-
     const card = document.createElement('div');
     card.className = 'u-card';
-    card.style.width  = w + 'px';
-    card.style.height = h + 'px';
+    card.style.cssText = `width:${w}px;height:${h}px;opacity:0;pointer-events:none;`;
 
     const inner = document.createElement('div');
     inner.className = 'u-card-inner';
@@ -1885,91 +1890,109 @@ function buildUniverse() {
       inner.style.background = p.color;
     }
     if (p.shape === 'circle') inner.style.borderRadius = '50%';
-
-    const name = document.createElement('div');
-    name.className = 'u-card-name';
-    name.textContent = p.short;
-
     card.appendChild(inner);
-    card.appendChild(name);
     uCanvas.appendChild(card);
 
     const baseX   = padX + rand() * (vw - padX * 2 - w);
     const baseY   = padY + rand() * (vh - padY * 2 - h);
-    const baseRot = (rand() - 0.5) * 16;  // ±8° random tilt
-
+    const baseRot = (rand() - 0.5) * 16;
     card.style.left = baseX + 'px';
     card.style.top  = baseY + 'px';
     card.style.transform = `rotate(${baseRot}deg)`;
-
-    card.addEventListener('click', () => { if (!uDragActive) openProject(p); });
-    uItems.push({
-      el: card, p, baseX, baseY, w, h, baseRot,
-      ampX:  20 + rand() * 22,         // 20–42px horizontal swing
-      ampY:  14 + rand() * 18,         // 14–32px vertical swing
-      ampR:  (rand() - 0.5) * 3,       // ±1.5° rotation oscillation
-      phase:  rand() * Math.PI * 2,
-      phaseY: rand() * Math.PI * 2,
-      speed:  0.00020 + rand() * 0.00025,  // 16–31 second period
-    });
+    uItems.push({ el: card, p, baseX, baseY, w, h, baseRot });
   });
 
   hint.style.display = 'none';
 
-  // Canvas drag-to-pan
-  uCanvas.addEventListener('mousedown', e => {
-    uDragging = true;
-    uDragActive = false;
-    uDragStartX = e.clientX;
-    uDragStartY = e.clientY;
-    uDragPanX0 = uPanX;
-    uDragPanY0 = uPanY;
-    uCanvas.classList.add('grabbing');
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove', e => {
-    if (!uDragging) return;
-    const dx = e.clientX - uDragStartX, dy = e.clientY - uDragStartY;
-    if (!uDragActive && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) uDragActive = true;
-    if (uDragActive) {
-      uPanX = uDragPanX0 + dx;
-      uPanY = uDragPanY0 + dy;
-      uCanvas.style.transform = `translate(${uPanX}px,${uPanY}px)`;
-    }
-  });
-  window.addEventListener('mouseup', () => {
-    if (uDragging) { uDragging = false; uCanvas.classList.remove('grabbing'); }
-  });
+  // ── Three.js ──
+  function initThreeUniverse() {
+    uRenderer = new THREE.WebGLRenderer({ antialias: true });
+    uRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    uRenderer.setSize(vw, vh);
+    uRenderer.setClearColor(0xffffff, 1);
+    const rc = uRenderer.domElement;
+    rc.style.cssText = 'position:absolute;inset:0;z-index:1;cursor:default;';
+    document.getElementById('universe').appendChild(rc);
 
-  // Touch pan
-  let uTouchPanX0 = 0, uTouchPanY0 = 0, uTouchStartX = 0, uTouchStartY = 0;
-  uCanvas.addEventListener('touchstart', e => {
-    uDragActive = false;
-    uTouchStartX = e.touches[0].clientX;
-    uTouchStartY = e.touches[0].clientY;
-    uTouchPanX0 = uPanX; uTouchPanY0 = uPanY;
-  }, { passive: true });
-  uCanvas.addEventListener('touchmove', e => {
-    const dx = e.touches[0].clientX - uTouchStartX;
-    const dy = e.touches[0].clientY - uTouchStartY;
-    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) uDragActive = true;
-    uPanX = uTouchPanX0 + dx;
-    uPanY = uTouchPanY0 + dy;
-    uCanvas.style.transform = `translate(${uPanX}px,${uPanY}px)`;
-  }, { passive: true });
-  uCanvas.addEventListener('touchend', () => {
-    setTimeout(() => { uDragActive = false; }, 50);
-  }, { passive: true });
+    uScene  = new THREE.Scene();
+    uCamera = new THREE.PerspectiveCamera(55, vw / vh, 0.1, 100);
+    uCamera.position.z = 7;
+    uRaycaster = new THREE.Raycaster();
+    uGroup  = new THREE.Group();
+    uScene.add(uGroup);
+
+    const rand3d = seededRand(999);
+    const loader = new THREE.TextureLoader();
+    uMeshes = [];
+
+    PROJECTS.forEach(p => {
+      const aspect  = CARD_W / CARD_H;
+      const worldH  = 0.9 + rand3d() * 0.9;
+      const worldW  = worldH * aspect;
+      const geo     = new THREE.PlaneGeometry(worldW, worldH);
+      let mat;
+      if (p.img) {
+        const tex = loader.load(p.img);
+        mat = new THREE.MeshBasicMaterial({ map: tex });
+      } else {
+        mat = new THREE.MeshBasicMaterial({ color: parseInt((p.color || '#aaaaaa').replace('#',''), 16) });
+      }
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(
+        (rand3d() - 0.5) * 14,
+        (rand3d() - 0.5) * 8,
+        (rand3d() - 0.5) * 6
+      );
+      mesh.rotation.z = (rand3d() - 0.5) * 0.4;
+      uGroup.add(mesh);
+      uMeshes.push({ mesh, p });
+    });
+
+    window.addEventListener('mousemove', e => {
+      uMouseTarget.x =  (e.clientX / window.innerWidth  - 0.5) * 0.5;
+      uMouseTarget.y = -(e.clientY / window.innerHeight - 0.5) * 0.35;
+    });
+
+    rc.addEventListener('click', e => {
+      if (uOrganised) return;
+      const mouse = new THREE.Vector2(
+         (e.clientX / window.innerWidth)  * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1
+      );
+      uRaycaster.setFromCamera(mouse, uCamera);
+      const hits = uRaycaster.intersectObjects(uMeshes.map(m => m.mesh));
+      if (hits.length) {
+        const item = uMeshes.find(m => m.mesh === hits[0].object);
+        if (item) openProject(item.p);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      const w = window.innerWidth, h = window.innerHeight;
+      uCamera.aspect = w / h;
+      uCamera.updateProjectionMatrix();
+      uRenderer.setSize(w, h);
+    });
+  }
+
+  if (typeof THREE !== 'undefined') {
+    initThreeUniverse();
+  } else {
+    const s = document.getElementById('three-js');
+    if (s) s.addEventListener('load', initThreeUniverse, { once: true });
+  }
 }
 
-function updateUniverse(t) {
-  if (!uItems.length || uOrganised) return;
-  uItems.forEach(u => {
-    const dx = Math.sin(t * u.speed        + u.phase)  * u.ampX;
-    const dy = Math.cos(t * u.speed * 0.7  + u.phaseY) * u.ampY;
-    const dr = Math.sin(t * u.speed * 0.5  + u.phase)  * u.ampR;
-    u.el.style.transform = `translate(${dx}px,${dy}px) rotate(${u.baseRot + dr}deg)`;
-  });
+function updateUniverse() {
+  if (!uRenderer || !uScene || !uCamera || uOrganised) return;
+  uGroup.rotation.y += 0.0012;
+  uGroup.rotation.x += 0.0003;
+  uMouseCurrent.x += (uMouseTarget.x - uMouseCurrent.x) * 0.05;
+  uMouseCurrent.y += (uMouseTarget.y - uMouseCurrent.y) * 0.05;
+  uCamera.position.x = uMouseCurrent.x * 2;
+  uCamera.position.y = uMouseCurrent.y * 1.5;
+  uCamera.lookAt(0, 0, 0);
+  uRenderer.render(uScene, uCamera);
 }
 
 function organiseUniverse() {
@@ -1977,78 +2000,72 @@ function organiseUniverse() {
   uOrganised = true;
   document.getElementById('universe-btn').textContent = 'Disorganise';
 
-  // Bake canvas pan + current drift + rotation into absolute position, then reset
-  const t = performance.now();
-  uItems.forEach(u => {
-    const dx = Math.sin(t * u.speed        + u.phase)  * u.ampX;
-    const dy = Math.cos(t * u.speed * 0.7  + u.phaseY) * u.ampY;
-    const dr = Math.sin(t * u.speed * 0.5  + u.phase)  * u.ampR;
-    u.el.style.transition = 'none';
-    u.el.style.left      = (u.baseX + uPanX + dx) + 'px';
-    u.el.style.top       = (u.baseY + uPanY + dy) + 'px';
-    u.el.style.transform = `rotate(${u.baseRot + dr}deg)`;
-  });
-  uPanX = 0; uPanY = 0;
-  uCanvas.style.transition = 'none';
-  uCanvas.style.transform  = '';
+  // Fade out Three.js
+  if (uRenderer) {
+    const rc = uRenderer.domElement;
+    rc.style.transition = 'opacity 0.5s ease';
+    rc.style.opacity    = '0';
+  }
 
-  // Fly each card to its carousel slot
-  const ox = window.innerWidth * 0.5, oy = window.innerHeight * 0.5;
-  requestAnimationFrame(() => {
-    uItems.forEach((u, i) => {
-      const su  = scrollPos / Math.abs(STEP_X);
-      let off   = i - (N - 1) / 2 + su;
-      off = off - Math.floor((off + N / 2) / N) * N;
-      const tx  = ox + off * STEP_X - u.w / 2;
-      const ty  = oy + off * STEP_Y - u.h / 2;
-      const del = Math.min(Math.abs(off) * 22 + i * 16, 480);
-      u.el.style.transition =
-        `left .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
-        `top  .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
-        `transform .7s cubic-bezier(.22,1,.36,1) ${del}ms`;
-      u.el.style.left      = tx + 'px';
-      u.el.style.top       = ty + 'px';
-      u.el.style.transform = 'rotate(0deg)';
+  // Show CSS u-cards and fly to carousel slots
+  setTimeout(() => {
+    uItems.forEach(u => { u.el.style.transition = 'none'; u.el.style.opacity = '1'; });
+    const ox = window.innerWidth * 0.5, oy = window.innerHeight * 0.5;
+    requestAnimationFrame(() => {
+      uItems.forEach((u, i) => {
+        const su  = scrollPos / Math.abs(STEP_X);
+        let off   = i - (N - 1) / 2 + su;
+        off = off - Math.floor((off + N / 2) / N) * N;
+        const tx  = ox + off * STEP_X - u.w / 2;
+        const ty  = oy + off * STEP_Y - u.h / 2;
+        const del = Math.min(Math.abs(off) * 22 + i * 16, 480);
+        u.el.style.transition =
+          `left .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
+          `top  .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
+          `transform .7s cubic-bezier(.22,1,.36,1) ${del}ms`;
+        u.el.style.left      = tx + 'px';
+        u.el.style.top       = ty + 'px';
+        u.el.style.transform = 'rotate(0deg)';
+      });
+      setTimeout(() => {
+        const uEl = document.getElementById('universe');
+        uEl.style.transition = 'opacity 0.4s ease';
+        uEl.style.opacity = '0';
+        uEl.style.pointerEvents = 'none';
+        setTimeout(() => { uEl.style.display = 'none'; }, 400);
+      }, 1150);
     });
-
-    setTimeout(() => {
-      const uEl = document.getElementById('universe');
-      uEl.style.transition = 'opacity 0.4s ease';
-      uEl.style.opacity = '0';
-      uEl.style.pointerEvents = 'none';
-      setTimeout(() => { uEl.style.display = 'none'; }, 400);
-    }, 1150);
-  });
+  }, 300);
 }
 
 function disorganiseUniverse() {
   if (!uOrganised) return;
-  const uEl  = document.getElementById('universe');
-  const uBtn = document.getElementById('universe-btn');
+  const uEl = document.getElementById('universe');
 
-  uPanX = 0; uPanY = 0;
-  uCanvas.style.transform = '';
   uItems.forEach(u => {
     u.el.style.transition = 'none';
     u.el.style.left      = u.baseX + 'px';
     u.el.style.top       = u.baseY + 'px';
     u.el.style.transform = `rotate(${u.baseRot}deg)`;
+    u.el.style.opacity   = '0';
   });
 
-  uEl.style.display      = '';
-  uEl.style.opacity      = '0';
-  uEl.style.pointerEvents = 'all';
-  uEl.style.transition   = 'opacity 0.45s ease';
+  if (uRenderer) {
+    const rc = uRenderer.domElement;
+    rc.style.transition = 'opacity 0.45s ease';
+    rc.style.opacity    = '1';
+  }
 
+  uEl.style.display = '';
+  uEl.style.opacity = '0';
+  uEl.style.pointerEvents = 'all';
+  uEl.style.transition = 'opacity 0.45s ease';
   requestAnimationFrame(() => requestAnimationFrame(() => {
     uEl.style.opacity = '1';
-    setTimeout(() => {
-      uEl.style.transition = '';
-      uOrganised = false;
-    }, 450);
+    setTimeout(() => { uEl.style.transition = ''; uOrganised = false; }, 450);
   }));
 
-  uBtn.textContent = 'Organise';
+  document.getElementById('universe-btn').textContent = 'Organise';
 }
 
 document.getElementById('universe-btn').addEventListener('click', () => {
