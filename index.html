@@ -1848,7 +1848,7 @@ document.querySelectorAll('#filter-cat button').forEach(btn => {
 
 
 // ── UNIVERSE ──
-const U_SIZES = [65, 90, 120, 155, 190].map(w => ({ w, h: Math.round(w * CARD_H / CARD_W) }));
+const U_SIZES = [55, 75, 100, 130, 155].map(w => ({ w, h: Math.round(w * CARD_H / CARD_W) }));
 const U_WEIGHTS = [0.15, 0.25, 0.30, 0.20, 0.10];
 function pickUSize(r) {
   let c = 0;
@@ -1865,7 +1865,8 @@ function buildUniverse() {
   const rand = seededRand(137);
   const vw = window.innerWidth, vh = window.innerHeight;
   const cx = vw / 2, cy = vh / 2;
-  const spreadX = vw * 1.5, spreadY = vh * 1.5;
+  // Tight cluster (~45% of viewport) so lots of white space shows around the group
+  const spreadX = vw * 0.55, spreadY = vh * 0.60;
 
   PROJECTS.forEach(p => {
     const { w, h } = pickUSize(rand());
@@ -1904,7 +1905,15 @@ function buildUniverse() {
     card.style.top  = baseY + 'px';
 
     card.addEventListener('click', () => { if (!uDragActive) openProject(p); });
-    uItems.push({ el: card, p, baseX, baseY, w, h });
+    uItems.push({
+      el: card, p, baseX, baseY, w, h,
+      // Gentle slow drift — 40–70 second period, 8–18px amplitude
+      ampX:  8  + rand() * 10,
+      ampY:  6  + rand() * 10,
+      phase:  rand() * Math.PI * 2,
+      phaseY: rand() * Math.PI * 2,
+      speed:  0.00009 + rand() * 0.00006,
+    });
   });
 
   hint.style.display = 'none';
@@ -1955,18 +1964,29 @@ function buildUniverse() {
   }, { passive: true });
 }
 
-function updateUniverse() {} // static layout
+function updateUniverse(t) {
+  if (!uItems.length || uOrganised) return;
+  uItems.forEach(u => {
+    const dx = Math.sin(t * u.speed  + u.phase)         * u.ampX;
+    const dy = Math.cos(t * u.speed  * 0.7 + u.phaseY)  * u.ampY;
+    u.el.style.transform = `translate(${dx}px,${dy}px)`;
+  });
+}
 
 function organiseUniverse() {
   if (uOrganised) return;
   uOrganised = true;
   document.getElementById('universe-btn').textContent = 'Disorganise';
 
-  // Bake canvas pan offset into card positions, then reset canvas
+  // Bake canvas pan + current drift offset into absolute left/top, then reset canvas
+  const t = performance.now();
   uItems.forEach(u => {
+    const dx = Math.sin(t * u.speed  + u.phase)        * u.ampX;
+    const dy = Math.cos(t * u.speed  * 0.7 + u.phaseY) * u.ampY;
     u.el.style.transition = 'none';
-    u.el.style.left = (u.baseX + uPanX) + 'px';
-    u.el.style.top  = (u.baseY + uPanY) + 'px';
+    u.el.style.left      = (u.baseX + uPanX + dx) + 'px';
+    u.el.style.top       = (u.baseY + uPanY + dy) + 'px';
+    u.el.style.transform = '';
   });
   uPanX = 0; uPanY = 0;
   uCanvas.style.transition = 'none';
@@ -2008,8 +2028,9 @@ function disorganiseUniverse() {
   uCanvas.style.transform = '';
   uItems.forEach(u => {
     u.el.style.transition = 'none';
-    u.el.style.left = u.baseX + 'px';
-    u.el.style.top  = u.baseY + 'px';
+    u.el.style.left      = u.baseX + 'px';
+    u.el.style.top       = u.baseY + 'px';
+    u.el.style.transform = '';
   });
 
   uEl.style.display      = '';
