@@ -1848,7 +1848,7 @@ document.querySelectorAll('#filter-cat button').forEach(btn => {
 
 
 // ── UNIVERSE ──
-const U_SIZES = [55, 75, 100, 130, 155].map(w => ({ w, h: Math.round(w * CARD_H / CARD_W) }));
+const U_SIZES = [75, 100, 130, 160, 190].map(w => ({ w, h: Math.round(w * CARD_H / CARD_W) }));
 const U_WEIGHTS = [0.15, 0.25, 0.30, 0.20, 0.10];
 function pickUSize(r) {
   let c = 0;
@@ -1864,9 +1864,8 @@ function buildUniverse() {
   uCanvas = document.getElementById('universe-canvas');
   const rand = seededRand(137);
   const vw = window.innerWidth, vh = window.innerHeight;
-  const cx = vw / 2, cy = vh / 2;
-  // Tight cluster (~45% of viewport) so lots of white space shows around the group
-  const spreadX = vw * 0.55, spreadY = vh * 0.60;
+  // Full viewport spread with breathing room at edges
+  const padX = Math.max(60, vw * 0.08), padY = Math.max(60, vh * 0.10);
 
   PROJECTS.forEach(p => {
     const { w, h } = pickUSize(rand());
@@ -1895,24 +1894,23 @@ function buildUniverse() {
     card.appendChild(name);
     uCanvas.appendChild(card);
 
-    // Gaussian center-biased scatter
-    const gx = (rand() + rand() + rand()) / 3;
-    const gy = (rand() + rand() + rand()) / 3;
-    const baseX = cx + (gx - 0.5) * spreadX - w / 2;
-    const baseY = cy + (gy - 0.5) * spreadY - h / 2;
+    const baseX   = padX + rand() * (vw - padX * 2 - w);
+    const baseY   = padY + rand() * (vh - padY * 2 - h);
+    const baseRot = (rand() - 0.5) * 16;  // ±8° random tilt
 
     card.style.left = baseX + 'px';
     card.style.top  = baseY + 'px';
+    card.style.transform = `rotate(${baseRot}deg)`;
 
     card.addEventListener('click', () => { if (!uDragActive) openProject(p); });
     uItems.push({
-      el: card, p, baseX, baseY, w, h,
-      // Gentle slow drift — 40–70 second period, 8–18px amplitude
-      ampX:  8  + rand() * 10,
-      ampY:  6  + rand() * 10,
+      el: card, p, baseX, baseY, w, h, baseRot,
+      ampX:  20 + rand() * 22,         // 20–42px horizontal swing
+      ampY:  14 + rand() * 18,         // 14–32px vertical swing
+      ampR:  (rand() - 0.5) * 3,       // ±1.5° rotation oscillation
       phase:  rand() * Math.PI * 2,
       phaseY: rand() * Math.PI * 2,
-      speed:  0.00009 + rand() * 0.00006,
+      speed:  0.00020 + rand() * 0.00025,  // 16–31 second period
     });
   });
 
@@ -1967,9 +1965,10 @@ function buildUniverse() {
 function updateUniverse(t) {
   if (!uItems.length || uOrganised) return;
   uItems.forEach(u => {
-    const dx = Math.sin(t * u.speed  + u.phase)         * u.ampX;
-    const dy = Math.cos(t * u.speed  * 0.7 + u.phaseY)  * u.ampY;
-    u.el.style.transform = `translate(${dx}px,${dy}px)`;
+    const dx = Math.sin(t * u.speed        + u.phase)  * u.ampX;
+    const dy = Math.cos(t * u.speed * 0.7  + u.phaseY) * u.ampY;
+    const dr = Math.sin(t * u.speed * 0.5  + u.phase)  * u.ampR;
+    u.el.style.transform = `translate(${dx}px,${dy}px) rotate(${u.baseRot + dr}deg)`;
   });
 }
 
@@ -1978,15 +1977,16 @@ function organiseUniverse() {
   uOrganised = true;
   document.getElementById('universe-btn').textContent = 'Disorganise';
 
-  // Bake canvas pan + current drift offset into absolute left/top, then reset canvas
+  // Bake canvas pan + current drift + rotation into absolute position, then reset
   const t = performance.now();
   uItems.forEach(u => {
-    const dx = Math.sin(t * u.speed  + u.phase)        * u.ampX;
-    const dy = Math.cos(t * u.speed  * 0.7 + u.phaseY) * u.ampY;
+    const dx = Math.sin(t * u.speed        + u.phase)  * u.ampX;
+    const dy = Math.cos(t * u.speed * 0.7  + u.phaseY) * u.ampY;
+    const dr = Math.sin(t * u.speed * 0.5  + u.phase)  * u.ampR;
     u.el.style.transition = 'none';
     u.el.style.left      = (u.baseX + uPanX + dx) + 'px';
     u.el.style.top       = (u.baseY + uPanY + dy) + 'px';
-    u.el.style.transform = '';
+    u.el.style.transform = `rotate(${u.baseRot + dr}deg)`;
   });
   uPanX = 0; uPanY = 0;
   uCanvas.style.transition = 'none';
@@ -2004,9 +2004,11 @@ function organiseUniverse() {
       const del = Math.min(Math.abs(off) * 22 + i * 16, 480);
       u.el.style.transition =
         `left .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
-        `top  .75s cubic-bezier(.22,1,.36,1) ${del}ms`;
-      u.el.style.left = tx + 'px';
-      u.el.style.top  = ty + 'px';
+        `top  .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
+        `transform .7s cubic-bezier(.22,1,.36,1) ${del}ms`;
+      u.el.style.left      = tx + 'px';
+      u.el.style.top       = ty + 'px';
+      u.el.style.transform = 'rotate(0deg)';
     });
 
     setTimeout(() => {
@@ -2030,7 +2032,7 @@ function disorganiseUniverse() {
     u.el.style.transition = 'none';
     u.el.style.left      = u.baseX + 'px';
     u.el.style.top       = u.baseY + 'px';
-    u.el.style.transform = '';
+    u.el.style.transform = `rotate(${u.baseRot}deg)`;
   });
 
   uEl.style.display      = '';
