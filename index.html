@@ -539,6 +539,48 @@ a.contact-value:hover { color: #888; }
 }
 
 
+/* ── UNIVERSE ── */
+#universe {
+  position: fixed; inset: 0; z-index: 250;
+  background: #fff;
+  opacity: 0; pointer-events: none;
+}
+#universe-btn {
+  position: fixed; right: 24px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 500;
+  background: none; border: none; padding: 8px 0;
+  font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: #111; cursor: pointer; font-family: inherit;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+#universe-btn.u-visible { opacity: 0.32; pointer-events: all; }
+#universe-btn.u-visible:hover { opacity: 1; }
+.u-card {
+  position: absolute; cursor: pointer;
+}
+.u-card-inner {
+  width: 100%; height: 100%;
+  border-radius: 2px;
+  background-size: cover; background-position: center;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.u-card:hover .u-card-inner {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.09);
+  transform: scale(1.06);
+}
+.u-card-name {
+  position: absolute;
+  bottom: -19px; left: 0; right: 0;
+  text-align: center;
+  font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+}
+.u-card:hover .u-card-name { opacity: 1; }
+
 /* ── SPLASH ── */
 #splash-backdrop {
   position:fixed; inset:0; z-index:2000;
@@ -640,7 +682,7 @@ a.contact-value:hover { color: #888; }
       </div>
       <div id="splash-site-header">
         <div id="splash-site-title">Welcome to</div>
-        <div id="splash-site-name">Pedro Ventura's<br>Portfolio Page</div>
+        <div id="splash-site-name">Pedro Ventura's<br>Messy Creative<br>World</div>
         <div id="splash-site-sub">(site under construction — so is my frontal lobe)</div>
       </div>
       <div id="splash-page-body">
@@ -669,6 +711,9 @@ a.contact-value:hover { color: #888; }
     </div>
   </div>
 </div>
+
+<div id="universe"></div>
+<button id="universe-btn">Organise</button>
 
 <nav id="nav">
   <div id="nav-left">
@@ -1046,6 +1091,7 @@ let scrollPos = 0, targetScroll = 0;
 let isDragging = false, dragStartX = 0, dragStartScroll = 0;
 let mouseDragVelX = 0, lastMouseDragX = 0, lastMouseDragTime = 0;
 let snapTimer = null;
+let uItems = [], uOrganised = false, uDriftPaused = false;
 
 function snapToNearest() {
   const unit = Math.abs(STEP_X);
@@ -1597,10 +1643,12 @@ function applyPositions() {
 }
 
 function loop() {
+  const _lt = performance.now();
   if (!anyOverlayOpen()) {
     scrollPos += (targetScroll - scrollPos) * 0.06;
     applyPositions();
   }
+  updateUniverse(_lt);
   requestAnimationFrame(loop);
 }
 
@@ -1782,20 +1830,195 @@ document.querySelectorAll('#filter-cat button').forEach(btn => {
 });
 
 
+// ── UNIVERSE ──
+const U_W = 110;
+const U_H = Math.round(U_W * CARD_H / CARD_W);
+
+function seededRand(seed) {
+  let s = seed;
+  return function() { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+}
+
+function buildUniverse() {
+  const uEl = document.getElementById('universe');
+  const rand = seededRand(137);
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const px = Math.max(80, vw * 0.08), py = Math.max(80, vh * 0.1);
+  hint.style.display = 'none';
+
+  PROJECTS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'u-card';
+
+    const inner = document.createElement('div');
+    inner.className = 'u-card-inner';
+    if (p.img) {
+      inner.style.backgroundImage    = `url('${p.img}')`;
+      inner.style.backgroundPosition = p.imgPos || 'center';
+      if (p.bgColor) inner.style.backgroundColor = p.bgColor;
+    } else {
+      inner.style.background = p.color;
+    }
+    if (p.shape === 'circle') { inner.style.borderRadius = '50%'; }
+
+    const name = document.createElement('div');
+    name.className = 'u-card-name';
+    name.textContent = p.short;
+
+    card.appendChild(inner);
+    card.appendChild(name);
+    uEl.appendChild(card);
+
+    const baseX  = px + rand() * (vw - px * 2 - U_W);
+    const baseY  = py + rand() * (vh - py * 2 - U_H);
+    const baseRot = (rand() - 0.5) * 14;
+
+    card.style.cssText = `width:${U_W}px;height:${U_H}px;left:${baseX}px;top:${baseY}px;transform:rotate(${baseRot}deg);`;
+    card.addEventListener('click', () => { if (!uOrganised) openProject(p); });
+
+    uItems.push({
+      el: card, p,
+      baseX, baseY, baseRot,
+      ampX:   18 + rand() * 24,
+      ampY:   12 + rand() * 20,
+      ampR:   (rand() - 0.5) * 2.5,
+      phase:  rand() * Math.PI * 2,
+      phaseY: rand() * Math.PI * 2,
+      speed:  0.00025 + rand() * 0.00035,
+    });
+  });
+}
+
+function updateUniverse(t) {
+  if (uOrganised || uDriftPaused || !uItems.length) return;
+  uItems.forEach(u => {
+    const dx = Math.sin(t * u.speed  + u.phase)  * u.ampX;
+    const dy = Math.cos(t * u.speed  * 0.8 + u.phaseY) * u.ampY;
+    const dr = Math.sin(t * u.speed  * 0.5 + u.phase)  * u.ampR;
+    u.el.style.transform = `translate(${dx}px,${dy}px) rotate(${u.baseRot + dr}deg)`;
+  });
+}
+
+function organiseUniverse() {
+  if (uOrganised) return;
+  uOrganised = true;
+  uDriftPaused = true;
+  document.getElementById('universe-btn').textContent = 'Disorganise';
+
+  // Bake current drift into absolute position
+  const t = performance.now();
+  uItems.forEach(u => {
+    const dx = Math.sin(t * u.speed + u.phase)  * u.ampX;
+    const dy = Math.cos(t * u.speed * 0.8 + u.phaseY) * u.ampY;
+    const dr = Math.sin(t * u.speed * 0.5 + u.phase)  * u.ampR;
+    u.el.style.transition = 'none';
+    u.el.style.left = (u.baseX + dx) + 'px';
+    u.el.style.top  = (u.baseY + dy) + 'px';
+    u.el.style.transform = `rotate(${u.baseRot + dr}deg)`;
+  });
+
+  // Fly each card to its carousel slot position
+  const ox = window.innerWidth * 0.5, oy = window.innerHeight * 0.5;
+  requestAnimationFrame(() => {
+    uItems.forEach((u, i) => {
+      const su  = scrollPos / Math.abs(STEP_X);
+      let off   = i - (N - 1) / 2 + su;
+      off = off - Math.floor((off + N / 2) / N) * N;
+      const tx  = ox + off * STEP_X - U_W / 2;
+      const ty  = oy + off * STEP_Y - U_H / 2;
+      const del = Math.min(Math.abs(off) * 22 + i * 16, 480);
+      u.el.style.transition =
+        `left .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
+        `top  .75s cubic-bezier(.22,1,.36,1) ${del}ms,` +
+        `transform .7s cubic-bezier(.22,1,.36,1) ${del}ms`;
+      u.el.style.left      = tx + 'px';
+      u.el.style.top       = ty + 'px';
+      u.el.style.transform = 'rotate(0deg)';
+    });
+
+    setTimeout(() => {
+      const uEl = document.getElementById('universe');
+      uEl.style.transition = 'opacity 0.4s ease';
+      uEl.style.opacity = '0';
+      uEl.style.pointerEvents = 'none';
+      setTimeout(() => { uEl.style.display = 'none'; }, 400);
+    }, 1150);
+  });
+}
+
+function disorganiseUniverse() {
+  if (!uOrganised) return;
+  const uEl  = document.getElementById('universe');
+  const uBtn = document.getElementById('universe-btn');
+
+  // Reset cards to scattered positions (instant, no animation)
+  uItems.forEach(u => {
+    u.el.style.transition = 'none';
+    u.el.style.left      = u.baseX + 'px';
+    u.el.style.top       = u.baseY + 'px';
+    u.el.style.transform = `rotate(${u.baseRot}deg)`;
+  });
+
+  uEl.style.display      = '';
+  uEl.style.opacity      = '0';
+  uEl.style.pointerEvents = 'all';
+  uEl.style.transition   = 'opacity 0.45s ease';
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    uEl.style.opacity = '1';
+    setTimeout(() => {
+      uEl.style.transition = '';
+      uDriftPaused = false;
+      uOrganised   = false;
+    }, 450);
+  }));
+
+  uBtn.textContent = 'Organise';
+}
+
+document.getElementById('universe-btn').addEventListener('click', () => {
+  if (!uOrganised) organiseUniverse();
+  else disorganiseUniverse();
+});
+
 // ── INIT ──
 build();
 loop();
+buildUniverse();
 
 // ── SPLASH ──
 (function() {
   var backdrop = document.getElementById('splash-backdrop');
+  var uEl      = document.getElementById('universe');
+  var uBtn     = document.getElementById('universe-btn');
+
+  function showUniverse(animate) {
+    uBtn.classList.add('u-visible');
+    if (animate) {
+      uEl.style.transition = 'opacity 0.5s ease';
+      requestAnimationFrame(function() {
+        uEl.style.opacity = '1';
+        uEl.style.pointerEvents = 'all';
+        setTimeout(function() { uEl.style.transition = ''; }, 500);
+      });
+    } else {
+      uEl.style.opacity = '1';
+      uEl.style.pointerEvents = 'all';
+    }
+  }
+
   if (sessionStorage.getItem('splashDismissed')) {
     backdrop.style.display = 'none';
+    showUniverse(false);
   }
+
   document.getElementById('splash-dismiss').addEventListener('click', function() {
     sessionStorage.setItem('splashDismissed', '1');
     backdrop.classList.add('hiding');
-    setTimeout(function(){ backdrop.style.display = 'none'; }, 400);
+    setTimeout(function() {
+      backdrop.style.display = 'none';
+      showUniverse(true);
+    }, 400);
   });
 })();
 </script>
