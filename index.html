@@ -538,9 +538,137 @@ a.contact-value:hover { color: #888; }
   #project-back { top: 14px; right: 16px; font-size: 11px; }
 }
 
+
+/* ── SPLASH ── */
+#splash-backdrop {
+  position:fixed; inset:0; z-index:2000;
+  background:rgba(0,0,0,0.5);
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity 0.4s ease;
+}
+#splash-backdrop.hiding { opacity:0; pointer-events:none; }
+#browser {
+  width:560px; max-width:96vw;
+  box-shadow:4px 4px 12px rgba(0,0,0,0.6);
+  border:2px solid #666;
+  font-family:'Times New Roman',serif;
+}
+#browser-bar {
+  background:linear-gradient(180deg,#e0e0e0 0%,#c0c0c0 100%);
+  padding:6px 8px; display:flex; align-items:center; gap:6px;
+  border-bottom:2px solid #999;
+}
+.btn-fake {
+  width:12px; height:12px; border-radius:50%; border:1px solid #aaa; display:inline-block;
+  background:linear-gradient(135deg,#ff5f57,#c0392b);
+}
+.btn-fake:nth-child(2){background:linear-gradient(135deg,#febc2e,#d09000);}
+.btn-fake:nth-child(3){background:linear-gradient(135deg,#28c840,#1a8a2a);}
+#url-bar {
+  flex:1; background:#fff; border:1px solid #aaa;
+  padding:2px 6px; font-family:monospace; font-size:11px; color:#333; border-radius:2px;
+}
+#splash-page {
+  background-color:#c8e8f8;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cellipse cx='30' cy='30' rx='18' ry='22' fill='none' stroke='rgba(100,160,210,0.25)' stroke-width='1.5'/%3E%3Ccircle cx='30' cy='18' r='5' fill='none' stroke='rgba(100,160,210,0.2)' stroke-width='1'/%3E%3C/svg%3E");
+}
+#splash-marquee-band {
+  background:#000080; padding:4px 0; overflow:hidden; white-space:nowrap;
+  border-bottom:2px solid #ffff00;
+}
+#splash-marquee-inner {
+  display:inline-block; font-family:Arial,sans-serif; font-size:11px;
+  color:#ffff00; letter-spacing:0.15em; text-transform:uppercase;
+  animation:splash-scroll 14s linear infinite;
+}
+@keyframes splash-scroll { from{transform:translateX(580px)} to{transform:translateX(-100%)} }
+#splash-site-header {
+  background:linear-gradient(135deg,#000066 0%,#003399 40%,#6600cc 100%);
+  padding:16px 20px 12px; text-align:center; border-bottom:3px solid #ffff00;
+}
+#splash-site-title { font-family:'Times New Roman',serif; font-size:13px; color:#00ffff; font-style:italic; margin-bottom:4px; }
+#splash-site-name {
+  font-family:Impact,Arial,sans-serif; font-size:46px; font-weight:900; color:#ffff00;
+  text-shadow:3px 3px 0 #ff00ff, 5px 5px 0 rgba(0,0,255,0.5);
+  line-height:0.95; text-transform:uppercase;
+}
+#splash-site-sub { font-family:'Comic Sans MS',cursive; font-size:14px; color:#ff99ff; margin-top:6px; font-style:italic; }
+#splash-page-body {
+  padding:14px 24px; text-align:center; background:#c8e8f8; border-bottom:2px dashed #0000cc;
+}
+#splash-page-body .splash-welcome { font-family:'Times New Roman',serif; font-size:15px; color:#cc0000; font-weight:bold; }
+#splash-page-body .splash-welcome span { color:#0000cc; font-style:italic; }
+#splash-page-main {
+  padding:12px 20px 16px; display:flex; gap:14px; align-items:flex-start;
+  border-bottom:3px solid #0000cc; background:#c8e8f8;
+}
+#splash-page-main img {
+  width:160px; height:180px; object-fit:cover; object-position:center top;
+  border:3px outset #aaa; flex-shrink:0; filter:saturate(0.8) contrast(1.05);
+}
+#splash-main-text { flex:1; }
+#splash-main-text p { font-family:'Times New Roman',serif; font-size:14px; color:#000066; line-height:1.75; margin-bottom:8px; }
+#splash-main-text p b { color:#cc0000; }
+.splash-service-list { font-family:Arial,sans-serif; font-size:11px; color:#000080; line-height:1.9; list-style:none; text-align:left; }
+.splash-service-list li::before { content:"★ "; color:#cc00cc; }
+#splash-footer {
+  background:#000066; padding:10px 20px; display:flex; align-items:center; justify-content:space-between;
+}
+#splash-footer-text { font-family:'Comic Sans MS',cursive; font-size:13px; color:#ffff00; font-style:italic; text-shadow:1px 1px 0 #ff00ff; }
+#splash-dismiss {
+  font-family:Arial,sans-serif; font-size:11px; font-weight:bold;
+  text-transform:uppercase; color:#000066; background:#ffff00;
+  border:2px outset #ffcc00; padding:5px 14px; cursor:pointer; letter-spacing:0.06em;
+}
+#splash-dismiss:hover{background:#ffcc00;}
+#splash-dismiss:active{border-style:inset;}
 </style>
 </head>
 <body>
+
+<div id="splash-backdrop">
+  <div id="browser">
+    <div id="browser-bar">
+      <span class="btn-fake"></span>
+      <span class="btn-fake"></span>
+      <span class="btn-fake"></span>
+      <div id="url-bar">http://www.pedroventura.com/portfolio/index.html</div>
+    </div>
+    <div id="splash-page">
+      <div id="splash-marquee-band">
+        <span id="splash-marquee-inner">✦ UNDER CONSTRUCTION ✦ BEST VIEWED IN 800x600 ✦ NETSCAPE NAVIGATOR 4.0 ✦ UNDER CONSTRUCTION ✦ BEST VIEWED IN 800x600 ✦ NETSCAPE NAVIGATOR 4.0 ✦</span>
+      </div>
+      <div id="splash-site-header">
+        <div id="splash-site-title">Welcome to</div>
+        <div id="splash-site-name">Pedro Ventura's<br>Portfolio Page</div>
+        <div id="splash-site-sub">(site under construction — so is my frontal lobe)</div>
+      </div>
+      <div id="splash-page-body">
+        <p class="splash-welcome">Hello and Welcome to <span>Pedro Ventura's Creative Page!</span></p>
+      </div>
+      <div id="splash-page-main">
+        <img src="splash/stock.png" alt="">
+        <div id="splash-main-text">
+          <p><b>So, you must be wondering</b> — what exactly does Pedro do anyway?!</p>
+          <p>Well, the answer is simple folks: I do it all.</p>
+          <p><b>Hire the lost one.</b> Turns out being directionless is great for research and conceptualisation.</p>
+          <ul class="splash-service-list">
+            <li>Photography</li>
+            <li>Painting</li>
+            <li>Installations</li>
+            <li>Art Direction</li>
+            <li>Creative Consulting</li>
+            <li>Research & Curation</li>
+          </ul>
+        </div>
+      </div>
+      <div id="splash-footer">
+        <span id="splash-footer-text">Want to hire me?</span>
+        <button id="splash-dismiss">Dismiss</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <nav id="nav">
   <div id="nav-left">
@@ -1657,6 +1785,19 @@ document.querySelectorAll('#filter-cat button').forEach(btn => {
 // ── INIT ──
 build();
 loop();
+
+// ── SPLASH ──
+(function() {
+  var backdrop = document.getElementById('splash-backdrop');
+  if (sessionStorage.getItem('splashDismissed')) {
+    backdrop.style.display = 'none';
+  }
+  document.getElementById('splash-dismiss').addEventListener('click', function() {
+    sessionStorage.setItem('splashDismissed', '1');
+    backdrop.classList.add('hiding');
+    setTimeout(function(){ backdrop.style.display = 'none'; }, 400);
+  });
+})();
 </script>
 
 </body>
