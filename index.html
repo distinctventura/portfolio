@@ -279,11 +279,10 @@ html, body {
 #project-image-wrap.sized #project-video-bg {
   width: 100%; height: 100%; max-height: none; max-width: none; object-fit: cover;
 }
-#video-mute-btn {
+.media-btn {
   display: none;
   position: absolute;
-  bottom: 12px; right: 12px;
-  z-index: 20;
+  bottom: 12px; z-index: 20;
   background: rgba(0,0,0,0.35);
   border: none; border-radius: 50%;
   width: 32px; height: 32px;
@@ -293,22 +292,9 @@ html, body {
   transition: background 0.2s;
   backdrop-filter: blur(4px);
 }
-#video-mute-btn:hover { background: rgba(0,0,0,0.55); }
-#ambient-mute-btn {
-  display: none;
-  position: absolute;
-  bottom: 12px; left: 12px;
-  z-index: 20;
-  background: rgba(0,0,0,0.35);
-  border: none; border-radius: 50%;
-  width: 32px; height: 32px;
-  cursor: pointer;
-  align-items: center; justify-content: center;
-  color: #fff; font-size: 14px;
-  transition: background 0.2s;
-  backdrop-filter: blur(4px);
-}
-#ambient-mute-btn:hover { background: rgba(0,0,0,0.55); }
+.media-btn:hover { background: rgba(0,0,0,0.55); }
+#video-mute-btn   { right: 12px; }
+#ambient-mute-btn { left:  12px; }
 #project-meta {
   display: flex; flex-direction: column; align-items: flex-start;
   gap: 5px; text-align: left;
@@ -717,8 +703,8 @@ a.contact-value:hover { color: #888; }
       <video id="project-video-bg" autoplay loop muted playsinline preload="metadata"></video>
       <div id="project-dots"></div>
     </div>
-    <button id="video-mute-btn" aria-label="Toggle mute">🔇</button>
-    <button id="ambient-mute-btn" aria-label="Toggle ambient sound">♪</button>
+    <button id="video-mute-btn" class="media-btn" aria-label="Toggle mute">🔇</button>
+    <button id="ambient-mute-btn" class="media-btn" aria-label="Toggle ambient sound">♪</button>
   </div>
   <audio id="project-ambient" loop preload="none"></audio>
   <div id="project-meta">
@@ -1165,9 +1151,7 @@ function scheduleAutoDismiss() {
   if (notifyAutoTimer) clearTimeout(notifyAutoTimer);
   notifyAutoTimer = setTimeout(() => {
     notifyAutoTimer = null;
-    dismissNotify(() => {
-      if (currentProject) queueNotify(currentProject, 45000);
-    });
+    dismissAndRequeue();
   }, notifyRemaining);
 }
 
@@ -1201,14 +1185,14 @@ projectNotify.addEventListener('mouseleave', () => {
   scheduleAutoDismiss();
 });
 
+function dismissAndRequeue() {
+  clearNotifyTimers();
+  dismissNotify(() => { if (currentProject) queueNotify(currentProject, 45000); });
+}
+
 document.addEventListener('click', e => {
   if (!notifyActive) return;
-  if (!projectNotify.contains(e.target)) {
-    clearNotifyTimers();
-    dismissNotify(() => {
-      if (currentProject) queueNotify(currentProject, 45000);
-    });
-  }
+  if (!projectNotify.contains(e.target)) dismissAndRequeue();
 }, true);
 
 videoMuteBtn.addEventListener('click', e => {
@@ -1221,17 +1205,10 @@ ambientMuteBtn.addEventListener('click', e => {
   ambientAudio.muted = !ambientAudio.muted;
   ambientMuteBtn.textContent = ambientAudio.muted ? '🔕' : '♪';
 });
-document.getElementById('notify-no').addEventListener('click', () => {
-  clearNotifyTimers();
-  dismissNotify(() => {
-    if (currentProject) queueNotify(currentProject, 45000);
-  });
-});
+document.getElementById('notify-no').addEventListener('click', dismissAndRequeue);
 document.getElementById('notify-yes').addEventListener('click', () => {
   clearNotifyTimers();
-  dismissNotify(() => {
-    if (currentProject) openInfoPanel(currentProject);
-  });
+  dismissNotify(() => { if (currentProject) openInfoPanel(currentProject); });
 });
 
 // ── INFO PANEL ──
@@ -1315,9 +1292,10 @@ function goSlide(idx) {
     probeImg.src = src;
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
-  projectNavL.style.display = slideImgs.length > 1 ? 'flex' : 'none';
-  projectNavR.style.display = slideImgs.length > 1 ? 'flex' : 'none';
-  if (slideImgs.length > 1) {
+  const multi = slideImgs.length > 1;
+  projectNavL.style.display = multi ? 'flex' : 'none';
+  projectNavR.style.display = multi ? 'flex' : 'none';
+  if (multi) {
     const n = s => String(s).padStart(2, '0');
     slideCounter.textContent = n(slideIdx + 1) + ' / ' + n(slideImgs.length);
   } else {
@@ -1671,23 +1649,17 @@ projectNavL.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx 
 projectNavR.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx + 1); });
 
 // ── NAV LINKS ──
-document.getElementById('nav-home').addEventListener('click', e => {
-  e.preventDefault(); closeAll();
-});
-document.getElementById('nav-selected').addEventListener('click', e => {
-  e.preventDefault(); closeAll();
-  selectedPage.classList.add('open');
-  cursorLabel.classList.add('hidden');
-});
-document.getElementById('nav-about').addEventListener('click', e => {
-  e.preventDefault(); closeAll();
-  aboutPage.classList.add('open');
-  cursorLabel.classList.add('hidden');
-});
-document.getElementById('nav-contact').addEventListener('click', e => {
-  e.preventDefault(); closeAll();
-  contactPage.classList.add('open');
-  cursorLabel.classList.add('hidden');
+document.getElementById('nav-home').addEventListener('click', e => { e.preventDefault(); closeAll(); });
+[
+  ['nav-selected', selectedPage],
+  ['nav-about',    aboutPage],
+  ['nav-contact',  contactPage],
+].forEach(([id, page]) => {
+  document.getElementById(id).addEventListener('click', e => {
+    e.preventDefault(); closeAll();
+    page.classList.add('open');
+    cursorLabel.classList.add('hidden');
+  });
 });
 document.querySelectorAll('.selected-item').forEach(el => {
   el.addEventListener('click', () => {
