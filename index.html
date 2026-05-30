@@ -497,17 +497,17 @@ a.contact-value:hover { color: #888; }
   /* Stage — moderate the 3D angle so it doesn't feel extreme on a narrow screen */
   #stage { perspective: 700px; perspective-origin: 38% 22%; }
 
-  /* Nav — two lines, left-aligned, P and S on the same column */
-  #nav-left { flex-wrap: wrap; }
-  #nav-left a { padding: 16px 3px 11px 14px; font-size: 9px; letter-spacing: 0.08em; }
-  #nav-left a:first-child { flex: 0 0 100%; padding-left: 14px; padding-bottom: 0; }
+  /* Nav — single line, all items */
+  #nav-left { flex-wrap: nowrap; }
+  #nav-left a { padding: 16px 2px 11px 9px; font-size: 8.5px; letter-spacing: 0.07em; }
+  #nav-left a:first-child { padding-left: 14px; }
 
   /* Hint */
   #hint { bottom: 18px; left: 18px; font-size: 8px; }
 
-  /* About & Contact — account for taller two-line nav */
-  #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 96px 24px 80px; }
-  #contact-inner { grid-template-columns: 1fr; gap: 32px; padding: 96px 24px 80px; }
+  /* About & Contact */
+  #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px 80px; }
+  #contact-inner { grid-template-columns: 1fr; gap: 32px; padding: 80px 24px 80px; }
 
   /* Project page — hide back button (tap Pedro Ventura to go back) */
   #project-back { display: none; }
