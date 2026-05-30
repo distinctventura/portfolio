@@ -518,7 +518,6 @@ a.contact-value:hover { color: #888; }
     gap: 32px;
     padding: 80px 24px 80px;
   }
-  #project-page { padding: 56px 16px 24px; gap: 16px; }
   #project-page { padding: 56px 16px 20px; gap: 8px; }
   #project-meta { gap: 5px; }
   #filter {
@@ -947,11 +946,6 @@ const PROJECTS = [
     desc: "Visual direction and EP cover photography for Husbands — Scénic Saint Laurent.",
     img: "covers/husbands.jpg", imgPos: "center center",
     imgs: ['husbands/1.jpg','husbands/2.jpg','husbands/4.jpg'] },
-  // { short: "Athena Ceramics",  year: "2025",  cat: "photography", type: "client", color: "#d8f0c8",
-  //   title: "Athena Ceramics",
-  //   desc:  "Still life photography and art direction for Athena Ceramics.",
-  //   img: "covers/athena-ceramics.jpg", imgPos: "center bottom",
-  //   imgs: ['athena-ceramics/1.jpg','athena-ceramics/2.jpg','athena-ceramics/3.jpg'] },
   // 2024
   { short: "Quarto",           year: "2024",  cat: "photography", type: "personal",  color: "#e0a8e8",
     title: "Quarto",
@@ -1384,12 +1378,11 @@ function getOffset(idx) {
   return o;
 }
 
-let _ox = window.innerWidth * 0.50, _oy = window.innerHeight * 0.50;
+let _ox = window.innerWidth * 0.5, _oy = window.innerHeight * 0.5;
 window.addEventListener('resize', () => {
-  _ox = window.innerWidth * 0.50;
-  _oy = window.innerHeight * 0.50;
+  _ox = window.innerWidth * 0.5;
+  _oy = window.innerHeight * 0.5;
 });
-function origin() { return { ox: _ox, oy: _oy }; }
 
 function anyOverlayOpen() {
   return projectPage.classList.contains('open') ||
@@ -1565,7 +1558,7 @@ function applyPositions() {
   cursorLabel.classList.toggle('visible', onCard);
   if (onCard) cursorLabel.textContent = topCard.p.short;
 
-  const { ox, oy } = origin();
+  const ox = _ox, oy = _oy;
   cards.forEach(card => {
     if (!card.entered) return;
     const offset = getOffset(card.idx);
@@ -1600,7 +1593,6 @@ function applyPositions() {
 }
 
 function loop() {
-  const _lt = performance.now();
   if (!anyOverlayOpen()) {
     scrollPos += (targetScroll - scrollPos) * 0.06;
     applyPositions();
