@@ -538,12 +538,20 @@ a.contact-value:hover { color: #888; }
   .selected-item { text-align: center; padding: 0 24px; }
 }
 
-/* Splash — stack layout for narrow screens */
+/* Splash — compact layout for narrow screens */
 @media (max-width: 560px) {
-  #splash-page-main img { display: none; }
-  #splash-page-main { padding: 10px 14px 14px; }
-  #splash-site-name { font-size: 34px; }
-  #splash-site-sub { font-size: 12px; }
+  #browser { max-width: 88vw; }
+  #splash-site-header { padding: 10px 14px 8px; }
+  #splash-site-name { font-size: 26px; }
+  #splash-site-sub { font-size: 11px; }
+  #splash-page-body { padding: 8px 16px; }
+  #splash-page-body .splash-welcome { font-size: 12px; }
+  #splash-page-main { padding: 8px 12px 10px; gap: 10px; }
+  #splash-page-main img { display: block; width: 68px; height: 78px; }
+  #splash-main-text p { font-size: 11px; line-height: 1.5; margin-bottom: 5px; }
+  .splash-service-list { font-size: 9.5px; line-height: 1.7; }
+  #splash-footer { padding: 8px 14px; }
+  #splash-footer-text { font-size: 11px; }
 }
 
 
