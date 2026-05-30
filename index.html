@@ -497,10 +497,10 @@ a.contact-value:hover { color: #888; }
   /* Stage — moderate the 3D angle so it doesn't feel extreme on a narrow screen */
   #stage { perspective: 700px; perspective-origin: 38% 22%; }
 
-  /* Nav — centred two-line layout */
-  #nav-left { flex-wrap: wrap; justify-content: center; width: 100%; }
-  #nav-left a { padding: 11px 8px; font-size: 9px; }
-  #nav-left a:first-child { flex: 0 0 100%; text-align: center; padding-left: 0; padding-bottom: 0; }
+  /* Nav — two lines, left-aligned */
+  #nav-left { flex-wrap: wrap; }
+  #nav-left a { padding: 11px 8px 11px 14px; font-size: 9px; }
+  #nav-left a:first-child { flex: 0 0 100%; padding-bottom: 0; }
 
   /* Hint */
   #hint { bottom: 18px; left: 18px; font-size: 8px; }
@@ -518,14 +518,14 @@ a.contact-value:hover { color: #888; }
   #project-desc-text  { font-size: 9px; }
   #slide-counter      { font-size: 9px; }
 
-  /* Filter — proper touch targets */
-  #filter { bottom: 14px; right: 12px; gap: 6px; }
+  /* Filter — proper touch targets; touch-action removes iOS tap delay on the whole group */
+  #filter { bottom: 14px; right: 12px; gap: 6px; touch-action: manipulation; }
   #filter-type, #filter-cat {
     gap: 8px; flex-wrap: wrap; justify-content: flex-end;
     max-width: calc(100vw - 24px);
   }
-  #filter-type button { font-size: 7.5px; padding: 12px 4px; touch-action: manipulation; }
-  #filter-cat button  { font-size: 7px;   padding: 12px 4px; touch-action: manipulation; }
+  #filter-type button { font-size: 7.5px; padding: 12px 4px; }
+  #filter-cat button  { font-size: 7px;   padding: 12px 4px; }
 
   /* Project nav — hide arrows; swipe handles navigation on touch */
   #project-nav-l, #project-nav-r { display: none !important; }
@@ -1746,7 +1746,7 @@ function applyFilter() {
 }
 
 document.querySelectorAll('#filter-type button').forEach(btn => {
-  function onTypeBtn() {
+  btn.addEventListener('click', () => {
     activeType = btn.dataset.type;
     document.querySelectorAll('#filter-type button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -1763,20 +1763,16 @@ document.querySelectorAll('#filter-type button').forEach(btn => {
       filterCatRow.classList.add('visible');
     }
     applyFilter();
-  }
-  btn.addEventListener('click', onTypeBtn);
-  if (isMobile) btn.addEventListener('touchend', e => { e.preventDefault(); onTypeBtn(); }, { passive: false });
+  });
 });
 
 document.querySelectorAll('#filter-cat button').forEach(btn => {
-  function onCatBtn() {
+  btn.addEventListener('click', () => {
     activeCat = btn.dataset.cat;
     document.querySelectorAll('#filter-cat button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     applyFilter();
-  }
-  btn.addEventListener('click', onCatBtn);
-  if (isMobile) btn.addEventListener('touchend', e => { e.preventDefault(); onCatBtn(); }, { passive: false });
+  });
 });
 
 // ── INIT ──
