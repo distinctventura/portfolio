@@ -497,40 +497,41 @@ a.contact-value:hover { color: #888; }
   /* Stage — moderate the 3D angle so it doesn't feel extreme on a narrow screen */
   #stage { perspective: 700px; perspective-origin: 38% 22%; }
 
-  /* Nav — tighten padding and scale text on narrow screens */
-  #nav-left a { padding: 13px 7px; font-size: 9px; }
-  #nav-left a:first-child { padding-left: 14px; }
+  /* Nav — two-line layout: Pedro Ventura on top, links below */
+  #nav-left { flex-wrap: wrap; }
+  #nav-left a { padding: 12px 7px; font-size: 9px; }
+  #nav-left a:first-child { flex: 0 0 100%; padding-left: 14px; padding-bottom: 2px; }
 
   /* Hint */
   #hint { bottom: 18px; left: 18px; font-size: 8px; }
 
-  /* About & Contact */
-  #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px 80px; }
-  #contact-inner { grid-template-columns: 1fr; gap: 32px; padding: 80px 24px 80px; }
+  /* About & Contact — account for taller two-line nav */
+  #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 96px 24px 80px; }
+  #contact-inner { grid-template-columns: 1fr; gap: 32px; padding: 96px 24px 80px; }
 
-  /* Project page */
-  #project-page { padding: 44px 12px 14px; gap: 6px; }
+  /* Project page — hide back button (tap Pedro Ventura to go back) */
+  #project-back { display: none; }
+  #project-page { padding: 56px 12px 14px; gap: 6px; }
   #project-meta { gap: 4px; }
   #project-title-text { font-size: 9px; }
   #project-year-text  { font-size: 9px; }
   #project-desc-text  { font-size: 9px; }
   #slide-counter      { font-size: 9px; }
 
-  /* Filter — compact with adequate touch targets */
+  /* Filter — proper touch targets */
   #filter { bottom: 14px; right: 12px; gap: 6px; }
   #filter-type, #filter-cat {
     gap: 8px; flex-wrap: wrap; justify-content: flex-end;
     max-width: calc(100vw - 24px);
   }
-  #filter-type button { font-size: 8px; padding: 7px 2px; }
-  #filter-cat button  { font-size: 7px; padding: 7px 2px; }
+  #filter-type button { font-size: 9px; padding: 12px 4px; }
+  #filter-cat button  { font-size: 8px; padding: 12px 4px; }
 
   /* Project nav — hide arrows; swipe handles navigation on touch */
   #project-nav-l, #project-nav-r { display: none !important; }
-  #project-back { top: 12px; right: 14px; font-size: 9px; }
 
   /* Notification — narrower so it doesn't eat the full screen width */
-  #project-notify { top: 48px; width: min(280px, calc(100vw - 24px)); }
+  #project-notify { top: 56px; width: min(280px, calc(100vw - 24px)); }
 
   /* Selected work — allow long titles to wrap gracefully */
   #selected-list { gap: 18px; }
