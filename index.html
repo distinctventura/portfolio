@@ -261,17 +261,18 @@ html, body {
   color: #ccc; margin-bottom: 20px; padding-bottom: 10px;
   border-bottom: 0.5px solid #ececec; display: block;
 }
-#info-panel-photos { display: flex; flex-direction: column; gap: 6px; }
+#info-panel-photos { display: flex; flex-direction: column; gap: 24px; }
 #info-panel-photos img {
   width: 100%; height: auto; display: block;
   opacity: 0; transform: translateY(12px);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
 #info-panel-photos img.loaded { opacity: 1; transform: translateY(0); }
-.bts-photo-wrap { display: flex; flex-direction: column; gap: 4px; }
+.bts-photo-wrap { display: flex; flex-direction: column; gap: 0; }
 .bts-caption {
   font-size: 11px; color: #aaa; line-height: 1.6;
   letter-spacing: 0.02em; font-style: italic;
+  margin: 2px 0 0 0; padding: 0;
 }
 #project-image-prev {
   display: block;
