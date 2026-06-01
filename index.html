@@ -1316,7 +1316,9 @@ function dismissAndRequeue() {
 
 document.addEventListener('click', e => {
   if (!notifyActive) return;
-  if (!projectNotify.contains(e.target)) dismissAndRequeue();
+  if (projectNotify.contains(e.target)) return;
+  if (projectPage.contains(e.target)) return;
+  dismissAndRequeue();
 }, true);
 
 videoMuteBtn.addEventListener('click', e => {
@@ -1933,7 +1935,9 @@ loop();
   }
 
   if (!sessionStorage.getItem('splashDismissed')) {
-    setTimeout(function() { notify.classList.add('visible'); }, 3000);
+    setTimeout(function() {
+      if (!anyOverlayOpen()) notify.classList.add('visible');
+    }, 3000);
   }
 
   document.getElementById('splash-notify-accept').addEventListener('click', function() {
