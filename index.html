@@ -846,7 +846,7 @@ a.contact-value:hover { color: #888; }
 <div id="project-notify">
   <div id="notify-icon"></div>
   <div id="notify-content">
-    <div id="notify-app">Note</div>
+    <div id="notify-app"></div>
     <div id="notify-title"></div>
     <div id="notify-body"></div>
     <div id="notify-actions">
@@ -1206,9 +1206,9 @@ function clearNotifyTimers() {
 }
 
 function triggerNotify() {
-  if (!notifyArmed || !currentProject) return;
-  notifyArmed = false;
-  queueNotify(currentProject, 7000);
+  if (!currentProject || notifyActive) return;
+  clearNotifyTimers();
+  queueNotify(currentProject, 4000);
 }
 
 function queueNotify(p, delay) {
@@ -1766,7 +1766,8 @@ function openProject(p) {
 
   if (p.notification || (p.bts && p.bts.length)) {
     clearNotifyTimers();
-    notifyArmed = true;
+    notifyArmed = false;
+    queueNotify(p, 4000);
     projectNotify.classList.remove('visible');
   }
 
