@@ -1061,11 +1061,11 @@ const STEP_X = isMobile ? -73  : -97;
 const STEP_Y = isMobile ? 51   : 70;
 const ROT_X  = isMobile ? -20 : -28;
 const ROT_Y  = isMobile ? -15 : -22;
-const EASE   = isMobile ? 0.10 : 0.06;
+const EASE   = isMobile ? 0.10 : 0.085;
 const N = PROJECTS.length;
 
 // ── STATE ──
-let scrollPos = 0, targetScroll = 0, scrollVel = 0;
+let scrollPos = 0, targetScroll = 0;
 let isDragging = false, dragStartX = 0, dragStartScroll = 0;
 let mouseDragVelX = 0, lastMouseDragX = 0, lastMouseDragTime = 0;
 let snapTimer = null;
@@ -1636,14 +1636,10 @@ function applyPositions() {
 function loop() {
   if (!anyOverlayOpen()) {
     const dist = targetScroll - scrollPos;
-    if (Math.abs(dist) < 0.15 && Math.abs(scrollVel) < 0.15) {
+    if (Math.abs(dist) < 0.08) {
       scrollPos = targetScroll;
-      scrollVel = 0;
     } else {
-      scrollVel += dist * EASE * 1.5;
-      const speed = Math.abs(scrollVel);
-      scrollVel *= speed > 5 ? 0.80 : 0.82 + (1 - Math.min(speed / 5, 1)) * 0.07;
-      scrollPos += scrollVel;
+      scrollPos += dist * EASE;
     }
     applyPositions();
   }
