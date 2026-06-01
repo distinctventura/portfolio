@@ -268,6 +268,11 @@ html, body {
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
 #info-panel-photos img.loaded { opacity: 1; transform: translateY(0); }
+.bts-photo-wrap { display: flex; flex-direction: column; gap: 10px; }
+.bts-caption {
+  font-size: 11px; color: #aaa; line-height: 1.6;
+  letter-spacing: 0.02em; font-style: italic;
+}
 #project-image-prev {
   display: block;
   position: absolute; inset: 0;
@@ -1021,6 +1026,13 @@ const PROJECTS = [
     },
     btsLabel: "The Napkins",
     bts: ['ecos-de-intencao/napkin-1.jpg','ecos-de-intencao/napkin-2.jpg','ecos-de-intencao/napkin-3.jpg','ecos-de-intencao/napkin-4.jpg','ecos-de-intencao/napkin-5.jpg'],
+    btsCaptions: [
+      "I'm not as grateful to my parents as I should be.",
+      "If the government gave everyone a massage once a month, the world would be a better place.",
+      "Sometimes I think too much about the future and forget to exist in the present.",
+      "Being kind requires more strength than being mean or arrogant.",
+      "I can't help someone who doesn't want help."
+    ],
     img: "covers/ecos-de-intencao.jpg", imgPos: "center top",
     imgs: ['ecos-de-intencao/10.jpg','ecos-de-intencao/9.jpg','ecos-de-intencao/4.jpg','ecos-de-intencao/3.jpg','ecos-de-intencao/6.jpg','ecos-de-intencao/7.mp4'] },
   { short: "Erdem",            year: "2025",  cat: "photography", type: "client", color: "#b8d8a8",
@@ -1347,7 +1359,16 @@ function openInfoPanel(p) {
       };
       img.src = src;
       if (img.complete) setTimeout(() => img.classList.add('loaded'), i * 60);
-      photosEl.appendChild(img);
+      const wrap = document.createElement('div');
+      wrap.className = 'bts-photo-wrap';
+      wrap.appendChild(img);
+      if (p.btsCaptions && p.btsCaptions[i]) {
+        const cap = document.createElement('p');
+        cap.className = 'bts-caption';
+        cap.textContent = p.btsCaptions[i];
+        wrap.appendChild(cap);
+      }
+      photosEl.appendChild(wrap);
     });
   } else {
     btsLabel.style.display = 'none';
