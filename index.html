@@ -1767,7 +1767,7 @@ function openProject(p) {
   if (p.notification || (p.bts && p.bts.length)) {
     clearNotifyTimers();
     notifyArmed = false;
-    queueNotify(p, 4000);
+    queueNotify(p, 2000);
     projectNotify.classList.remove('visible');
   }
 
