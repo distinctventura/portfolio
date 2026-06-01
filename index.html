@@ -267,14 +267,24 @@ html, body {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 #info-panel-photos img.loaded { opacity: 1; transform: translateY(0); }
+#project-image-prev {
+  display: block;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
 #project-image-bg {
   display: block;
   max-height: min(calc(100vh - 160px), 580px);
   max-width: calc(100vw - 80px);
   width: auto; height: auto;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.38s ease;
+  position: relative; z-index: 1;
 }
-#project-video-bg { display: none; max-height: min(calc(100vh - 160px), 580px); max-width: calc(100vw - 80px); width: auto; height: auto; }
+#project-video-bg { display: none; max-height: min(calc(100vh - 160px), 580px); max-width: calc(100vw - 80px); width: auto; height: auto; position: relative; z-index: 1; }
 #project-image-wrap.sized #project-image-bg,
 #project-image-wrap.sized #project-video-bg {
   width: 100%; height: 100%; max-height: none; max-width: none; object-fit: cover;
@@ -730,6 +740,7 @@ a.contact-value:hover { color: #888; }
     <button id="project-nav-l" aria-label="Previous">&#8249;</button>
     <button id="project-nav-r" aria-label="Next">&#8250;</button>
     <div id="project-image-wrap">
+      <img id="project-image-prev" src="" alt="" aria-hidden="true">
       <img id="project-image-bg" src="" alt="">
       <video id="project-video-bg" autoplay loop muted playsinline preload="metadata"></video>
       <div id="project-dots"></div>
@@ -1054,7 +1065,7 @@ const EASE   = isMobile ? 0.10 : 0.06;
 const N = PROJECTS.length;
 
 // ── STATE ──
-let scrollPos = 0, targetScroll = 0;
+let scrollPos = 0, targetScroll = 0, scrollVel = 0;
 let isDragging = false, dragStartX = 0, dragStartScroll = 0;
 let mouseDragVelX = 0, lastMouseDragX = 0, lastMouseDragTime = 0;
 let snapTimer = null;
@@ -1313,16 +1324,33 @@ function goSlide(idx) {
     projectVideoBg.style.display = 'none';
     projectVideoBg.src = '';
     projectImageBg.style.display = 'block';
-    projectImageBg.style.opacity = '0';
     videoMuteBtn.style.display = 'none';
+
+    const prevImgEl = document.getElementById('project-image-prev');
+    const hasPrev = projectImageBg.src && projectImageWrap.classList.contains('sized');
+    if (hasPrev) {
+      prevImgEl.src = projectImageBg.src;
+      prevImgEl.style.opacity = '1';
+    }
+    projectImageBg.style.opacity = '0';
+
     if (probeImg) probeImg.onload = null;
     probeImg = new Image();
     probeImg.onload = () => {
       lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
       projectImageBg.src = src;
-      requestAnimationFrame(() => { projectImageBg.style.opacity = '1'; });
+      requestAnimationFrame(() => {
+        projectImageBg.style.opacity = '1';
+        if (hasPrev) setTimeout(() => { prevImgEl.style.opacity = '0'; }, 400);
+      });
     };
     probeImg.src = src;
+
+    // Preload adjacent slides
+    [slideIdx + 1, slideIdx - 1].forEach(adj => {
+      const adjSrc = slideImgs[((adj % slideImgs.length) + slideImgs.length) % slideImgs.length];
+      if (adjSrc && !isVideo(adjSrc) && adjSrc !== src) new Image().src = adjSrc;
+    });
   }
   slideDots.forEach((d, i) => d.classList.toggle('active', i === slideIdx));
   const multi = slideImgs.length > 1;
@@ -1372,6 +1400,8 @@ function teardownSlide() {
   projectImageWrap.style.width = '';
   projectImageWrap.style.height = '';
   projectImageWrap.classList.remove('sized', 'shadow');
+  const prevImgEl = document.getElementById('project-image-prev');
+  prevImgEl.src = ''; prevImgEl.style.opacity = '0';
 }
 const aboutPage    = document.getElementById('about-page');
 const contactPage  = document.getElementById('contact-page');
@@ -1423,7 +1453,6 @@ function build() {
     bg.style.backgroundSize     = p.bgSize || 'cover';
     if (p.img) {
       bg.style.backgroundColor = p.bgColor || p.color || '#f0f0f0';
-      if (!isMobile) bg.style.backgroundImage = `url('${p.img}')`;
     } else {
       bg.style.background = p.color;
     }
@@ -1440,7 +1469,7 @@ function build() {
 
     if (p.img) el.classList.add('has-image');
 
-    const card = { el, bg, p, idx: i, entered: false, _wasLit: false, _filtered: false, _bgLoaded: !isMobile };
+    const card = { el, bg, p, idx: i, entered: false, _wasLit: false, _filtered: false, _bgLoaded: false };
     cards.push(card);
 
     setTimeout(() => {
@@ -1606,7 +1635,16 @@ function applyPositions() {
 
 function loop() {
   if (!anyOverlayOpen()) {
-    scrollPos += (targetScroll - scrollPos) * EASE;
+    const dist = targetScroll - scrollPos;
+    if (Math.abs(dist) < 0.15 && Math.abs(scrollVel) < 0.15) {
+      scrollPos = targetScroll;
+      scrollVel = 0;
+    } else {
+      scrollVel += dist * EASE * 1.5;
+      const speed = Math.abs(scrollVel);
+      scrollVel *= speed > 5 ? 0.80 : 0.82 + (1 - Math.min(speed / 5, 1)) * 0.07;
+      scrollPos += scrollVel;
+    }
     applyPositions();
   }
   requestAnimationFrame(loop);
