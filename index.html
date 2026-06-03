@@ -268,13 +268,13 @@ html, body {
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
 #info-panel-photos img.loaded { opacity: 1; transform: translateY(0); }
-.bts-photo-wrap { display: flex; flex-direction: column; gap: 0; }
+.bts-photo-wrap { position: relative; }
 .bts-caption {
-  font-size: 11px; color: #aaa; line-height: 1.6;
+  position: absolute; bottom: 12px; left: 0; right: 0;
+  font-size: 11px; color: #888; line-height: 1.6;
   letter-spacing: 0.02em; font-style: italic;
-  margin: 3px 0 0 0; padding: 0 8px;
-  box-sizing: border-box; width: 100%;
-  text-align: center;
+  padding: 0 8px; text-align: center;
+  pointer-events: none;
 }
 #project-image-prev {
   display: block;
