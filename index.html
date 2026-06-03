@@ -1129,7 +1129,7 @@ const PROJECTS = [
     title: "Naturally You",
     desc:  "A collaboration with Yiyi Chen, a CSM womenswear fashion design student. Shot under a single principle — Wu Wei, the Taoist art of effortless action. No staging. No forcing. Just what presents itself.",
     img: "covers/naturally-you.jpg", imgPos: "center center",
-    imgs: ['naturally-you/2.jpg','naturally-you/1b.jpg','naturally-you/3.jpg'] },
+    imgs: ['naturally-you/2.jpg','naturally-you/dancing.jpg','naturally-you/3.jpg'] },
   // 2020—
   { short: "Film Archive",     year: "2020—", cat: "photography", type: "personal", color: "#dcc8f0",
     title: "Film Personal Archive",
@@ -1228,10 +1228,23 @@ function triggerNotify() {
   queueNotify(currentProject, 4000);
 }
 
+function splashNotifyVisible() {
+  const sn = document.getElementById('splash-notify');
+  return sn && sn.classList.contains('visible');
+}
+
+function dismissSplashNotify() {
+  const sn = document.getElementById('splash-notify');
+  if (!sn || !sn.classList.contains('visible')) return;
+  sn.classList.add('hiding');
+  setTimeout(() => sn.classList.remove('visible', 'hiding'), 320);
+}
+
 function queueNotify(p, delay) {
   if (!(p.notification || (p.bts && p.bts.length))) return;
   const t = setTimeout(() => {
     if (!currentProject || infoPanel.classList.contains('open')) return;
+    if (splashNotifyVisible()) return;
     showNotify(p);
   }, delay);
   notifyTimers.push(t);
@@ -1749,6 +1762,7 @@ function loop() {
 let probeImg = null;
 
 function openProject(p) {
+  dismissSplashNotify();
   projectVideoBg.pause();
   ambientAudio.pause(); ambientAudio.src = ''; ambientMuteBtn.style.display = 'none';
   projectImageWrap.style.width = '';
@@ -1942,7 +1956,7 @@ loop();
 
   if (!sessionStorage.getItem('splashDismissed')) {
     setTimeout(function() {
-      if (!anyOverlayOpen()) notify.classList.add('visible');
+      if (!anyOverlayOpen() && !notifyActive) notify.classList.add('visible');
     }, 3000);
   }
 
