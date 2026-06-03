@@ -1445,17 +1445,23 @@ function goSlide(idx) {
     }
     projectImageBg.style.opacity = '0';
 
-    if (probeImg) probeImg.onload = null;
+    if (probeImg) { probeImg.onload = null; probeImg.onerror = null; }
     probeImg = new Image();
-    probeImg.onload = () => {
-      lockSlideSize(probeImg.naturalWidth, probeImg.naturalHeight);
+    const showSlide = () => {
+      lockSlideSize(probeImg.naturalWidth || projectImageWrap.offsetWidth, probeImg.naturalHeight || projectImageWrap.offsetHeight);
       projectImageBg.src = src;
       requestAnimationFrame(() => {
         projectImageBg.style.opacity = '1';
         if (hasPrev) setTimeout(() => { prevImgEl.style.opacity = '0'; }, 400);
       });
     };
+    probeImg.onload = showSlide;
+    probeImg.onerror = () => {
+      if (hasPrev) prevImgEl.style.opacity = '0';
+      projectImageBg.style.opacity = '1';
+    };
     probeImg.src = src;
+    if (probeImg.complete && probeImg.naturalWidth > 0) showSlide();
 
     [slideIdx + 1, slideIdx - 1].forEach(adj => {
       const adjSrc = slideImgs[((adj % slideImgs.length) + slideImgs.length) % slideImgs.length];
