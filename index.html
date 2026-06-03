@@ -263,18 +263,17 @@ html, body {
 }
 #info-panel-photos { display: flex; flex-direction: column; gap: 16px; }
 .bts-photo-wrap { display: flex; flex-direction: column; gap: 0; }
-.bts-photo-clip { overflow: hidden; }
+.bts-photo-clip { overflow: hidden; line-height: 0; }
 .bts-photo-clip img {
-  display: block; max-width: none; height: auto;
-  width: calc(100% + 20px); margin: -10px -10px -10px;
+  display: block; width: 100%; height: auto;
   opacity: 0; transform: translateY(12px);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
 .bts-photo-clip img.loaded { opacity: 1; transform: translateY(0); }
 .bts-caption {
-  font-size: 11px; color: #888; line-height: 1.5;
+  display: block; font-size: 11px; color: #888; line-height: 1.5;
   letter-spacing: 0.02em; font-style: italic;
-  text-align: center; margin: 0; padding: 0;
+  text-align: center; margin: 0; padding: 6px 0 0;
 }
 #project-image-prev {
   display: block;
