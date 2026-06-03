@@ -1059,11 +1059,11 @@ const PROJECTS = [
     btsLabel: "The Napkins",
     bts: ['ecos-de-intencao/napkin-1.jpg','ecos-de-intencao/napkin-2.jpg','ecos-de-intencao/napkin-3.jpg','ecos-de-intencao/napkin-4.jpg','ecos-de-intencao/napkin-5.jpg'],
     btsCaptions: [
-      "I'm not as grateful to my parents as I should be..",
-      "If the government gave everyone a massage once a month, the world would be a better place..",
-      "Sometimes I think too much about the future and forget to exist in the present..",
-      "Being kind requires more strength than being mean or arrogant..",
-      "I can't help someone who doesn't want help.."
+      "“I'm not as grateful to my parents as I should be.”",
+      "“If the government gave everyone a massage once a month, the world would be a better place.”",
+      "“Sometimes I think too much about the future and forget to exist in the present.”",
+      "“Being kind requires more strength than being mean or arrogant.”",
+      "“I can't help someone who doesn't want help.”"
     ],
     img: "covers/ecos-de-intencao.jpg", imgPos: "center top",
     imgs: ['ecos-de-intencao/10.jpg','ecos-de-intencao/9.jpg','ecos-de-intencao/4.jpg','ecos-de-intencao/3.jpg','ecos-de-intencao/6.jpg','ecos-de-intencao/7.mp4'] },
@@ -1702,6 +1702,13 @@ window.addEventListener('mousemove', e => {
   }
 
   if (anyOverlayOpen()) return;
+  const _sn = document.getElementById('splash-notify');
+  if (_sn && _sn.classList.contains('visible')) {
+    const _sr = _sn.getBoundingClientRect();
+    if (mouseX >= _sr.left && mouseX <= _sr.right && mouseY >= _sr.top && mouseY <= _sr.bottom) {
+      topCard = null; return;
+    }
+  }
   let newTop = null, topZ = -1;
   cards.forEach(card => {
     if (!card.entered || card._filtered || !card._rect) return;
