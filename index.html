@@ -261,14 +261,16 @@ html, body {
   color: #ccc; margin-bottom: 20px; padding-bottom: 10px;
   border-bottom: 0.5px solid #ececec; display: block;
 }
-#info-panel-photos { display: flex; flex-direction: column; gap: 20px; }
-#info-panel-photos img {
-  width: 100%; height: auto; display: block;
+#info-panel-photos { display: flex; flex-direction: column; gap: 16px; }
+.bts-photo-wrap { display: flex; flex-direction: column; gap: 5px; }
+.bts-photo-clip { overflow: hidden; }
+.bts-photo-clip img {
+  display: block; max-width: none; height: auto;
+  width: calc(100% + 20px); margin: -10px -10px -10px;
   opacity: 0; transform: translateY(12px);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
-#info-panel-photos img.loaded { opacity: 1; transform: translateY(0); }
-.bts-photo-wrap { display: flex; flex-direction: column; gap: 5px; }
+.bts-photo-clip img.loaded { opacity: 1; transform: translateY(0); }
 .bts-caption {
   font-size: 11px; color: #888; line-height: 1.5;
   letter-spacing: 0.02em; font-style: italic;
@@ -1362,9 +1364,12 @@ function openInfoPanel(p) {
       };
       img.src = src;
       if (img.complete) setTimeout(() => img.classList.add('loaded'), i * 60);
+      const clip = document.createElement('div');
+      clip.className = 'bts-photo-clip';
+      clip.appendChild(img);
       const wrap = document.createElement('div');
       wrap.className = 'bts-photo-wrap';
-      wrap.appendChild(img);
+      wrap.appendChild(clip);
       if (p.btsCaptions && p.btsCaptions[i]) {
         const cap = document.createElement('p');
         cap.className = 'bts-caption';
