@@ -532,26 +532,43 @@ a.contact-value:hover { color: #888; }
   #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px 80px; }
   #contact-inner { grid-template-columns: 1fr; gap: 32px; padding: 80px 24px 80px; }
   #project-back { display: none; }
-  #project-page { padding: 56px 12px 14px; gap: 6px; }
-  #project-meta { gap: 4px; }
+  #project-page { padding: 52px 16px 20px; gap: 14px; }
+  #project-meta { gap: 6px; }
   #project-title-text { font-size: 9px; }
   #project-year-text  { font-size: 9px; }
-  #project-desc-text  { font-size: 9px; }
+  #project-desc-text  { font-size: 9px; line-height: 1.65; }
   #slide-counter      { font-size: 9px; }
-  #filter { bottom: 14px; right: 12px; gap: 6px; touch-action: manipulation; }
+  #filter { bottom: 18px; right: 14px; gap: 8px; touch-action: manipulation; }
   #filter-type, #filter-cat {
-    gap: 8px; flex-wrap: wrap; justify-content: flex-end;
-    max-width: calc(100vw - 24px);
+    gap: 10px; flex-wrap: wrap; justify-content: flex-end;
+    max-width: calc(100vw - 28px);
   }
-  #filter-type button { font-size: 7.5px; padding: 12px 4px; letter-spacing: 0.09em; }
-  #filter-cat button  { font-size: 7px;   padding: 12px 4px; letter-spacing: 0.09em; }
+  #filter-type button { font-size: 8px; padding: 14px 6px; letter-spacing: 0.09em; touch-action: manipulation; }
+  #filter-cat button  { font-size: 7.5px; padding: 14px 6px; letter-spacing: 0.09em; touch-action: manipulation; }
   #project-nav-l, #project-nav-r { display: none !important; }
-  #project-notify { top: 56px; width: min(280px, calc(100vw - 24px)); }
+  #project-notify {
+    top: 52px; right: 12px;
+    width: min(260px, calc(100vw - 28px));
+    padding: 11px 12px 14px;
+  }
+  #notify-icon { width: 34px; height: 34px; border-radius: 9px; }
+  #notify-title { font-size: 12px; }
+  #notify-body  { font-size: 11px; }
+  #notify-yes, #notify-no { font-size: 11px; padding: 6px 0; }
+  #project-info-panel { width: 100vw; }
+  #info-panel-inner { padding: 52px 24px 60px; }
   #selected-list { gap: 18px; }
   .selected-item { text-align: center; padding: 0 24px; }
 }
-
 @media (max-width: 560px) {
+  #splash-notify {
+    top: 52px; right: 12px;
+    width: min(260px, calc(100vw - 28px));
+    padding: 11px 12px 14px;
+  }
+  #splash-notify-icon { width: 34px; height: 34px; border-radius: 9px; }
+  #splash-notify-title { font-size: 12px; }
+  #splash-notify-accept, #splash-notify-ignore { font-size: 11px; padding: 6px 0; }
   #browser { max-width: 88vw; }
   #splash-site-header { padding: 10px 14px 8px; }
   #splash-site-name { font-size: 26px; }
@@ -1188,7 +1205,7 @@ function lockSlideSize(nw, nh) {
   const hPad = isMobile ? 32 : 80;
   const vPad = isMobile ? 140 : 160;
   const r = nw / nh;
-  const maxH = Math.min(window.innerHeight - vPad, 580);
+  const maxH = Math.min(window.innerHeight - vPad, isMobile ? 440 : 580);
   const maxW  = window.innerWidth - hPad;
   let w, h;
   if (r > maxW / maxH) { w = Math.round(maxW); h = Math.round(maxW / r); }
@@ -1897,6 +1914,7 @@ window.addEventListener('keydown', e => {
 // ── FILTER ──
 let activeType = 'all', activeCat = 'all';
 const filterCatRow = document.getElementById('filter-cat');
+document.getElementById('filter').addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
 
 function applyFilter() {
   cards.forEach(card => {
