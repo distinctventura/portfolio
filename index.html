@@ -1438,7 +1438,7 @@ function goSlide(idx) {
     videoMuteBtn.style.display = 'none';
 
     const prevImgEl = document.getElementById('project-image-prev');
-    const hasPrev = projectImageBg.src && projectImageWrap.classList.contains('sized');
+    const hasPrev = !!projectImageBg.getAttribute('src') && projectImageWrap.classList.contains('sized');
     if (hasPrev) {
       prevImgEl.src = projectImageBg.src;
       prevImgEl.style.opacity = '1';
@@ -1447,8 +1447,10 @@ function goSlide(idx) {
 
     if (probeImg) { probeImg.onload = null; probeImg.onerror = null; }
     probeImg = new Image();
+    const thisProbe = probeImg;
     const showSlide = () => {
-      lockSlideSize(probeImg.naturalWidth || projectImageWrap.offsetWidth, probeImg.naturalHeight || projectImageWrap.offsetHeight);
+      if (probeImg === thisProbe) probeImg.onload = null;
+      lockSlideSize(thisProbe.naturalWidth || projectImageWrap.offsetWidth, thisProbe.naturalHeight || projectImageWrap.offsetHeight);
       projectImageBg.src = src;
       requestAnimationFrame(() => {
         projectImageBg.style.opacity = '1';
@@ -1457,8 +1459,9 @@ function goSlide(idx) {
     };
     probeImg.onload = showSlide;
     probeImg.onerror = () => {
+      projectImageBg.src = src;
       if (hasPrev) prevImgEl.style.opacity = '0';
-      projectImageBg.style.opacity = '1';
+      requestAnimationFrame(() => { projectImageBg.style.opacity = '1'; });
     };
     probeImg.src = src;
     if (probeImg.complete && probeImg.naturalWidth > 0) showSlide();
@@ -1777,6 +1780,8 @@ function openProject(p) {
   projectImageWrap.classList.toggle('shadow', !!p.shadow);
 
   if (p.imgs && p.imgs.length > 0) {
+    const prevImgEl = document.getElementById('project-image-prev');
+    prevImgEl.src = ''; prevImgEl.style.opacity = '0';
     slideImgs = p.imgs; slideIdx = 0;
     projectDots.innerHTML = ''; slideDots = [];
     if (p.imgs.length > 1) {
