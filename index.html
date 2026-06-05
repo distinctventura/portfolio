@@ -568,7 +568,7 @@ a.contact-value:hover { color: #888; }
     width: min(260px, calc(100vw - 28px));
     padding: 11px 12px 14px;
   }
-  #splash-notify-icon { width: 34px; height: 34px; border-radius: 9px; }
+  #splash-notify-icon { width: 34px; height: 34px; border-radius: 4px; }
   #splash-notify-title { font-size: 12px; }
   #splash-notify-accept, #splash-notify-ignore { font-size: 11px; padding: 6px 0; }
   #browser { max-width: 72vw; }
@@ -605,13 +605,12 @@ a.contact-value:hover { color: #888; }
 /* ── SPLASH NOTIFY ── */
 #splash-notify {
   position: fixed; top: 56px; right: 16px; z-index: 2100;
-  background: rgba(52, 48, 62, 0.94);
-  border-radius: 18px;
-  border-top: 1px solid rgba(255,255,255,0.16);
-  border-left: 1px solid rgba(255,255,255,0.10);
-  border-right: 1px solid rgba(0,0,0,0.2);
-  border-bottom: 1px solid rgba(0,0,0,0.28);
-  box-shadow: 0 2px 0 rgba(255,255,255,0.05) inset, 0 16px 60px rgba(0,0,0,0.45);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-radius: 4px;
+  border: 0.5px solid rgba(0,0,0,0.10);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.08);
   padding: 14px 14px 18px 14px;
   display: flex; gap: 12px; align-items: flex-start;
   width: 320px; max-width: calc(100vw - 32px);
@@ -626,40 +625,40 @@ a.contact-value:hover { color: #888; }
 }
 #splash-notify-icon {
   width: 40px; height: 40px; flex-shrink: 0; margin-top: 1px;
-  background: #d99a97; border-radius: 11px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.3);
+  background: #d99a97; border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
   position: relative; overflow: hidden;
 }
 #splash-notify-icon::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 55%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 55%);
 }
 #splash-notify-content { flex: 1; min-width: 0; }
 #splash-notify-app {
-  font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.38);
+  font-size: 10px; font-weight: 500; color: rgba(0,0,0,0.32);
   margin-bottom: 2px; line-height: 1.3; letter-spacing: 0.06em; text-transform: uppercase;
 }
 #splash-notify-title {
-  font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.90);
+  font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.82);
   margin-bottom: 3px; line-height: 1.35; letter-spacing: -0.01em;
 }
 #splash-notify-actions { display: flex; gap: 7px; margin-top: 11px; }
 #splash-notify-accept, #splash-notify-ignore {
   flex: 1; padding: 7px 0;
   font-size: 12px; font-weight: 500;
-  border-radius: 9px; cursor: pointer; font-family: inherit;
+  border-radius: 3px; cursor: pointer; font-family: inherit;
   transition: background 0.15s;
 }
 #splash-notify-accept {
-  background: rgba(255,255,255,0.13); color: rgba(255,255,255,0.88);
-  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(0,0,0,0.07); color: rgba(0,0,0,0.75);
+  border: 0.5px solid rgba(0,0,0,0.12);
 }
-#splash-notify-accept:hover { background: rgba(255,255,255,0.20); }
+#splash-notify-accept:hover { background: rgba(0,0,0,0.11); }
 #splash-notify-ignore {
-  background: transparent; color: rgba(255,255,255,0.35);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent; color: rgba(0,0,0,0.32);
+  border: 0.5px solid rgba(0,0,0,0.08);
 }
-#splash-notify-ignore:hover { color: rgba(255,255,255,0.6); }
+#splash-notify-ignore:hover { color: rgba(0,0,0,0.6); }
 #browser {
   width:560px; max-width:96vw;
   box-shadow:4px 4px 12px rgba(0,0,0,0.6);
