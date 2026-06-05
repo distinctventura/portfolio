@@ -1874,6 +1874,11 @@ document.getElementById('nav-home').addEventListener('click', e => { e.preventDe
     e.preventDefault(); closeAll();
     page.classList.add('open');
     cursorLabel.classList.add('hidden');
+    const sn = document.getElementById('splash-notify');
+    if (sn.classList.contains('visible')) {
+      sn.classList.add('hiding');
+      setTimeout(() => sn.classList.remove('visible', 'hiding'), 320);
+    }
   });
 });
 document.querySelectorAll('.selected-item').forEach(el => {
@@ -1986,9 +1991,16 @@ loop();
   }
 
   if (!sessionStorage.getItem('splashDismissed')) {
-    setTimeout(function() {
+    var splashTimer = setTimeout(function() {
       if (!anyOverlayOpen() && !notifyActive) notify.classList.add('visible');
     }, 3000);
+    document.addEventListener('click', function cancelOnNav(e) {
+      var link = e.target.closest('#nav-left a');
+      if (link && link.id !== 'nav-home') {
+        clearTimeout(splashTimer);
+        document.removeEventListener('click', cancelOnNav);
+      }
+    }, true);
   }
 
   document.getElementById('splash-notify-accept').addEventListener('click', function() {
