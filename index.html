@@ -158,15 +158,15 @@ html, body {
 /* ── PROJECT NOTIFICATION ── */
 #project-notify {
   position: fixed; top: 56px; right: 16px; z-index: 600;
-  background: rgba(250, 248, 245, 0.50);
-  backdrop-filter: blur(52px) saturate(180%) brightness(1.02);
-  -webkit-backdrop-filter: blur(52px) saturate(180%) brightness(1.02);
+  background: rgba(20, 19, 24, 0.74);
+  backdrop-filter: blur(52px) saturate(180%);
+  -webkit-backdrop-filter: blur(52px) saturate(180%);
   border-radius: 4px;
-  border-top: 0.5px solid rgba(255,255,255,0.90);
-  border-left: 0.5px solid rgba(255,255,255,0.60);
-  border-right: 0.5px solid rgba(0,0,0,0.06);
-  border-bottom: 0.5px solid rgba(0,0,0,0.08);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset, 0 12px 48px rgba(0,0,0,0.14);
+  border-top: 0.5px solid rgba(255,255,255,0.14);
+  border-left: 0.5px solid rgba(255,255,255,0.10);
+  border-right: 0.5px solid rgba(0,0,0,0.30);
+  border-bottom: 0.5px solid rgba(0,0,0,0.35);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.06) inset, 0 16px 56px rgba(0,0,0,0.42);
   padding: 14px 14px 18px 14px;
   display: flex; gap: 12px; align-items: flex-start;
   width: 320px; max-width: calc(100vw - 32px);
@@ -183,31 +183,30 @@ html, body {
 }
 #notify-progress {
   position: absolute; bottom: 0; left: 0; right: 0;
-  height: 3px;
+  height: 2px;
   background: var(--notify-accent, #555);
-  opacity: 0.45;
+  opacity: 0.60;
   transform-origin: left;
   transform: scaleX(1);
-  border-radius: 0 0 14px 14px;
 }
 #notify-icon {
-  width: 40px; height: 40px; flex-shrink: 0; margin-top: 1px;
+  width: 38px; height: 38px; flex-shrink: 0; margin-top: 2px;
   background: var(--notify-accent, #888);
   border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
   position: relative; overflow: hidden;
 }
 #notify-icon::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 55%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 55%);
 }
 #notify-content { flex: 1; min-width: 0; }
 #notify-title {
-  font-size: 10px; font-weight: 500; color: rgba(0,0,0,0.72);
-  margin-bottom: 3px; line-height: 1.35; letter-spacing: 0.10em; text-transform: uppercase;
+  font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.88);
+  margin-bottom: 4px; line-height: 1.35; letter-spacing: 0.10em; text-transform: uppercase;
 }
 #notify-body {
-  font-size: 11px; color: rgba(0,0,0,0.46); line-height: 1.5;
+  font-size: 11px; color: rgba(255,255,255,0.46); line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; overflow: hidden;
 }
@@ -217,10 +216,10 @@ html, body {
   background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
   transition: opacity 0.15s;
 }
-#notify-yes { color: rgba(0,0,0,0.72); }
-#notify-yes:hover { opacity: 0.55; }
-#notify-no { color: rgba(0,0,0,0.28); }
-#notify-no:hover { color: rgba(0,0,0,0.52); }
+#notify-yes { color: rgba(255,255,255,0.82); }
+#notify-yes:hover { opacity: 0.60; }
+#notify-no { color: rgba(255,255,255,0.30); }
+#notify-no:hover { color: rgba(255,255,255,0.58); }
 /* ── INFO PANEL ── */
 #info-panel-backdrop {
   position: fixed; inset: 0; z-index: 640;
@@ -235,16 +234,16 @@ html, body {
 #project-info-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
   width: 400px; max-width: 100vw;
-  background: rgba(250, 248, 245, 0.50);
-  backdrop-filter: blur(64px) saturate(220%);
-  -webkit-backdrop-filter: blur(64px) saturate(220%);
+  background: rgba(20, 19, 24, 0.74);
+  backdrop-filter: blur(64px) saturate(200%);
+  -webkit-backdrop-filter: blur(64px) saturate(200%);
   z-index: 650;
   transform: translateX(100%);
   transition: transform 0.52s cubic-bezier(0.22,1,0.36,1);
   overflow-y: auto;
-  border-left: 0.5px solid rgba(255,255,255,0.90);
-  border-top: none;
-  box-shadow: -12px 0 80px rgba(0,0,0,0.14);
+  border-left: 0.5px solid rgba(255,255,255,0.10);
+  border-top: 3px solid var(--panel-color, #555);
+  box-shadow: -12px 0 80px rgba(0,0,0,0.40);
 }
 #project-info-panel.open { transform: translateX(0); }
 #info-panel-inner { padding: 52px 36px 80px; }
@@ -252,22 +251,22 @@ html, body {
   position: fixed; top: 20px; right: 24px; z-index: 660;
   background: none; border: none; cursor: pointer;
   font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(0,0,0,0.30); font-family: inherit; transition: color 0.25s;
+  color: rgba(255,255,255,0.32); font-family: inherit; transition: color 0.25s;
 }
-#info-panel-close:hover { color: rgba(0,0,0,0.75); }
+#info-panel-close:hover { color: rgba(255,255,255,0.80); }
 #info-panel-title {
   font-size: 10px; font-weight: 500; letter-spacing: 0.18em;
-  text-transform: uppercase; color: rgba(0,0,0,0.65); margin-bottom: 24px;
+  text-transform: uppercase; color: rgba(255,255,255,0.78); margin-bottom: 24px;
 }
 #info-panel-body {
-  font-size: 13px; color: rgba(0,0,0,0.52); line-height: 2;
+  font-size: 13px; color: rgba(255,255,255,0.52); line-height: 2;
   margin-bottom: 48px; letter-spacing: 0.015em;
   white-space: pre-line;
 }
 #info-panel-bts-label {
   font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(0,0,0,0.35); margin-bottom: 20px; padding-bottom: 10px;
-  border-bottom: 0.5px solid rgba(0,0,0,0.08); display: block;
+  color: rgba(255,255,255,0.38); margin-bottom: 20px; padding-bottom: 10px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.10); display: block;
 }
 #info-panel-photos { display: flex; flex-direction: column; gap: 32px; }
 .bts-photo-wrap { display: block; }
@@ -280,7 +279,7 @@ html, body {
 }
 .bts-photo-clip img.loaded { opacity: 1; }
 .bts-caption {
-  display: block; font-size: 11px; color: rgba(0,0,0,0.48); line-height: 1.5;
+  display: block; font-size: 11px; color: rgba(255,255,255,0.46); line-height: 1.5;
   letter-spacing: 0.02em; font-style: italic;
   text-align: left; margin: 10px 0 0; padding: 0;
 }
@@ -597,15 +596,15 @@ a.contact-value:hover { color: #888; }
 /* ── SPLASH NOTIFY ── */
 #splash-notify {
   position: fixed; top: 56px; right: 16px; z-index: 2100;
-  background: rgba(250, 248, 245, 0.50);
-  backdrop-filter: blur(52px) saturate(180%) brightness(1.02);
-  -webkit-backdrop-filter: blur(52px) saturate(180%) brightness(1.02);
+  background: rgba(20, 19, 24, 0.74);
+  backdrop-filter: blur(52px) saturate(180%);
+  -webkit-backdrop-filter: blur(52px) saturate(180%);
   border-radius: 4px;
-  border-top: 0.5px solid rgba(255,255,255,0.90);
-  border-left: 0.5px solid rgba(255,255,255,0.60);
-  border-right: 0.5px solid rgba(0,0,0,0.06);
-  border-bottom: 0.5px solid rgba(0,0,0,0.08);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset, 0 12px 48px rgba(0,0,0,0.14);
+  border-top: 0.5px solid rgba(255,255,255,0.14);
+  border-left: 0.5px solid rgba(255,255,255,0.10);
+  border-right: 0.5px solid rgba(0,0,0,0.30);
+  border-bottom: 0.5px solid rgba(0,0,0,0.35);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.06) inset, 0 16px 56px rgba(0,0,0,0.42);
   padding: 14px 14px 18px 14px;
   width: 320px; max-width: calc(100vw - 32px);
   opacity: 0; transform: translateX(calc(100% + 32px));
@@ -618,7 +617,7 @@ a.contact-value:hover { color: #888; }
   transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.55,0,1,0.45);
 }
 #splash-notify-title {
-  font-size: 10px; font-weight: 400; color: rgba(0,0,0,0.76);
+  font-size: 10px; font-weight: 400; color: rgba(255,255,255,0.88);
   line-height: 1.55; letter-spacing: 0.10em; text-transform: uppercase;
 }
 #splash-notify-actions { display: flex; align-items: center; gap: 20px; margin-top: 12px; }
@@ -627,10 +626,10 @@ a.contact-value:hover { color: #888; }
   background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
   transition: opacity 0.15s;
 }
-#splash-notify-accept { color: rgba(0,0,0,0.72); }
-#splash-notify-accept:hover { opacity: 0.55; }
-#splash-notify-ignore { color: rgba(0,0,0,0.28); }
-#splash-notify-ignore:hover { color: rgba(0,0,0,0.52); }
+#splash-notify-accept { color: rgba(255,255,255,0.82); }
+#splash-notify-accept:hover { opacity: 0.60; }
+#splash-notify-ignore { color: rgba(255,255,255,0.30); }
+#splash-notify-ignore:hover { color: rgba(255,255,255,0.58); }
 #browser {
   width:560px; max-width:96vw;
   box-shadow:4px 4px 12px rgba(0,0,0,0.6);
