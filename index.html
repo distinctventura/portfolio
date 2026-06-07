@@ -188,10 +188,6 @@ html, body {
   transform-origin: left;
   transform: scaleX(1);
 }
-#notify-title {
-  font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.88);
-  margin-bottom: 4px; line-height: 1.35; letter-spacing: 0.10em; text-transform: uppercase;
-}
 #notify-body {
   font-size: 11px; color: rgba(255,255,255,0.46); line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 2;
@@ -532,7 +528,6 @@ a.contact-value:hover { color: #888; }
     width: min(260px, calc(100vw - 28px));
     padding: 11px 12px 14px;
   }
-  #notify-title { font-size: 9px; }
   #notify-body  { font-size: 10.5px; }
   #notify-yes, #notify-no { font-size: 8px; }
   #project-info-panel { width: 92vw; }
@@ -827,7 +822,6 @@ a.contact-value:hover { color: #888; }
 </div>
 
 <div id="project-notify">
-  <div id="notify-title"></div>
   <div id="notify-body"></div>
   <div id="notify-actions">
     <button id="notify-yes">Explore</button>
@@ -1223,7 +1217,6 @@ function showNotify(p) {
   notifyPaused = false;
   notifyRemaining = NOTIFY_DURATION;
   projectNotify.style.setProperty('--notify-accent', p.color || '#111');
-  document.getElementById('notify-title').textContent = p.title || '';
   document.getElementById('notify-body').textContent  = p.notification?.teaser || '';
   projectNotify.classList.remove('hiding');
   projectNotify.classList.add('visible');
