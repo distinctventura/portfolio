@@ -260,6 +260,13 @@ html, body {
 .bts-photo-clip {
   width: 100%; overflow: hidden;
 }
+.bts-photo-clip.cropped {
+  aspect-ratio: 1 / 1;
+}
+.bts-photo-clip.cropped img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 38%;
+}
 .bts-photo-clip img {
   width: 100%; height: auto; display: block;
   opacity: 0; transition: opacity 0.5s ease;
@@ -1008,6 +1015,7 @@ const PROJECTS = [
       body: "You enter a softly lit white room. Sound fills the space — ambient noise, the texture of mental clutter — that gradually sharpens into a voice as you move closer. At the centre stands a plinth. On it, a napkin holder: a metaphor for the mind attempting order, organised in structure but cluttered in content.\n\nEach napkin carries a single sentence, distilled from the artist's recorded conversations about purpose, doubt, and the ordinary texture of a life still being figured out. You take one. You read it. You let it go.\n\nThe discarded napkins fall onto a growing pile — a collective residue, a sediment of thought. Each visitor's small act of release joins the ones before it. By the end, the pile is a physical record of how many people held the same question briefly, and put it down.\n\nArtist: Pedro Ventura. Conceptual Consultancy: António Lemos. Sound Design: José Lobo."
     },
     btsLabel: "The Napkins",
+    btsCrop: true,
     bts: ['ecos-de-intencao/napkin-1.jpg','ecos-de-intencao/napkin-2.jpg','ecos-de-intencao/napkin-3.jpg','ecos-de-intencao/napkin-4.jpg','ecos-de-intencao/napkin-5.jpg'],
     btsCaptions: [
       "“I'm not as grateful to my parents as I should be.”",
@@ -1362,7 +1370,7 @@ function openInfoPanel(p) {
       img.src = src;
       if (img.complete) setTimeout(() => img.classList.add('loaded'), i * 60);
       const clip = document.createElement('div');
-      clip.className = 'bts-photo-clip';
+      clip.className = 'bts-photo-clip' + (p.btsCrop ? ' cropped' : '');
       clip.appendChild(img);
       const wrap = document.createElement('div');
       wrap.className = 'bts-photo-wrap';
