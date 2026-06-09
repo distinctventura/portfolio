@@ -489,7 +489,7 @@ a.contact-value:hover { color: #888; }
 #filter {
   position: fixed; bottom: 28px; right: 28px;
   display: flex; flex-direction: column; align-items: flex-end;
-  gap: 8px; z-index: 200;
+  gap: 14px; z-index: 200;
   pointer-events: all;
 }
 #filter-type {
@@ -1768,7 +1768,7 @@ function applyPositions() {
     card.el.style.zIndex = isLit ? '500' : String(Math.round(100 + offset * 10));
     card._rect = { left: x, top: y, right: x + cw, bottom: y + ch };
 
-    card.el.style.opacity = String(card._filtered ? 0 : fade * 0.95);
+    card.el.style.opacity = String(card._filtered ? Math.min(fade * 0.1, 0.08) : fade * 0.95);
     card.el.classList.toggle('lit', isLit);
 
     if (isLit !== card._wasLit) {
