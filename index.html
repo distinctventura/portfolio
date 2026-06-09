@@ -1758,7 +1758,7 @@ function applyPositions() {
       if (isLit) {
         card.el.style.willChange = 'transform';
         card.el.style.transition = 'transform 0.45s cubic-bezier(0.16,1,0.3,1)';
-        card.el.style.transform  = `rotateX(${ROT_X}deg) rotateY(${ROT_Y}deg) translateZ(50px) translateX(80px)`;
+        card.el.style.transform  = `rotateX(${ROT_X}deg) rotateY(${ROT_Y}deg) translateZ(44px) translateX(70px)`;
         card.el.style.opacity    = '1';
       } else {
         card.el.style.willChange = '';
@@ -1790,7 +1790,7 @@ function loop() {
     const dist = targetScroll - scrollPos;
     if (Math.abs(dist) < 0.08) scrollPos = targetScroll;
     else scrollPos += dist * EASE;
-    if (_forceDirty || scrollPos !== targetScroll || topCard !== null || topCard !== _lastTopCard) {
+    if (_forceDirty || scrollPos !== targetScroll || topCard !== _lastTopCard) {
       _forceDirty = false;
       _lastTopCard = topCard;
       applyPositions();
