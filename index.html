@@ -1594,20 +1594,6 @@ function build() {
     bgImg.className = 'card-bg-img';
     bgImg.style.backgroundPosition = p.imgPos || 'center';
     bgImg.style.backgroundSize     = p.bgSize || 'cover';
-    let _bgLoaded = false;
-    if (p.img && Math.abs(o0) < 7) {
-      _bgLoaded = true;
-      const preload = new Image();
-      preload.onload = () => {
-        bgImg.style.backgroundImage = `url('${p.img}')`;
-        requestAnimationFrame(() => { bgImg.style.opacity = '1'; });
-      };
-      preload.src = p.img;
-      if (preload.complete && preload.naturalWidth > 0) {
-        bgImg.style.backgroundImage = `url('${p.img}')`;
-        bgImg.style.opacity = '1';
-      }
-    }
 
     const label = document.createElement('div');
     label.className = 'card-label';
@@ -1622,14 +1608,8 @@ function build() {
     el.appendChild(face);
     frag.appendChild(el);
 
-    const card = { el, bg, bgImg, p, idx: i, entered: false, _wasLit: false, _filtered: false, _bgLoaded };
+    const card = { el, bg, bgImg, p, idx: i, entered: false, _wasLit: false, _filtered: false, _bgLoaded: false };
     cards.push(card);
-
-    setTimeout(() => {
-      el.style.transition = 'opacity 0.4s ease';
-      el.style.opacity    = '1';
-      setTimeout(() => { el.style.transition = ''; card.entered = true; _forceDirty = true; }, 420);
-    }, 60);
 
     el.addEventListener('click', () => {
       if (card.entered && !touchMoved && !mouseMoved && (topCard === card || !topCard)) openProject(p);
@@ -1652,6 +1632,45 @@ function build() {
   });
 
   track.appendChild(frag);
+
+  // Hold the fan hidden until the visible cards' covers have loaded, then
+  // reveal them together — already wearing their photos, so the carousel
+  // never flashes as bare colour blocks. Cap the wait so a slow or failed
+  // image can never stall the reveal.
+  const initialCards = cards.filter(c => c.p.img && Math.abs(getOffset(c.idx)) < 10);
+  let pending = initialCards.length;
+  let revealed = false;
+  function revealFan() {
+    if (revealed) return;
+    revealed = true;
+    cards.forEach(card => {
+      card.el.style.transition = 'opacity 0.55s ease';
+      card.el.style.opacity    = '1';
+      setTimeout(() => { card.el.style.transition = ''; card.entered = true; _forceDirty = true; }, 580);
+    });
+    _forceDirty = true;
+  }
+  initialCards.forEach(card => {
+    let counted = false;
+    const tally = ok => {
+      if (counted) return; counted = true;
+      if (ok) {
+        card.bgImg.style.transition = 'none';
+        card.bgImg.style.backgroundImage = `url('${card.p.img}')`;
+        card.bgImg.style.opacity = '1';
+        card._bgLoaded = true;
+      }
+      if (--pending <= 0) revealFan();
+    };
+    const img = new Image();
+    img.onload  = () => tally(true);
+    img.onerror = () => tally(false);
+    img.src = card.p.img;
+    if (img.complete && img.naturalWidth > 0) tally(true);
+  });
+  if (pending <= 0) revealFan();
+  setTimeout(revealFan, 1200);
+
   setTimeout(() => { hint.style.opacity = '0'; }, 5000);
 }
 
