@@ -68,6 +68,7 @@ html, body {
   cursor: pointer;
   transform-style: preserve-3d;
 }
+#scroll-track.filtering .card { transition: opacity 0.45s ease !important; }
 .card-face {
   width: 100%; height: 100%;
   border-radius: 2px;
@@ -259,13 +260,6 @@ html, body {
 .bts-photo-wrap { display: block; }
 .bts-photo-clip {
   width: 100%; overflow: hidden;
-}
-.bts-photo-clip.cropped {
-  aspect-ratio: 1 / 1;
-}
-.bts-photo-clip.cropped img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center 38%;
 }
 .bts-photo-clip img {
   width: 100%; height: auto; display: block;
@@ -1015,7 +1009,6 @@ const PROJECTS = [
       body: "You enter a softly lit white room. Sound fills the space — ambient noise, the texture of mental clutter — that gradually sharpens into a voice as you move closer. At the centre stands a plinth. On it, a napkin holder: a metaphor for the mind attempting order, organised in structure but cluttered in content.\n\nEach napkin carries a single sentence, distilled from the artist's recorded conversations about purpose, doubt, and the ordinary texture of a life still being figured out. You take one. You read it. You let it go.\n\nThe discarded napkins fall onto a growing pile — a collective residue, a sediment of thought. Each visitor's small act of release joins the ones before it. By the end, the pile is a physical record of how many people held the same question briefly, and put it down.\n\nArtist: Pedro Ventura. Conceptual Consultancy: António Lemos. Sound Design: José Lobo."
     },
     btsLabel: "The Napkins",
-    btsCrop: true,
     bts: ['ecos-de-intencao/napkin-1.jpg','ecos-de-intencao/napkin-2.jpg','ecos-de-intencao/napkin-3.jpg','ecos-de-intencao/napkin-4.jpg','ecos-de-intencao/napkin-5.jpg'],
     btsCaptions: [
       "“I'm not as grateful to my parents as I should be.”",
@@ -1370,7 +1363,7 @@ function openInfoPanel(p) {
       img.src = src;
       if (img.complete) setTimeout(() => img.classList.add('loaded'), i * 60);
       const clip = document.createElement('div');
-      clip.className = 'bts-photo-clip' + (p.btsCrop ? ' cropped' : '');
+      clip.className = 'bts-photo-clip';
       clip.appendChild(img);
       const wrap = document.createElement('div');
       wrap.className = 'bts-photo-wrap';
@@ -1750,7 +1743,7 @@ function applyPositions() {
     card.el.style.zIndex = isLit ? '500' : String(Math.round(100 + offset * 10));
     card._rect = { left: x, top: y, right: x + cw, bottom: y + ch };
 
-    card.el.style.opacity = String(card._filtered ? Math.min(fade * 0.1, 0.08) : fade * 0.95);
+    card.el.style.opacity = String(card._filtered ? 0 : fade * 0.95);
     card.el.classList.toggle('lit', isLit);
 
     if (isLit !== card._wasLit) {
@@ -1941,24 +1934,19 @@ let activeType = 'all', activeCat = 'all';
 const filterCatRow = document.getElementById('filter-cat');
 document.getElementById('filter').addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
 
+let _filterTimer = null;
 function applyFilter() {
   cards.forEach(card => {
     const match = (activeType === 'all' || card.p.type === activeType) &&
                   (activeCat  === 'all' || card.p.cat  === activeCat);
     card._filtered = !match;
-    card._wasLit = false;
     card.el.style.pointerEvents = match ? 'all' : 'none';
-    card.el.style.transition = 'opacity 0.4s ease';
   });
   topCard = null;
-  stage.getBoundingClientRect();
-  cards.forEach(card => {
-    if (!card.entered) return;
-    const fade = Math.max(0, Math.min(1, (N / 2 - 0.4) - Math.abs(getOffset(card.idx))));
-    card.el.style.opacity = card._filtered ? String(Math.min(fade * 0.1, 0.08)) : String(fade * 0.95);
-  });
-  setTimeout(() => { cards.forEach(c => { c.el.style.transition = ''; }); }, 450);
+  track.classList.add('filtering');
   _forceDirty = true;
+  clearTimeout(_filterTimer);
+  _filterTimer = setTimeout(() => track.classList.remove('filtering'), 550);
 }
 
 document.querySelectorAll('#filter-type button').forEach(btn => {
