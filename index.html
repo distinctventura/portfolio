@@ -40,7 +40,7 @@ html, body {
 }
 #nav-left { display: flex; pointer-events: all; }
 #nav-left a {
-  display: block; padding: 18px 10px;
+  display: block; padding: 22px 10px;
   font-size: 10px; letter-spacing: 0.13em;
   text-transform: uppercase; color: #111;
   text-decoration: none; white-space: nowrap;
@@ -113,7 +113,7 @@ html, body {
   position: fixed; bottom: 28px; left: 28px;
   font-size: 9px; letter-spacing: 0.14em;
   color: #555; text-transform: uppercase;
-  pointer-events: none; opacity: 0.32;
+  pointer-events: none; opacity: 0.30;
   transition: opacity 1.5s ease;
   white-space: nowrap; z-index: 100;
 }
@@ -345,7 +345,7 @@ html, body {
   font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
   color: #111; background: none; border: none;
   cursor: pointer; font-family: inherit; z-index: 450;
-  opacity: 0.32;
+  opacity: 0.30;
   transition: opacity 0.4s ease, color 0.2s;
 }
 #project-back:hover { opacity: 1; }
@@ -370,7 +370,7 @@ html, body {
   z-index: 11;
   opacity: 0;
   transition: opacity 0.4s ease 0.3s;
-  width: auto !important;
+  width: auto;
 }
 #project-page.open #project-dots { opacity: 1; }
 .project-dot {
@@ -393,7 +393,7 @@ html, body {
 .selected-item {
   font-size: 11px; letter-spacing: 0.13em;
   text-transform: uppercase; color: #111;
-  text-decoration: none; opacity: 0.32; cursor: pointer;
+  text-decoration: none; opacity: 0.30; cursor: pointer;
   transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .selected-item:hover { opacity: 1; }
@@ -471,7 +471,7 @@ a.contact-value:hover { color: #888; }
 #filter {
   position: fixed; bottom: 28px; right: 28px;
   display: flex; flex-direction: column; align-items: flex-end;
-  gap: 20px; z-index: 200;
+  gap: 8px; z-index: 200;
   pointer-events: all;
 }
 #filter-type {
@@ -507,7 +507,7 @@ a.contact-value:hover { color: #888; }
 #splash-notify {
   position: fixed; top: 56px; right: 16px; z-index: 2100;
   font-family: 'Arial', sans-serif;
-  width: 250px; max-width: calc(100vw - 32px);
+  width: 215px; max-width: calc(100vw - 32px);
   background: #c0c0c0;
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
@@ -558,7 +558,7 @@ a.contact-value:hover { color: #888; }
 @media (max-width: 768px) {
   #stage { perspective: 700px; perspective-origin: 38% 22%; }
   #nav-left { flex-wrap: nowrap; }
-  #nav-left a { padding: 18px 2px 11px 9px; font-size: 8.5px; letter-spacing: 0.07em; }
+  #nav-left a { padding: 22px 2px 11px 9px; font-size: 8.5px; letter-spacing: 0.07em; }
   #nav-left a:first-child { padding-left: 18px; }
   #hint { bottom: 18px; left: 18px; font-size: 8px; }
   #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px 80px; }
@@ -705,8 +705,7 @@ a.contact-value:hover { color: #888; }
   <div class="sn-body">
     <div class="sn-icon">🔔</div>
     <div class="sn-text">
-      <strong>pedro wants to show you something!</strong>
-      This program requires your immediate attention. Please advise.
+      pedro wants to show you something.
     </div>
   </div>
   <div class="sn-footer">
@@ -943,13 +942,13 @@ a.contact-value:hover { color: #888; }
 <!-- Selected Work page -->
 <div id="selected-page">
   <div id="selected-list">
-    <a class="selected-item" data-short="Ecos de Intenção">Ecos de Intenção</a>
-    <a class="selected-item" data-short="Fans of the Bible">Fans of the Bible</a>
-    <a class="selected-item" data-short="Painting">Painting</a>
-    <a class="selected-item" data-short="Quarto">Quarto</a>
-    <a class="selected-item" data-short="Moda Lisboa">Moda Lisboa</a>
-    <a class="selected-item" data-short="Old House">I Would Rather Not Go Back to the Old House</a>
-    <a class="selected-item" data-short="Film Archive">Film Archive</a>
+    <a class="selected-item" tabindex="0" data-short="Ecos de Intenção">Ecos de Intenção</a>
+    <a class="selected-item" tabindex="0" data-short="Fans of the Bible">Fans of the Bible</a>
+    <a class="selected-item" tabindex="0" data-short="Painting">Painting</a>
+    <a class="selected-item" tabindex="0" data-short="Quarto">Quarto</a>
+    <a class="selected-item" tabindex="0" data-short="Moda Lisboa">Moda Lisboa</a>
+    <a class="selected-item" tabindex="0" data-short="Old House">I Would Rather Not Go Back to the Old House</a>
+    <a class="selected-item" tabindex="0" data-short="Film Archive">Film Archive</a>
   </div>
 </div>
 
@@ -1404,7 +1403,7 @@ function goSlide(idx) {
     projectImageBg.style.display = 'none';
     projectVideoBg.style.display = 'block';
     projectVideoBg.src = src;
-    projectVideoBg.poster = (currentProject && currentProject.videoPosters && currentProject.videoPosters[src]) || '';
+    projectVideoBg.poster = (currentProject && currentProject.videoPosters && currentProject.videoPosters[src]) || (currentProject && currentProject.img) || '';
     projectVideoBg.muted = true;
     videoMuteBtn.textContent = '🔇';
     videoMuteBtn.style.display = 'flex';
@@ -1894,6 +1893,9 @@ document.querySelectorAll('.selected-item').forEach(el => {
     const p = PROJECTS.find(p => p.short === el.dataset.short);
     if (p) { closeAll(); openProject(p); }
   });
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
 });
 
 // ── SLIDE TOUCH SWIPE + caption tap ──
@@ -1937,11 +1939,17 @@ function applyFilter() {
                   (activeCat  === 'all' || card.p.cat  === activeCat);
     card._filtered = !match;
     card._wasLit = false;
-    card.el.style.transition    = 'opacity 0.4s ease';
     card.el.style.pointerEvents = match ? 'all' : 'none';
-    setTimeout(() => { card.el.style.transition = ''; }, 450);
+    card.el.style.transition = 'opacity 0.4s ease';
   });
   topCard = null;
+  stage.getBoundingClientRect();
+  cards.forEach(card => {
+    if (!card.entered) return;
+    const fade = Math.max(0, Math.min(1, (N / 2 - 0.4) - Math.abs(getOffset(card.idx))));
+    card.el.style.opacity = card._filtered ? String(Math.min(fade * 0.1, 0.08)) : String(fade * 0.95);
+  });
+  setTimeout(() => { cards.forEach(c => { c.el.style.transition = ''; }); }, 450);
   _forceDirty = true;
 }
 
