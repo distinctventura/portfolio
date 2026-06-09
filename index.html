@@ -1881,6 +1881,7 @@ function openProject(p) {
   projectYearText.textContent  = p.year;
   document.title = p.title + ' — Pedro Ventura';
   updateProjectNav(p);
+  centerCarouselOn(p);
   navEl.classList.add('paged');
   projectPage.classList.add('open');
   cursorLabel.classList.remove('visible');
@@ -1897,6 +1898,15 @@ projectNavL.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx 
 projectNavR.addEventListener('click', () => { triggerNotify(); goSlide(slideIdx + 1); });
 
 // ── PROJECT-TO-PROJECT NAV ──
+// Re-centre the carousel on a project while it's hidden behind the project
+// page, so returning (Back) lands on it — set instantly, no visible spin.
+function centerCarouselOn(p) {
+  const i = PROJECTS.indexOf(p);
+  if (i === -1) return;
+  scrollPos = targetScroll = ((N - 1) / 2 - i) * Math.abs(STEP_X);
+  _forceDirty = true;
+}
+
 let prevProjectIdx = 0, nextProjectIdx = 0;
 function updateProjectNav(p) {
   const i = PROJECTS.indexOf(p);
