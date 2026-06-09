@@ -474,12 +474,22 @@ html, body {
   letter-spacing: 0.14em; text-transform: uppercase;
   color: #111; margin-bottom: 40px;
 }
+.email-label {
+  display: block; font-size: 8px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: #bbb; margin-bottom: 12px;
+}
+#contact-email {
+  display: inline-block; font-size: 28px; letter-spacing: -0.01em;
+  color: #111; text-decoration: none; line-height: 1.05; margin-bottom: 48px;
+  transition: color 0.25s ease;
+}
+#contact-email:hover { color: #999; }
 .contact-row {
   display: flex; align-items: baseline;
   gap: 32px; padding: 18px 0;
   border-bottom: 0.5px solid #f0f0f0;
 }
-.contact-row:first-child { border-top: 0.5px solid #f0f0f0; }
+.contact-row:first-of-type { border-top: 0.5px solid #f0f0f0; }
 .contact-label {
   font-size: 8px; letter-spacing: 0.14em;
   text-transform: uppercase; color: #bbb; min-width: 90px;
@@ -584,6 +594,7 @@ a.contact-value:hover { color: #888; }
   #hint { bottom: 18px; left: 18px; font-size: 8px; }
   #about-inner { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px 80px; }
   #contact-inner { grid-template-columns: 1fr; gap: 32px; padding: 80px 24px 80px; }
+  #contact-email { font-size: 22px; margin-bottom: 36px; }
   #project-back { display: none; }
   .project-jump { bottom: 14px; }
   #project-prev { left: 14px; }
@@ -991,10 +1002,8 @@ a.contact-value:hover { color: #888; }
   <div id="contact-inner">
     <div id="contact-left"><div id="contact-heading">Get in<br>touch</div></div>
     <div>
-      <div class="contact-row">
-        <span class="contact-label">Email</span>
-        <a href="mailto:pedrotvl@outlook.com" class="contact-value">pedrotvl@outlook.com</a>
-      </div>
+      <span class="email-label">Email</span>
+      <a href="mailto:pedrotvl@outlook.com" id="contact-email">pedrotvl@outlook.com</a>
       <div class="contact-row">
         <span class="contact-label">Instagram</span>
         <a href="https://instagram.com/distinct_jpg" target="_blank" rel="noopener" class="contact-value">@distinct_jpg</a>
