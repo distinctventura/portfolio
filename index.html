@@ -624,6 +624,41 @@ a.contact-value:hover { color: #888; }
   .splash-inner-wrap { transform: scale(0.68); }
 }
 
+/* ── DESKTOP TYPE (slightly larger than the shared/mobile base) ── */
+@media (min-width: 769px) {
+  #nav-left a            { font-size: 10px; }
+  .card-label            { font-size: 8.5px; }
+  #filter-type button    { font-size: 9px; }
+  #filter-cat button     { font-size: 9px; }
+  #project-title-text    { font-size: 10px; }
+  #project-year-text     { font-size: 10px; }
+  #project-desc-text     { font-size: 10px; }
+  #slide-counter         { font-size: 10px; }
+  #slide-caption-title   { font-size: 10px; }
+  #slide-caption-body    { font-size: 10px; }
+  #project-back          { font-size: 10px; }
+  #notify-body           { font-size: 11px; }
+  #info-panel-title      { font-size: 10px; }
+  #info-panel-body       { font-size: 12px; }
+  #info-panel-bts-label  { font-size: 9px; }
+  .bts-caption           { font-size: 11px; }
+  .exp-section h2        { font-size: 10px; }
+  .exp-item span:first-child { font-size: 12px; }
+  .exp-item span:last-child  { font-size: 11px; }
+  #about-bio             { font-size: 13px; }
+  .role-title            { font-size: 12px; }
+  .role-dates            { font-size: 11px; }
+  .role-company          { font-size: 11px; }
+  .role-desc             { font-size: 12px; }
+  .feature-line          { font-size: 11px; }
+  #cv-download           { font-size: 9px; }
+  #contact-heading       { font-size: 11px; }
+  .contact-label         { font-size: 9px; }
+  .contact-value         { font-size: 13px; }
+  #contact-note          { font-size: 12px; }
+  .selected-item         { font-size: 11px; }
+}
+
 
 
 /* ── SPLASH ── */
@@ -1149,10 +1184,10 @@ const PROJECTS = [
 
 // ── CONSTANTS ──
 const isMobile = window.innerWidth <= 768;
-const CARD_W = isMobile ? 120 : 162;
-const CARD_H = isMobile ? 168 : 228;
-const STEP_X = isMobile ? -63  : -85;
-const STEP_Y = isMobile ? 44   : 62;
+const CARD_W = isMobile ? 108 : 162;
+const CARD_H = isMobile ? 151 : 228;
+const STEP_X = isMobile ? -57  : -85;
+const STEP_Y = isMobile ? 40   : 62;
 const ROT_X  = isMobile ? -20 : -28;
 const ROT_Y  = isMobile ? -15 : -22;
 const EASE   = isMobile ? 0.10 : 0.085;
@@ -1616,7 +1651,7 @@ function build() {
     });
 
     if (p.shape === 'circle') {
-      const sz = isMobile ? 120 : 162;
+      const sz = isMobile ? 108 : 162;
       el.style.width = el.style.height = sz + 'px';
       el.style.borderRadius = '50%';
       el.style.overflow = 'hidden';
