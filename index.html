@@ -1130,7 +1130,7 @@ const N = PROJECTS.length;
 
 // ── STATE ──
 let scrollPos = 0, targetScroll = 0;
-let isDragging = false, dragStartX = 0, dragStartScroll = 0;
+let isDragging = false, mouseMoved = false, dragStartX = 0, dragStartScroll = 0;
 let mouseDragVelX = 0, lastMouseDragX = 0, lastMouseDragTime = 0;
 let snapTimer = null;
 
@@ -1160,6 +1160,7 @@ const slideCounter   = document.getElementById('slide-counter');
 const projectVideoBg   = document.getElementById('project-video-bg');
 const projectImageWrap = document.getElementById('project-image-wrap');
 const projectImagePrev = document.getElementById('project-image-prev');
+const splashNotifyEl   = document.getElementById('splash-notify');
 let slideImgs = [], slideIdx = 0, slideDots = [];
 
 function isVideo(src) { return src && src.endsWith('.mp4'); }
@@ -1215,15 +1216,13 @@ function triggerNotify() {
 }
 
 function splashNotifyVisible() {
-  const sn = document.getElementById('splash-notify');
-  return sn && sn.classList.contains('visible');
+  return splashNotifyEl && splashNotifyEl.classList.contains('visible');
 }
 
 function dismissSplashNotify() {
-  const sn = document.getElementById('splash-notify');
-  if (!sn || !sn.classList.contains('visible')) return;
-  sn.classList.add('hiding');
-  setTimeout(() => sn.classList.remove('visible', 'hiding'), 320);
+  if (!splashNotifyEl || !splashNotifyEl.classList.contains('visible')) return;
+  splashNotifyEl.classList.add('hiding');
+  setTimeout(() => splashNotifyEl.classList.remove('visible', 'hiding'), 320);
 }
 
 function queueNotify(p, delay) {
@@ -1521,6 +1520,7 @@ let _ox = window.innerWidth * 0.5, _oy = window.innerHeight * 0.5;
 window.addEventListener('resize', () => {
   _ox = window.innerWidth * 0.5;
   _oy = window.innerHeight * 0.5;
+  _forceDirty = true;
   if ((window.innerWidth <= 768) !== isMobile) location.reload();
 });
 
@@ -1606,7 +1606,7 @@ function build() {
     }, 60);
 
     el.addEventListener('click', () => {
-      if (card.entered && !touchMoved && (topCard === card || !topCard)) openProject(p);
+      if (card.entered && !touchMoved && !mouseMoved && (topCard === card || !topCard)) openProject(p);
     });
 
     if (p.shape === 'circle') {
@@ -1639,6 +1639,7 @@ stage.addEventListener('wheel', e => {
 
 stage.addEventListener('mousedown', e => {
   isDragging = true;
+  mouseMoved = false;
   dragStartX = e.clientX;
   dragStartScroll = targetScroll;
   mouseDragVelX = 0;
@@ -1646,7 +1647,7 @@ stage.addEventListener('mousedown', e => {
   lastMouseDragTime = Date.now();
 });
 window.addEventListener('mouseup', () => {
-  if (isDragging) {
+  if (isDragging && mouseMoved) {
     targetScroll -= mouseDragVelX * 100;
     snapToNearest();
   }
@@ -1674,7 +1675,7 @@ stage.addEventListener('touchmove', e => {
   lastTouchX    = x;
   lastTouchTime = now;
   if (Math.abs(x - dragStartX) > 6) touchMoved = true;
-  targetScroll = dragStartScroll - (x - dragStartX) * 1.5;
+  if (touchMoved) targetScroll = dragStartScroll - (x - dragStartX) * 1.5;
 }, { passive: true });
 
 stage.addEventListener('touchend', () => {
@@ -1691,18 +1692,20 @@ window.addEventListener('mousemove', e => {
   cursorLabel.style.left = e.clientX + 'px';
   cursorLabel.style.top  = e.clientY + 'px';
   if (isDragging) {
-    const now = Date.now();
-    const dt = now - lastMouseDragTime;
-    if (dt > 0) mouseDragVelX = (e.clientX - lastMouseDragX) / dt;
-    lastMouseDragX = e.clientX;
-    lastMouseDragTime = now;
-    targetScroll = dragStartScroll - (e.clientX - dragStartX) * 1.4;
+    if (Math.abs(e.clientX - dragStartX) > 4) mouseMoved = true;
+    if (mouseMoved) {
+      const now = Date.now();
+      const dt = now - lastMouseDragTime;
+      if (dt > 0) mouseDragVelX = (e.clientX - lastMouseDragX) / dt;
+      lastMouseDragX = e.clientX;
+      lastMouseDragTime = now;
+      targetScroll = dragStartScroll - (e.clientX - dragStartX) * 1.4;
+    }
   }
 
   if (anyOverlayOpen()) return;
-  const _sn = document.getElementById('splash-notify');
-  if (_sn && _sn.classList.contains('visible')) {
-    const _sr = _sn.getBoundingClientRect();
+  if (splashNotifyEl && splashNotifyEl.classList.contains('visible')) {
+    const _sr = splashNotifyEl.getBoundingClientRect();
     if (mouseX >= _sr.left && mouseX <= _sr.right && mouseY >= _sr.top && mouseY <= _sr.bottom) {
       topCard = null; return;
     }
@@ -1882,11 +1885,7 @@ document.getElementById('nav-home').addEventListener('click', e => { e.preventDe
     page.classList.add('open');
     navEl.classList.add('paged');
     cursorLabel.classList.add('hidden');
-    const sn = document.getElementById('splash-notify');
-    if (sn.classList.contains('visible')) {
-      sn.classList.add('hiding');
-      setTimeout(() => sn.classList.remove('visible', 'hiding'), 320);
-    }
+    dismissSplashNotify();
   });
 });
 document.querySelectorAll('.selected-item').forEach(el => {
@@ -1987,11 +1986,6 @@ loop();
 (function() {
   var backdrop  = document.getElementById('splash-backdrop');
   var notify    = document.getElementById('splash-notify');
-
-  function dismissSplashNotify() {
-    notify.classList.add('hiding');
-    setTimeout(function() { notify.classList.remove('visible', 'hiding'); }, 320);
-  }
 
   function showSplash() {
     backdrop.classList.add('visible');
