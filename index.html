@@ -585,7 +585,7 @@ a.contact-value:hover { color: #888; }
   .project-jump { bottom: 14px; }
   #project-prev { left: 14px; }
   #project-next { right: 14px; }
-  .project-jump .pj-label { font-size: 7px; }
+  .project-jump .pj-label { font-size: 8px; }
   .project-jump .pj-name  { font-size: 8px; }
   #project-page { padding: 52px 16px 36px; gap: 14px; }
   #project-meta { gap: 6px; }
@@ -1679,11 +1679,13 @@ function build() {
     if (revealed) return;
     revealed = true;
     cards.forEach(card => {
-      card.el.style.transition = 'opacity 0.55s ease';
-      card.el.style.opacity    = '1';
-      setTimeout(() => { card.el.style.transition = ''; card.entered = true; _forceDirty = true; }, 580);
+      card.entered = true;                              // interactive immediately
+      card.el.style.transition = 'opacity 0.55s ease';  // fade-in
+      setTimeout(() => { card.el.style.transition = ''; }, 580);
     });
-    _forceDirty = true;
+    _forceDirty = true;   // applyPositions sets each card's real opacity
+                          // (respecting any active filter), animated by the
+                          // transition above — no hardcoded full opacity.
   }
   initialCards.forEach(card => {
     let counted = false;
