@@ -1203,6 +1203,7 @@ const PROJECTS = [
 
 // ── CONSTANTS ──
 const isMobile = window.innerWidth <= 768;
+const canHover = window.matchMedia('(hover: hover)').matches; // false on touch devices
 const CARD_W = isMobile ? 108 : 162;
 const CARD_H = isMobile ? 151 : 228;
 const STEP_X = isMobile ? -57  : -85;
@@ -1759,6 +1760,7 @@ stage.addEventListener('wheel', e => {
 }, { passive: false });
 
 stage.addEventListener('mousedown', e => {
+  if (!canHover) return;   // ignore synthetic mouse events on touch devices
   isDragging = true;
   mouseMoved = false;
   dragStartX = e.clientX;
@@ -1823,6 +1825,7 @@ window.addEventListener('mousemove', e => {
   }
 
   if (anyOverlayOpen()) return;
+  if (!canHover) { topCard = null; return; }   // no hover/lift on touch devices
   if (splashNotifyEl && splashNotifyEl.classList.contains('visible')) {
     const _sr = splashNotifyEl.getBoundingClientRect();
     if (mouseX >= _sr.left && mouseX <= _sr.right && mouseY >= _sr.top && mouseY <= _sr.bottom) {
