@@ -1260,6 +1260,17 @@ function lockSlideSize(nw, nh) {
   else                  { h = Math.round(maxH); w = Math.round(maxH * r); }
   projectImageWrap.style.width  = w + 'px';
   projectImageWrap.style.height = h + 'px';
+  // On a freshly opened project, snap the photo into place — don't animate
+  // it in from the previous project's size/position (that read as a random
+  // left/right slide). Slide-to-slide moves within a project still animate.
+  const fresh = _freshOpen; _freshOpen = false;
+  if (fresh) {
+    projectHero.style.transition = 'none';
+    projectMeta.style.transition = 'none';
+    projectImageWrap.style.transition = 'transform 0.6s cubic-bezier(0.22,1,0.36,1)';
+  }
+  projectImageWrap.style.width  = w + 'px';
+  projectImageWrap.style.height = h + 'px';
   projectImageWrap.classList.add('sized');
   projectMeta.style.width = w + 'px';
   // Anchor the photo's centre at a fixed point; hang the text below it.
@@ -1269,7 +1280,16 @@ function lockSlideSize(nw, nh) {
   projectHero.style.top  = Math.round(cy - h / 2) + 'px';
   projectMeta.style.left = left + 'px';
   projectMeta.style.top  = Math.round(cy + h / 2 + 14) + 'px';
+  if (fresh) {
+    void projectImageWrap.offsetWidth;
+    requestAnimationFrame(() => {
+      projectHero.style.transition = '';
+      projectMeta.style.transition = '';
+      projectImageWrap.style.transition = '';
+    });
+  }
 }
+let _freshOpen = false;
 
 const videoMuteBtn   = document.getElementById('video-mute-btn');
 const ambientAudio   = document.getElementById('project-ambient');
@@ -1894,6 +1914,7 @@ function loop() {
 let probeImg = null;
 
 function openProject(p) {
+  _freshOpen = true;
   dismissSplashNotify();
   projectVideoBg.pause();
   ambientAudio.pause(); ambientAudio.src = ''; ambientMuteBtn.style.display = 'none';
