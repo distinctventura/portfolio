@@ -2133,9 +2133,27 @@ document.querySelectorAll('#filter-cat button').forEach(btn => {
   });
 });
 
+// Quietly pre-cache each project's first photo during idle time while the
+// visitor browses the carrousel — so opening any project is near-instant and
+// they all open at the same speed. Skips on data-saver / very slow connections.
+function prefetchProjects() {
+  const conn = navigator.connection;
+  if (conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''))) return;
+  const queue = PROJECTS.map(p => (p.imgs && p.imgs.find(s => s && !isVideo(s))) || p.img).filter(Boolean);
+  const idle = window.requestIdleCallback || (cb => setTimeout(cb, 250));
+  let i = 0;
+  (function next() {
+    if (i >= queue.length) return;
+    const im = new Image();
+    im.onload = im.onerror = () => idle(next);
+    im.src = queue[i++];
+  })();
+}
+
 // ── INIT ──
 build();
 loop();
+setTimeout(prefetchProjects, 2500);
 
 // ── SPLASH ──
 (function() {
