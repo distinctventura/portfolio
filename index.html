@@ -127,12 +127,15 @@ html, body {
   position: fixed; inset: 0; background: #fff;
   z-index: 520; opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease; overflow: hidden;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 56px 40px 28px; gap: 10px;
+  padding: 0;
 }
 #project-page.open { opacity: 1; pointer-events: all; }
-#project-hero { flex-shrink: 0; position: relative; }
+/* Photo anchored to a fixed centre, text hung below it — so the photo
+   never shifts between slides (different captions or different shapes). */
+#project-hero {
+  position: absolute;
+  transition: top 0.35s ease, left 0.35s ease;
+}
 #project-image-wrap {
   border-radius: 2px; overflow: hidden;
   position: relative;
@@ -313,10 +316,11 @@ html, body {
 #video-mute-btn   { right: 12px; }
 #ambient-mute-btn { left:  12px; }
 #project-meta {
+  position: absolute;
   display: flex; flex-direction: column; align-items: flex-start;
   gap: 5px; text-align: left;
   opacity: 0; transform: translateY(6px);
-  transition: width 0.35s ease, opacity 0.5s ease 0.15s, transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s;
+  transition: width 0.35s ease, top 0.35s ease, left 0.35s ease, opacity 0.5s ease 0.15s, transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s;
 }
 #project-page.open #project-meta {
   opacity: 1; transform: translateY(0);
@@ -601,7 +605,7 @@ a.contact-value:hover { color: #888; }
   #project-next { right: 14px; }
   .project-jump .pj-label { font-size: 8px; }
   .project-jump .pj-name  { font-size: 8px; }
-  #project-page { padding: 52px 16px 36px; gap: 14px; }
+  #project-page { padding: 0; }
   #project-meta { gap: 6px; }
   #project-title-text { font-size: 8px; }
   #project-year-text  { font-size: 8px; }
@@ -1226,6 +1230,7 @@ const projectYearText  = document.getElementById('project-year-text');
 const projectNavL  = document.getElementById('project-nav-l');
 const projectNavR  = document.getElementById('project-nav-r');
 const projectDots    = document.getElementById('project-dots');
+const projectHero    = document.getElementById('project-hero');
 const projectMeta    = document.getElementById('project-meta');
 const projectPrevBtn = document.getElementById('project-prev');
 const projectNextBtn = document.getElementById('project-next');
@@ -1257,6 +1262,13 @@ function lockSlideSize(nw, nh) {
   projectImageWrap.style.height = h + 'px';
   projectImageWrap.classList.add('sized');
   projectMeta.style.width = w + 'px';
+  // Anchor the photo's centre at a fixed point; hang the text below it.
+  const cy   = window.innerHeight * 0.46;
+  const left = Math.round((window.innerWidth - w) / 2);
+  projectHero.style.left = left + 'px';
+  projectHero.style.top  = Math.round(cy - h / 2) + 'px';
+  projectMeta.style.left = left + 'px';
+  projectMeta.style.top  = Math.round(cy + h / 2 + 14) + 'px';
 }
 
 const videoMuteBtn   = document.getElementById('video-mute-btn');
