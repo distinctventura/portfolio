@@ -111,6 +111,9 @@ html, body {
 }
 #cursor-label.visible { opacity: 1; }
 #cursor-label.hidden { opacity: 0 !important; pointer-events: none; }
+/* The cursor label is a hover affordance — never show it on touch devices
+   (a tap fires a synthetic mouse event that would otherwise pin it). */
+@media (hover: none) { #cursor-label { display: none !important; } }
 
 /* ── HINT ── */
 #hint {
@@ -1636,6 +1639,7 @@ function closeAll() {
   projectPage.classList.remove('open');
   teardownSlide();
   cursorLabel.classList.remove('visible', 'hidden');
+  topCard = null;
   document.title = 'Pedro Ventura';
   navEl.classList.remove('paged');
 }
