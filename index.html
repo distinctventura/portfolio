@@ -153,9 +153,6 @@ html, body {
   transition: opacity 0.25s ease;
 }
 #slide-caption.has-text { opacity: 1; }
-/* In projects that use captions, hold a steady caption slot so the photo
-   doesn't shift between captioned and un-captioned slides. */
-#project-page.captions-on #slide-caption { min-height: 42px; }
 #slide-caption-title {
   display: block; font-size: 9px; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase;
@@ -1260,6 +1257,29 @@ function lockSlideSize(nw, nh) {
   projectImageWrap.style.height = h + 'px';
   projectImageWrap.classList.add('sized');
   projectMeta.style.width = w + 'px';
+  if (!_capReserveDone) { _capReserveDone = true; measureCaptionReserve(); }
+}
+
+// Reserve a steady caption slot sized to THIS project's tallest caption, so
+// the photo never shifts as you move between slides of different caption
+// lengths. Measured once per project at the real rendered width.
+let _capReserveDone = false;
+function measureCaptionReserve() {
+  slideCaption.style.minHeight = '';
+  const caps = currentProject && currentProject.slideCaptions;
+  if (!caps || !caps.some(Boolean)) return;
+  const sT = slideCaptionTitle.textContent, sB = slideCaptionBody.textContent, sD = slideCaptionTitle.style.display;
+  let max = 0;
+  caps.forEach(c => {
+    slideCaptionTitle.textContent = c && c.title ? c.title : '';
+    slideCaptionBody.textContent  = c && c.body  ? c.body  : '';
+    slideCaptionTitle.style.display = (c && c.title) ? 'block' : 'none';
+    if (slideCaption.offsetHeight > max) max = slideCaption.offsetHeight;
+  });
+  slideCaptionTitle.textContent = sT;
+  slideCaptionBody.textContent  = sB;
+  slideCaptionTitle.style.display = sD;
+  slideCaption.style.minHeight = max + 'px';
 }
 
 const videoMuteBtn   = document.getElementById('video-mute-btn');
@@ -1565,6 +1585,8 @@ function teardownSlide() {
   document.getElementById('info-panel-photos').innerHTML = '';
   currentProject = null;
   slideCaption.classList.remove('has-text');
+  slideCaption.style.minHeight = '';
+  _capReserveDone = false;
   slideCaptionTitle.textContent = '';
   slideCaptionBody.textContent  = '';
   projectImageWrap.style.width = '';
@@ -1950,7 +1972,7 @@ function openProject(p) {
   document.title = p.title + ' — Pedro Ventura';
   updateProjectNav(p);
   centerCarouselOn(p);
-  projectPage.classList.toggle('captions-on', !!(p.slideCaptions && p.slideCaptions.some(Boolean)));
+  _capReserveDone = false;
   navEl.classList.add('paged');
   projectPage.classList.add('open');
   cursorLabel.classList.remove('visible');
