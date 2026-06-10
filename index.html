@@ -132,7 +132,7 @@ html, body {
   transition: opacity 0.5s ease; overflow: hidden;
   padding: 0;
 }
-#project-page.open { opacity: 1; pointer-events: all; }
+#project-page.open { opacity: 1; pointer-events: all; transition: none; } /* open instantly (no see-through); close still fades */
 /* Photo anchored to a fixed centre, text hung below it — so the photo
    never shifts between slides (different captions or different shapes). */
 #project-hero {
@@ -1929,6 +1929,11 @@ function openProject(p) {
   projectImageWrap.style.height = '';
   projectImageWrap.classList.remove('sized', 'shadow');
   projectImageWrap.classList.toggle('shadow', !!p.shadow);
+  // Instantly hide the previous project's photo so it can't flash on open.
+  projectImageBg.style.transition = 'none';
+  projectImageBg.style.opacity = '0';
+  void projectImageBg.offsetWidth;
+  projectImageBg.style.transition = '';
 
   if (p.imgs && p.imgs.length > 0) {
     projectImagePrev.src = ''; projectImagePrev.style.opacity = '0';
