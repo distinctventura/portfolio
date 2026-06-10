@@ -153,6 +153,9 @@ html, body {
   transition: opacity 0.25s ease;
 }
 #slide-caption.has-text { opacity: 1; }
+/* In projects that use captions, hold a steady caption slot so the photo
+   doesn't shift between captioned and un-captioned slides. */
+#project-page.captions-on #slide-caption { min-height: 42px; }
 #slide-caption-title {
   display: block; font-size: 9px; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase;
@@ -1947,6 +1950,7 @@ function openProject(p) {
   document.title = p.title + ' — Pedro Ventura';
   updateProjectNav(p);
   centerCarouselOn(p);
+  projectPage.classList.toggle('captions-on', !!(p.slideCaptions && p.slideCaptions.some(Boolean)));
   navEl.classList.add('paged');
   projectPage.classList.add('open');
   cursorLabel.classList.remove('visible');
